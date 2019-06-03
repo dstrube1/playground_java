@@ -165,6 +165,7 @@ public class ThreadManager implements INotifyingThreadListener{
 	}
 	
 	public void notifyOfThreadComplete(final Thread thread){
+		//If another thread is notifying, pause this one for some random period
 		try{
 			final int sleep = 100 + random.nextInt(900);
 			if (isAnotherThreadNotifying){
@@ -191,6 +192,7 @@ public class ThreadManager implements INotifyingThreadListener{
 		final BigInteger oldStart = notifyingThread.getStart();
 		//System.out.println(threadName + " - " + oldStart.toString() + " X - digits: " + numOfTrailingDigits + "; stabs: " + notifyingThread.getStabs().toString());
 
+		//if we found a new max, do something about it
 		final AtomicInteger tempMaxStepsFound = notifyingThread.getMaxStepsFound();
 		if (tempMaxStepsFound.get() > maxStepsFound.get()){
 			biggestFound.set(notifyingThread.getBiggestFound().get());
@@ -210,7 +212,8 @@ public class ThreadManager implements INotifyingThreadListener{
 		}
 		
 		//when creating a new thread, do so by removing a key from the currentAvailableThreadPoolTemplates until it's empty, 
-		//then refill it from startingTemplates, tacking on the last digit
+		//OLD: then refill it from startingTemplates, tacking on the last digit
+		//TODO NEW: then find another thread still working, and help it
 		if (currentAvailableThreadPoolTemplates.isEmpty()){
 // 			System.out.println(threadName + " - currentAvailableThreadPoolTemplates.isEmpty");
 			final Set<String> startingKeys = startingTemplates.keySet();
