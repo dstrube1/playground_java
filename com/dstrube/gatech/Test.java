@@ -25,77 +25,16 @@ public class Test {
 	
 	private static final String[] ignoreFolders = {"/temp"};
 	private static final String[] ignoreFiles = {".cbz"};
-	
+	private static final String defaultPath = "~/Downloads/";
+    private static File path = null;
+    private static FilenameFilter filter = null;
+
 	public static void main(final String[] args) {
-        File path = null;		
-        if (args.length == 0){
-            final String defaultPath = "~/Downloads/";
-			System.out.println("No path found. Using default " + defaultPath);
-			path = new File(defaultPath);
-		} else if (args.length > 1){
-			System.out.println("More than one path found");
-			return;
-		} else{
-		    path = new File(args[0]);
+        if (!doesPathCheckout(args)){
+            return;
         }
 
-		if (!path.exists()){
-			System.out.println("Path doesn't exist: " + args[0]);
-			return;
-		}
-		if (!path.isDirectory()){
-			System.out.println("Path is not a directory: " + args[0]);
-			return;
-		}
-		if (!path.canRead()){
-			System.out.println("Path is not readable: " + args[0]);
-			return;
-		}
-		if (!path.canWrite()){
-			System.out.println("Path is not writable: " + args[0]);
-			return;
-		}
-		//from https://www.tutorialspoint.com/java/io/file_listfiles_filename_filter.htm
-		final FilenameFilter filter = new FilenameFilter() {
-   
-			@Override
-			public boolean accept(final File dir, final String name) {
-                final File file = new File(dir.getPath() + File.separator + name);
-                //System.out.println("in accept : " + file.getPath());
-				if (file.isDirectory()){
-                //new Exception().printStackTrace();
-					for (final String ignoreFolder : ignoreFolders) {
-						if (file.getPath().contains(ignoreFolder)){
-							return false;
-						}
-					}
-					return true;
-				}
-                //System.out.println("in accept is not dir?: " + file.getPath() );
-			    if (name.lastIndexOf('.') > 0) {
-					for (final String ignoreFile : ignoreFiles) {
-						if (name.endsWith(ignoreFile)){
-                            //System.out.println("name " + name + " ends with " + ignoreFile);
-							return false;
-						}
-					}
-               
-					// get last index for '.' char
-					final int lastIndex = name.lastIndexOf('.');
-                  
-					// get extension
-					String str = name.substring(lastIndex);
-                  
-					// match path name extension
-					if (str.equals(".cbr")) {
-						return true;
-					}
-			    }
-               
-    	       return true;
-            }
-		};
-		//end filter
+        setFilter();
 
 		final File pathTemp = new File(path.getPath()+"/temp");
 		if (!pathTemp.exists()){
@@ -130,6 +69,68 @@ public class Test {
 		}
 		System.out.println("Done");
 	}
+
+    private static boolean doesPathCheckout(final String[] args){
+        if (args.length == 0){
+			System.out.println("No path found. Using default " + defaultPath);
+			path = new File(defaultPath);
+		} else if (args.length > 1){
+			System.out.println("More than one path found");
+			return false;
+		} else{
+		    path = new File(args[0]);
+        }
+
+		if (!path.exists()){
+			System.out.println("Path doesn't exist: " + args[0]);
+			return false;
+		}
+		if (!path.isDirectory()){
+			System.out.println("Path is not a directory: " + args[0]);
+			return false;
+		}
+		if (!path.canRead()){
+			System.out.println("Path is not readable: " + args[0]);
+			return false;
+		}
+		if (!path.canWrite()){
+			System.out.println("Path is not writable: " + args[0]);
+			return false;
+		}
+        return true;
+    }
+
+    private static void setFilter(){
+		//from https://www.tutorialspoint.com/java/io/file_listfiles_filename_filter.htm
+		filter = new FilenameFilter() {
+   
+			@Override
+			public boolean accept(final File dir, final String name) {
+                final File file = new File(dir.getPath() + File.separator + name);
+                //System.out.println("in accept : " + file.getPath());
+				if (file.isDirectory()){
+                //new Exception().printStackTrace();
+					for (final String ignoreFolder : ignoreFolders) {
+						if (file.getPath().contains(ignoreFolder)){
+                            System.out.println("Ignoring folder " + ignoreFolder);
+							return false;
+						}
+					}
+					return true;
+				}
+                //System.out.println("in accept is not dir?: " + file.getPath() );
+			    if (name.lastIndexOf('.') > 0) {
+					for (final String ignoreFile : ignoreFiles) {
+						if (name.endsWith(ignoreFile)){
+                            System.out.println("Ignoring file named " + name + " because it ends with " + ignoreFile);
+							return false;
+						}
+					}               
+			    }
+    	       return true;
+            }
+		};
+    }
 	
 	private static void runProcCleanTemp(final File pathTemp){
 		try{
@@ -138,7 +139,7 @@ public class Test {
                 return;
             }
             
-			for (final File file : pathTemp.listFiles()){
+			for (final File file : pathTemp.listFiles(filter)){
 				System.out.print("file: " + file);
                 if (file.delete()){
                     System.out.println(" - deleted");
@@ -146,25 +147,6 @@ public class Test {
                     System.out.println(" - not deleted");
                 }
             }
-/*
-			final String procPath = "rm";
-			final Process process = Runtime.getRuntime().exec("sudo rm -rf /home/david/Downloads/temp/*");//procPath + " -rf " + path + "/*");
-			final InputStream is = process.getInputStream();
-			final InputStreamReader isr = new InputStreamReader(is);
-			final BufferedReader br = new BufferedReader(isr);
-			String line;
-
-			System.out.printf("Output of running %s is:\n", procPath);
-			while ((line = br.readLine()) != null) {
-				System.out.println(line);
-			}
-            process.waitFor();
-            System.out.println("exit: " + process.exitValue());
-            process.destroy();*/
-		//}catch(IOException iOexception){
-			//System.out.println("Caught IOException");
-//		}catch(InterruptedException interruptedException){
-	//		System.out.println("Caught InterruptedException");
  		}catch(SecurityException securityException){
 			System.out.println("Caught securityException");
 		}
