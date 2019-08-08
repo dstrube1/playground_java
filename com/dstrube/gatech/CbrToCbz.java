@@ -1,4 +1,4 @@
-package com.dstrube.gatech;
+//package com.dstrube.gatech;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,18 +14,15 @@ Purpose:
 for each cbr file in a dir:
 unrar files from the cbr
 zip them as cbz
-wait until done and then delete the extracteds, 
+wait until done and then confirm: delete the extracteds?, 
 and the cbr?
 
 Compile:
-Windows:
-javac -d bin com\dstrube\gatech\CbrToCbz.java 
-Mac / Linux:
-javac -d bin com/dstrube/gatech/CbrToCbz.java 
+javac -d . CbrToCbz.java 
 Run:
-java -cp bin com.dstrube.gatech.CbrToCbz [path]
+java -cp . com.dstrube.gatech.CbrToCbz [path]
 example:
-java -cp bin com.dstrube.gatech.CbrToCbz ~/Downloads
+java -cp . com.dstrube.gatech.CbrToCbz 
 
 See also 
 https://github.com/dstrube1/playground_java/blob/master/com/dstrube/FolderComparer.java
@@ -35,8 +32,8 @@ https://github.com/dstrube1/playground_java/blob/master/com/dstrube/FolderCompar
 public class CbrToCbz {
 	
 	private static final String[] ignoreFolders = {File.separator + "temp"};
-	private static final String[] ignoreFiles = {".cbz",".jpg",".png"};
-	private static final String defaultPath = "~" + File.separator + "Downloads" + File.separator;
+	private static final String[] ignoreFiles = {".cbz",".jpg",".png", ".java", ".class"};
+	private static final String defaultPath = ".";//"~" + File.separator + "Downloads" + File.separator;
     private static File path = null;
     private static FilenameFilter filter = null;
 
@@ -44,8 +41,11 @@ public class CbrToCbz {
         if (!doesPathCheckout(args)){
             return;
         }
+		//System.out.println("doesPathCheckout: yes");//
 
         setFilter();
+		//System.out.println("filter is set");
+		//if (true) return;
 
 		final File pathTemp = new File(path.getPath() + File.separator + "temp");
 		if (!pathTemp.exists()){
@@ -125,7 +125,7 @@ public class CbrToCbz {
 
     private static boolean doesPathCheckout(final String[] args){
         if (args.length == 0){
-			System.out.println("No path found. Using default " + defaultPath);
+			//System.out.println("No path found. Using default " + defaultPath);
 			path = new File(defaultPath);
 		} else if (args.length > 1){
 			System.out.println("More than one (" + args.length + ") path(s) found");
