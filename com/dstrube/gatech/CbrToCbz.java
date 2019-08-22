@@ -6,6 +6,7 @@ import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.IOException;
+
 /*
 Author: David Strube
 Date: 2019-06-20
@@ -18,11 +19,11 @@ wait until done and then confirm: delete the extracteds?,
 and the cbr?
 
 Compile:
-javac -d . CbrToCbz.java 
+javac -d . com/dstrube/gatech/CbrToCbz.java 
 Run:
 java -cp . com.dstrube.gatech.CbrToCbz [path]
 example:
-java -cp . com.dstrube.gatech.CbrToCbz 
+java -cp . CbrToCbz 
 
 See also 
 https://github.com/dstrube1/playground_java/blob/master/com/dstrube/FolderComparer.java
@@ -46,76 +47,13 @@ public class CbrToCbz {
         setFilter();
 		//System.out.println("filter is set");
 		//if (true) return;
-
-		final File pathTemp = new File(path.getPath() + File.separator + "temp");
-		if (!pathTemp.exists()){
-			System.out.println("Folder temp doesn't exist. (" + pathTemp.getPath() + ") Creating it...");
-            try{
-                boolean mkTempResult = pathTemp.mkdir();
-                if (!mkTempResult){
-        			System.out.println("Failed to create " + pathTemp.getPath());
-                    return;
-                }
-            }catch(SecurityException securityException){
-    			System.out.println("Caught securityException while creating " + pathTemp.getPath());
-                return;
-            }
-		}
-        
-        //Temp folder should be empty
-        if (pathTemp.list().length > 0){
-			System.out.println("Temp folder should empty but is not. Please sort this out before retrying: " + pathTemp.getPath());
-            return;
-        }
 		
 		try{
 			for (final File file : path.listFiles(filter)){
-				//System.out.println("file: " + file);
-                if (!file.getPath().endsWith(".cbr")){
-                    //System.out.println("File is not .cbr. Skipping " + file.getPath());
-                    continue;
-                }
-				//System.out.println("CBR file: " + file);
-
-                //Make sure this file hasn't already been unrarred
-                final String fileNameWithExtension = file.getPath().substring(1 + file.getPath().lastIndexOf(File.separator));
-                final String fileName = fileNameWithExtension.substring(0, fileNameWithExtension.lastIndexOf("."));
-                //System.out.println("File name: " + fileName);
-                boolean foundMatchingCbz = false;
-                for (final File searchFile : path.listFiles()){//search without filter to find matching cbz file
-                    if (searchFile.getPath().endsWith(fileName + ".cbz")) {
-                        foundMatchingCbz = true;
-                        break;
-                    }
-                }
-                if (foundMatchingCbz){
-                    System.out.println("Skipping this file because it seems to have already been unrarred and zipped: " + file.getPath());
-                    continue;
-                }
-
-                //Unrar this file to a folder in the temp folder
-                runProcUnrar(file.getPath());
-
-                //There should then be just one item (the afore mentioned folder) in temp
-                /*if (pathTemp.list().length != 1){
-                    System.out.print("Something is wrong. ");
-                    if (pathTemp.list().length > 1){
-                        System.out.println("More than one item in temp folder after unrarring: " + pathTemp.getPath());
-                    }else{
-                        System.out.println("No item in temp folder after unrarring: " + pathTemp.getPath());
-                    }
-                    break;
-                }*/
-
-                //Make a name for the new cbz file
-                final String name = pathTemp.list()[0].replace(' ', '_').replaceAll("[^a-zA-Z0-9_]","") + ".cbz";
-                //System.out.println("Name: " + name);
-
-                //Output a zip file to this folder with this name (param 1), using these contents (param 2)
-                runProcZip(path.getPath() + File.separator + name, pathTemp.getPath()+"/.");
-
-                //Clean up after yourself
-                runProcCleanTemp(pathTemp.getPath());
+				if (!processFile(file)){
+					//Error encountered
+					return;
+				}
 			}
 		}catch(SecurityException securityException){
 			System.out.println("Caught securityException");
@@ -185,6 +123,93 @@ public class CbrToCbz {
             }
 		};
     }
+    
+    private static boolean processFile(final File file){
+    	//System.out.println("file: " + file);
+    	
+    	//Handle case where input file is a folder
+    	if (file.isDirectory()){
+    		for (final File subFile : file.listFiles(filter)){
+				if (!processFile(subFile)){
+					//Error encountered
+					return false;
+				}
+			}
+			return true;
+    	}
+    	
+    	if (!file.getPath().endsWith(".cbr")){
+    		//System.out.println("File is not .cbr. Skipping " + file.getPath());
+            return true;
+        }
+		System.out.println("CBR file: " + file);
+
+        //Make sure this file hasn't already been unrarred
+        final String fileNameWithExtension = file.getPath().substring(1 + file.getPath().lastIndexOf(File.separator));
+        final String fileName = fileNameWithExtension.substring(0, fileNameWithExtension.lastIndexOf("."));
+        //System.out.println("File name: " + fileName);
+        boolean foundMatchingCbz = false;
+        for (final File searchFile : file.getParentFile().listFiles()){//search without filter to find matching cbz file
+        	if (searchFile.getPath().endsWith(fileName + ".cbz")) {
+            	foundMatchingCbz = true;
+                break;
+            }
+        }
+        if (foundMatchingCbz){
+        	System.out.println("Skipping this file because it seems to have already been unrarred and zipped: " + file.getPath());
+            return true;
+        }
+
+		final File pathTemp = new File(file.getParentFile().getPath() + File.separator + fileName + "_temp");
+		if (!pathTemp.exists()){
+			//System.out.println("Temp folder for this cbr file doesn't exist. (" + pathTemp.getPath() + ") Creating it...");
+            try{
+                boolean mkTempResult = pathTemp.mkdir();
+                if (!mkTempResult){
+        			System.out.println("Failed to create " + pathTemp.getPath());
+                    return false;
+                }
+            }catch(SecurityException securityException){
+    			System.out.println("Caught securityException while creating " + pathTemp.getPath());
+                return false;
+            }
+		}else{
+			System.out.println("Temp folder exists. (" + pathTemp.getPath() + ") That's weird. \n"
+				+ "A previous run didn't complete properly. Fix that before running this again.");
+			return false;
+        }
+        
+        //Temp folder should be empty
+        if (pathTemp.list().length > 0){
+			System.out.println("Temp folder should empty but is not. Please sort this out before retrying: " + pathTemp.getPath());
+            return false;
+        }
+        
+        //Unrar this file to a folder in the temp folder
+        runProcUnrar(file.getPath());
+
+        //There should then be just one item (the afore mentioned folder) in temp
+        /*if (pathTemp.list().length != 1){
+        	System.out.print("Something is wrong. ");
+	        if (pathTemp.list().length > 1){
+    	    	System.out.println("More than one item in temp folder after unrarring: " + pathTemp.getPath());
+            }else{
+            	System.out.println("No item in temp folder after unrarring: " + pathTemp.getPath());
+            }
+        	break;
+        }*/
+
+        //Make a name for the new cbz file
+        final String name = fileName /*pathTemp.list()[0].replace(' ', '_').replaceAll("[^a-zA-Z0-9_]","") */+ ".cbz";
+        //System.out.println("Name: " + name);
+
+        //Output a zip file to this folder with this name (param 1), using these contents (param 2)
+        runProcZip(file.getParentFile().getPath() + File.separator + name, pathTemp.getPath()+"/.");
+
+        //Clean up after yourself
+        runProcCleanTemp(pathTemp.getPath(), true);
+    	return true;
+    }
 		
 	private static void runProcUnrar(final String inputFilePath){
 		try{
@@ -207,8 +232,9 @@ public class CbrToCbz {
             process.destroy();
 		}catch(InterruptedException interruptedException){
 			System.out.println("Caught InterruptedException");
-		}catch(IOException exception){
+		}catch(IOException ioException){
 			System.out.println("Caught IOException");
+			ioException.printStackTrace();
 		}
     }
 
@@ -230,12 +256,13 @@ public class CbrToCbz {
             process.destroy();
 		}catch(InterruptedException interruptedException){
 			System.out.println("Caught InterruptedException");
-		}catch(IOException exception){
+		}catch(IOException ioException){
 			System.out.println("Caught IOException");
+			ioException.printStackTrace();
 		}
     }
 
-	private static void runProcCleanTemp(final String pathTemp){
+	private static void runProcCleanTemp(final String pathTemp, final boolean isRootTemp){
 		try{
             final File temp = new File(pathTemp);
             if (temp == null || temp.length() == 0){
@@ -246,15 +273,23 @@ public class CbrToCbz {
 			for (final File file : temp.listFiles()){//No filter = delete everything in this folder
                 if (file.isDirectory()){
                     //Delete everything in the directory before deleting the directory itself
-                    runProcCleanTemp(file.getPath());
+                    runProcCleanTemp(file.getPath(), false);
                 }
 				//System.out.print("file: " + file);
                 if (file.delete()){
                     //System.out.println(" - deleted");
                 }else{
-                    //System.out.println(" - not deleted");
+                    System.out.println(file.getPath() + " - not deleted");
                 }
             }
+            if (isRootTemp){
+	            if (temp.delete()){
+    	            //System.out.println(" - deleted");
+        	    }else{
+                	System.out.println(temp.getPath() + " - not deleted");
+            	}
+            }
+
  		}catch(SecurityException securityException){
 			System.out.println("Caught securityException");
 		}
