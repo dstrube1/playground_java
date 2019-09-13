@@ -10,50 +10,58 @@ import java.io.IOException;
 /*
 Author: David Strube
 Date: 2019-06-20
-
 Purpose:
 for each cbr file in a dir:
 unrar files from the cbr
 zip them as cbz
-wait until done and then confirm: delete the extracteds?, 
+wait until done and then delete the extracted, 
 and the cbr?
-
 Compile:
-javac -d . com/dstrube/gatech/CbrToCbz.java 
+javac -d . CbrToCbz.java 
+or
+javac -d . com\dstrube\gatech\CbrToCbz.java 
 Run:
-java -cp . com.dstrube.gatech.CbrToCbz [path]
+java -cp . CbrToCbz [path]
 example:
 java -cp . CbrToCbz 
-
 See also 
 https://github.com/dstrube1/playground_java/blob/master/com/dstrube/FolderComparer.java
-
 */
 
 public class CbrToCbz {
 	
-	private static final String[] ignoreFolders = {File.separator + "temp"};
+	private static final String[] ignoreFolders = {File.separator + "temp", ".git", "puzzlers", "old", "bin"};
 	private static final String[] ignoreFiles = {".cbz",".jpg",".png", ".java", ".class"};
 	private static final String defaultPath = ".";//"~" + File.separator + "Downloads" + File.separator;
     private static File path = null;
     private static FilenameFilter filter = null;
+	private static boolean isDeleteCbrs = false;
 
 	public static void main(final String[] args) {
-        if (!doesPathCheckout(args)){
+        if (!doesPathCheckout()){//args)){
             return;
         }
 		//System.out.println("doesPathCheckout: yes");//
-
+		
+		isDeleteCbrs = getIsDeleteCbrs(args);
+		
         setFilter();
 		//System.out.println("filter is set");
 		//if (true) return;
 		
 		try{
+			final int total = path.listFiles(filter).length;
+			int count = 1;
+			//System.out.println("Found " + total + " items in " + path.getPath());
 			for (final File file : path.listFiles(filter)){
+				if (file.getPath().endsWith(".cbr")){
+					System.out.println("Processing item " + count + " of " + total + " in " + path.getPath());
+				}
 				if (!processFile(file)){
 					//Error encountered
 					return;
 				}
+				count++;
 			}
 		}catch(SecurityException securityException){
 			System.out.println("Caught securityException");
@@ -61,35 +69,46 @@ public class CbrToCbz {
 		System.out.println("Done");
 	}
 
-    private static boolean doesPathCheckout(final String[] args){
-        if (args.length == 0){
-			//System.out.println("No path found. Using default " + defaultPath);
-			path = new File(defaultPath);
+    private static boolean doesPathCheckout(){//final String[] args){
+		//TODO If requested, allow for path getting passed in as an argument
+		//System.out.println("No path found. Using default " + defaultPath);
+		path = new File(defaultPath);
+        
+		/*if (args.length == 0){
 		} else if (args.length > 1){
 			System.out.println("More than one (" + args.length + ") path(s) found");
 			return false;
 		} else{
 		    path = new File(args[0]);
-        }
+        }*/
 
 		if (!path.exists()){
-			System.out.println("Path doesn't exist: " + args[0]);
+			System.out.println("Path doesn't exist: " + path.getPath());
 			return false;
 		}
 		if (!path.isDirectory()){
-			System.out.println("Path is not a directory: " + args[0]);
+			System.out.println("Path is not a directory: " + path.getPath());
 			return false;
 		}
 		if (!path.canRead()){
-			System.out.println("Path is not readable: " + args[0]);
+			System.out.println("Path is not readable: " + path.getPath());
 			return false;
 		}
 		if (!path.canWrite()){
-			System.out.println("Path is not writable: " + args[0]);
+			System.out.println("Path is not writable: " + path.getPath());
 			return false;
 		}
         return true;
     }
+
+	private static boolean getIsDeleteCbrs(final String[] args){
+		if (args.length == 0){
+			return false;
+		}else if (args[0].equals("-deleteCbrs")){
+			return true;
+		}
+		return false;
+	}
 
     private static void setFilter(){
 		//from https://www.tutorialspoint.com/java/io/file_listfiles_filename_filter.htm
@@ -129,11 +148,18 @@ public class CbrToCbz {
     	
     	//Handle case where input file is a folder
     	if (file.isDirectory()){
+			final int total = file.listFiles(filter).length;
+			int count = 1;
+			//System.out.println("Found " + total + " items in " + file.getPath());
     		for (final File subFile : file.listFiles(filter)){
+				if (subFile.getPath().endsWith(".cbr")){
+					System.out.println("Processing item " + count + " of " + total + " in " + file.getPath());
+				}
 				if (!processFile(subFile)){
 					//Error encountered
 					return false;
 				}
+				count++;
 			}
 			return true;
     	}
@@ -160,6 +186,7 @@ public class CbrToCbz {
             return true;
         }
 
+		final String pathTempFileName = cleanFileName(fileName);
 		final File pathTemp = new File(file.getParentFile().getPath() + File.separator + fileName + "_temp");
 		if (!pathTemp.exists()){
 			//System.out.println("Temp folder for this cbr file doesn't exist. (" + pathTemp.getPath() + ") Creating it...");
@@ -210,6 +237,10 @@ public class CbrToCbz {
         runProcCleanTemp(pathTemp.getPath(), true);
     	return true;
     }
+	
+	private static String cleanFileName(String fileName){
+		return fileName.replace(' ', '_').replaceAll("[^a-zA-Z0-9_]","");
+	}
 		
 	private static void runProcUnrar(final String inputFilePath){
 		try{
@@ -217,7 +248,7 @@ public class CbrToCbz {
             //final String inputFilePath = file.getPath();
             final String parentPath = file.getParent();
 			final String procPath = "unrar";
-			final Process process = Runtime.getRuntime().exec(procPath + " x " + inputFilePath + " " + parentPath + File.separator + "temp" + File.separator + ".");
+			final Process process = Runtime.getRuntime().exec(procPath + " x \"" + inputFilePath + "\" \"" + parentPath + File.separator + "temp" + File.separator + ".\"");
 			final InputStream is = process.getInputStream();
 			final InputStreamReader isr = new InputStreamReader(is);
 			final BufferedReader br = new BufferedReader(isr);
@@ -241,7 +272,7 @@ public class CbrToCbz {
 	private static void runProcZip(final String outputPath, final String inputPath){
 		try{
 			final String procPath = "zip";
-			final Process process = Runtime.getRuntime().exec(procPath + " -r " + outputPath + " " + inputPath);
+			final Process process = Runtime.getRuntime().exec(procPath + " -r \"" + outputPath + "\" \"" + inputPath + "\"");
 			final InputStream is = process.getInputStream();
 			final InputStreamReader isr = new InputStreamReader(is);
 			final BufferedReader br = new BufferedReader(isr);
