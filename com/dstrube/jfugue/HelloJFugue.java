@@ -18,6 +18,7 @@ import org.jfugue.theory.Note;
 import org.jfugue.rhythm.Rhythm;
 import org.jfugue.midi.MidiFileManager;
 import org.jfugue.realtime.RealtimePlayer;
+import org.staccato.SignatureSubparser;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,10 @@ public class HelloJFugue {
 //	    player.play("C D E F G A B");		
 //		player.play("V0 I[Piano] Eq Ch. | Eq Ch. | Dq Eq Dq Cq   V1 I[Flute] Rw | Rw | GmajQQQ CmajQ");
 //		MusicStrings();
-			PlayUniqueInstruments();
+//			PlayUniqueInstruments();
+//System.out.println("SHARP_CHAR: " + SignatureSubparser.SHARP_CHAR); //#
+//System.out.println("FLAT_CHAR: " + SignatureSubparser.FLAT_CHAR); //B
+		MaryHad();
 		/*
 		try{
 			SeeMidi();
@@ -175,6 +179,15 @@ public class HelloJFugue {
     };
     //END from Examples
 //////////////////////////////////////////////////////////////////////////////////////	
+	private static void MaryHad(){
+		Player player = new Player();
+	    player.play("B4q C5q D5q E5q F5q D5q F5q Rq");		
+	    player.play("F5q# C5q F5q Rq");		
+	    player.play("F5q C5q F5q Rq");		
+
+	    player.play("B4q C5q D5q E5q F5q D5q F5q B5q A5q F5q D5q F5q A5w");		
+		//
+	}
 
     private static void MusicStrings(){
     	//taken from chapter 2 of a manual:

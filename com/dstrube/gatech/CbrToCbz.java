@@ -36,6 +36,7 @@ public class CbrToCbz {
     private static File path = null;
     private static FilenameFilter filter = null;
 	private static boolean isDeleteCbrs = false;
+	private static final boolean isDebug = false;
 
 	public static void main(final String[] args) {
         if (!doesPathCheckout()){//args)){
@@ -52,10 +53,27 @@ public class CbrToCbz {
 		try{
 			final int total = path.listFiles(filter).length;
 			int count = 1;
-			//System.out.println("Found " + total + " items in " + path.getPath());
+			if (isDebug){
+				System.out.println("Found " + total + " items in " + path.getPath());
+			}
 			for (final File file : path.listFiles(filter)){
 				if (file.getPath().endsWith(".cbr")){
 					System.out.println("Processing item " + count + " of " + total + " in " + path.getPath());
+				}
+				if (file.getPath().contains(" ")){
+					System.out.println("Path contains space: '" + file.getPath() + "'");
+					final File newFile = new File(file.getPath().replace(" ","_"));
+					if (newFile.exists()){
+						System.out.println("There is a file whose path contains space: '" + file.getPath() + "', and another file with the same name, but with underscores instead of spaces. Sort this out before proceeding.");
+						return;
+					}
+					if (file.renameTo(newFile)){
+						System.out.println("rename succeeded");
+					}else{
+						System.out.println("rename failed");
+						return;
+					}
+
 				}
 				if (!processFile(file)){
 					//Error encountered
@@ -130,10 +148,14 @@ public class CbrToCbz {
 					return true;
 				}
                 //System.out.println("in accept is not dir?: " + file.getPath() );
+                if (name.startsWith(".")){
+                	System.out.println("Ignoring file named " + name + " because it starts with .");
+					return false;
+                }
 			    if (name.lastIndexOf('.') > 0) {
 					for (final String ignoreFile : ignoreFiles) {
 						if (name.endsWith(ignoreFile)){
-                            //System.out.println("Ignoring file named " + name + " because it ends with " + ignoreFile);
+                            System.out.println("Ignoring file named " + name + " because it ends with " + ignoreFile);
 							return false;
 						}
 					}               
@@ -150,11 +172,29 @@ public class CbrToCbz {
     	if (file.isDirectory()){
 			final int total = file.listFiles(filter).length;
 			int count = 1;
-			//System.out.println("Found " + total + " items in " + file.getPath());
+			if (isDebug){
+				System.out.println("Found " + total + " items in " + file.getPath());
+			}
     		for (final File subFile : file.listFiles(filter)){
 				if (subFile.getPath().endsWith(".cbr")){
 					System.out.println("Processing item " + count + " of " + total + " in " + file.getPath());
 				}
+				if (file.getPath().contains(" ")){
+					System.out.println("Path contains space: '" + file.getPath() + "'");
+					final File newFile = new File(file.getPath().replace(" ","_"));
+					if (newFile.exists()){
+						System.out.println("There is a file whose path contains space: '" + file.getPath() + "', and another file with the same name, but with underscores instead of spaces. Sort this out before proceeding.");
+						return false;
+					}
+					if (file.renameTo(newFile)){
+						System.out.println("rename succeeded");
+					}else{
+						System.out.println("rename failed");
+						return false;
+					}
+
+				}
+
 				if (!processFile(subFile)){
 					//Error encountered
 					return false;
@@ -165,11 +205,16 @@ public class CbrToCbz {
     	}
     	
     	if (!file.getPath().endsWith(".cbr")){
-    		//System.out.println("File is not .cbr. Skipping " + file.getPath());
+    		if (isDebug){
+    			System.out.println("File is not .cbr. Skipping " + file.getPath());
+    		}
             return true;
         }
-		System.out.println("CBR file: " + file);
-
+        
+        if (isDebug){
+			System.out.println("CBR file: " + file);
+		}
+		
         //Make sure this file hasn't already been unrarred
         final String fileNameWithExtension = file.getPath().substring(1 + file.getPath().lastIndexOf(File.separator));
         final String fileName = fileNameWithExtension.substring(0, fileNameWithExtension.lastIndexOf("."));
@@ -189,7 +234,9 @@ public class CbrToCbz {
 		final String pathTempFileName = cleanFileName(fileName);
 		final File pathTemp = new File(file.getParentFile().getPath() + File.separator + fileName + "_temp");
 		if (!pathTemp.exists()){
-			//System.out.println("Temp folder for this cbr file doesn't exist. (" + pathTemp.getPath() + ") Creating it...");
+			if (isDebug){
+				System.out.println("Temp folder for this cbr file doesn't exist. (" + pathTemp.getPath() + ") Creating it.");
+			}
             try{
                 boolean mkTempResult = pathTemp.mkdir();
                 if (!mkTempResult){
@@ -206,6 +253,16 @@ public class CbrToCbz {
 			return false;
         }
         
+        if (isDebug){
+	        if (!pathTemp.exists()){
+    	    	//It should definitely exist now. If it doesn't something went wrong
+        		System.out.println("Temp folder for this cbr file doesn't exist. (" + pathTemp.getPath() + ") Something went wrong.");
+        		return false;
+        	}else{
+	        	System.out.println("Temp folder for this cbr file exists. (" + pathTemp.getPath() + ".");
+    	    }
+        }
+        
         //Temp folder should be empty
         if (pathTemp.list().length > 0){
 			System.out.println("Temp folder should empty but is not. Please sort this out before retrying: " + pathTemp.getPath());
@@ -213,6 +270,9 @@ public class CbrToCbz {
         }
         
         //Unrar this file to a folder in the temp folder
+        if (isDebug){
+        	System.out.println("Unrarring: " + file.getPath());
+        }
         runProcUnrar(file.getPath());
 
         //There should then be just one item (the afore mentioned folder) in temp
@@ -239,24 +299,43 @@ public class CbrToCbz {
     }
 	
 	private static String cleanFileName(String fileName){
-		return fileName.replace(' ', '_').replaceAll("[^a-zA-Z0-9_]","");
+		return fileName.replace(' ', '_');//.replaceAll("[^a-zA-Z0-9_]","");
 	}
 		
 	private static void runProcUnrar(final String inputFilePath){
 		try{
             final File file = new File(inputFilePath);
+            final String inputFileName = inputFilePath.substring(1 + inputFilePath.lastIndexOf(File.separator), inputFilePath.lastIndexOf("."));
+            final String tempPath = inputFileName + "_temp";
             //final String inputFilePath = file.getPath();
             final String parentPath = file.getParent();
 			final String procPath = "unrar";
-			final Process process = Runtime.getRuntime().exec(procPath + " x \"" + inputFilePath + "\" \"" + parentPath + File.separator + "temp" + File.separator + ".\"");
+			final String command = procPath + " x " + inputFilePath + " " + parentPath + File.separator + tempPath + File.separator;
+            if (isDebug){
+	            System.out.println("inputFileName = " + inputFileName + "; \ninputFilePath = " + inputFilePath + "; \nparentPath = " + parentPath + "; \ncommand = " + command);
+            }
+            
+            final File pathTemp = new File(parentPath + File.separator + tempPath);
+            if (isDebug){
+		        if (!pathTemp.exists()){
+    	    	//It should definitely exist now. If it doesn't something went wrong
+	        		System.out.println("Temp folder for this cbr file doesn't exist. (" + pathTemp.getPath() + ") Something went wrong.");
+    	    		return;
+        		}else{
+	        		System.out.println("Temp folder for this cbr file exists. (" + pathTemp.getPath() + ".");
+    		    }
+    	    }
+			final Process process = Runtime.getRuntime().exec(command);
 			final InputStream is = process.getInputStream();
 			final InputStreamReader isr = new InputStreamReader(is);
 			final BufferedReader br = new BufferedReader(isr);
 			String line;
 
-			//System.out.printf("Output of running %s is:\n", procPath);
-			while ((line = br.readLine()) != null) {
-				//System.out.println(line);
+			if (isDebug){
+				System.out.printf("Output of running %s is:\n", procPath);
+				while ((line = br.readLine()) != null) {
+					System.out.println(line);
+				}
 			}
             process.waitFor();
             //System.out.println("exit: " + process.exitValue());
