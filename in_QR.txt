@@ -1,5 +1,5 @@
 URLs:
-https://digitalsignage.gatech.edu/assets/node/390
+https://www.google.com
 names:
-LIB22
+Google
 COMMENT: Everything else is ignored
