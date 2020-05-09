@@ -29,9 +29,16 @@ Date: 2019-08-07
 Purpose: For each URL in a file, generate a QR Code
 
 Compile:
+Windows:
 javac -cp bin;bin\core-3.2.1.jar; -d bin com\dstrube\gatech\QRGenerator.java
+Mac:
+javac -cp bin:bin/core-3.2.1.jar -d bin com/dstrube/gatech/QRGenerator.java
+
 Run:
+Windows:
 java -cp bin;bin\core-3.2.1.jar; com.dstrube.gatech.QRGenerator
+Mac:
+java -cp bin:bin/core-3.2.1.jar com.dstrube.gatech.QRGenerator
 
 https://zxing.github.io/zxing/apidocs/index.html
 https://crunchify.com/java-simple-qr-code-generator-example/
@@ -134,8 +141,19 @@ public class QRGenerator {
 		try {
 			final int size = 80;
 			final String fileType = "png";
-			final String outputFilePath = "images" + File.separator + name + "." + fileType;
+			final String imagesDir = "images";
+			final String outputFilePath = imagesDir + File.separator + name + "." + fileType;
 			final File outputFile = new File(outputFilePath);
+			final File dirTest = new File(imagesDir);
+			
+			if (!dirTest.exists()){
+				System.out.println("Images directory does not exist: " + imagesDir);
+				return false;
+			}
+			if (!dirTest.isDirectory()){
+				System.out.println("Images directory is not a directory: " + imagesDir);
+				return false;
+			}
 			
 			Map<EncodeHintType, Object> hintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
 			hintMap.put(EncodeHintType.CHARACTER_SET, "UTF-8");
