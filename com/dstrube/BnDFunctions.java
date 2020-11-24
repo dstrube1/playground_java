@@ -21,8 +21,8 @@ public class BnDFunctions{
 		System.out.println("Output of f: " + f(fInput));
 
 		final String gInput = "Hello there! Apple!";
-		System.out.println("Input of g: " + gInput);
-		System.out.println("Output of g: " + g(gInput));
+		//System.out.println("Input of g: " + gInput);
+		//System.out.println("Output of g: " + g(gInput));
 		System.out.println();
 	}
 	
@@ -40,7 +40,9 @@ public class BnDFunctions{
         final int size = s.length();
         char[] chars = s.toCharArray();
         for (int i = 0; i < size; i++) {
-            boolean isUpper = Character.isUpperCase(s.codePointAt(i)); 
+            boolean isUpper = Character.isUpperCase(s.charAt/*codePointAt*/(i)); 
+            //not sure why I originally used codePointAt instead of charAt:
+            //https://www.w3schools.com/java/ref_string_codepointat.asp
             if (alpha.indexOf(s.toLowerCase().charAt(i)) == -1 
                     && bet.indexOf(s.toLowerCase().charAt(i)) == -1) continue;
             if (bet.indexOf(s.toLowerCase().charAt(i)) == -1) {

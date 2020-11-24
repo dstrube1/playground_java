@@ -3,7 +3,7 @@ package com.dstrube.dataStructures;
 /*
 commands to compile and run:
 from ~/Projects/java
-javac -d bin com/dstrube/dataStructures/DataStructures.java 
+javac -Xlint -d bin com/dstrube/dataStructures/DataStructures.java 
 java -cp bin com.dstrube.dataStructures.DataStructures
 */
 
@@ -20,6 +20,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.DelayQueue;
+import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.LinkedTransferQueue;
@@ -31,12 +33,12 @@ public class DataStructures {
 
 	public static void main(String[] args){
     	
-    	//doArrayList();
+    	doArrayList();
 //		System.out.println("");
 //		doHashtable();
 //		doStack();
 //		doQueue();
-		doConcurrentHashMap();
+		//doConcurrentHashMap();
 		//the only reason to use Hashtable is when a legacy API (from ca. 1996) requires it.
 		//https://stackoverflow.com/questions/40471/differences-between-hashmap-and-hashtable
 		System.out.println("done");
@@ -49,8 +51,8 @@ public class DataStructures {
             List list = new ArrayList<>();
             //mixing data types is fine; be careful with datatypes when getting data out
             //Commenting these out for now, just to get quiet compilations; feel free to uncomment later
-            //list.add(1);
-            //list.add("2");
+            list.add(1);
+            list.add("2");
             for (int i = 0; i < list.size(); i++) {
                 System.out.println("list[" + i + "] = " + list.get(i));
             }
@@ -63,7 +65,7 @@ public class DataStructures {
     private static void doHashtable(){
         System.out.println("Hashtable:");
         try {
-            Hashtable hashtable = new Hashtable<>();
+            Hashtable<Integer, Integer> hashtable = new Hashtable<>();
             //Adding duplicates will quietly fail
             //Commenting these out for now, just to get quiet compilations; feel free to uncomment later
             /*hashtable.put(1, "one");
@@ -108,23 +110,70 @@ public class DataStructures {
         }
 
     }
+    
+    //from https://stackoverflow.com/questions/12142025/java-util-concurrent-delayqueue-overlooking-expired-elements
+    private static final TimeUnit delayUnit = TimeUnit.MILLISECONDS;
+    private static final TimeUnit ripeUnit = TimeUnit.NANOSECONDS;
+	static class Task implements Delayed {    
+		public long ripe;
+        public String name;    
+        public Task(String name, int delay) {
+        	this.name = name;
+            ripe = System.nanoTime() + ripeUnit.convert(delay, delayUnit);
+        }
+
+	    @Override
+    	public boolean equals(Object obj) {
+        	if (obj instanceof Task) {
+            	return compareTo((Task) obj) == 0;
+	        }
+    	    return false;
+	    }
+
+		@Override
+      	public int hashCode() {
+        	int hash = 7;
+        	hash = 67 * hash + (int) (this.ripe ^ (this.ripe >>> 32));
+        	hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        	return hash;
+		}
+
+      	@Override
+      	public int compareTo(Delayed delayed) {
+        	if (delayed instanceof Task) {
+            	Task that = (Task) delayed;
+            	return (int) (this.ripe - that.ripe);
+         	}
+         	throw new UnsupportedOperationException();
+      	}
+
+      	@Override
+      	public long getDelay(TimeUnit unit) {
+        	return unit.convert(ripe - System.nanoTime(), ripeUnit);
+      	}
+
+      	@Override
+      	public String toString() {
+        	return "task " + name + " due in " + String.valueOf(getDelay(delayUnit) + "ms");
+        }
+    }
 	
 	private static void doQueue(){
 	
-	    Queue arrayBlockingQueue	 = new ArrayBlockingQueue(1);//capacity must be > 0
-	    Queue arrayDeque			 = new ArrayDeque();
-	    Queue priorityQueue			 = new PriorityQueue();
-	    Queue linkedList			 = new LinkedList();
-	    Queue concurrentLinkedDeque	 = new ConcurrentLinkedDeque(); //Android requires API 21
-	    Queue concurrentLinkedQueue	 = new ConcurrentLinkedQueue();
-	    Queue delayQueue			 = new DelayQueue();
-	    Queue linkedBlockingDeque	 = new LinkedBlockingDeque();
-	    Queue linkedBlockingQueue	 = new LinkedBlockingQueue();
-	    Queue linkedTransferQueue	 = new LinkedTransferQueue(); //Android requires API 21
-	    Queue synchronousQueue		 = new SynchronousQueue();
-	    Queue priorityBlockingQueue	 = new PriorityBlockingQueue();
+	    Queue<Integer> arrayBlockingQueue	 = new ArrayBlockingQueue<>(1);//capacity must be > 0
+	    Queue<Integer> arrayDeque			 = new ArrayDeque<>();
+	    Queue<Integer> priorityQueue			 = new PriorityQueue<>();
+	    Queue<Integer> linkedList			 = new LinkedList<>();
+	    Queue<Integer> concurrentLinkedDeque	 = new ConcurrentLinkedDeque<>(); //Android requires API 21
+	    Queue<Integer> concurrentLinkedQueue	 = new ConcurrentLinkedQueue<>();
+	    DelayQueue<Task> delayQueue			 = new DelayQueue<Task>();
+	    Queue<Integer>linkedBlockingDeque	 = new LinkedBlockingDeque<>();
+	    Queue<Integer>linkedBlockingQueue	 = new LinkedBlockingQueue<>();
+	    Queue<Integer>linkedTransferQueue	 = new LinkedTransferQueue<>(); //Android requires API 21
+	    Queue<Integer>synchronousQueue		 = new SynchronousQueue<>();
+	    Queue<Integer>priorityBlockingQueue	 = new PriorityBlockingQueue<>();
 	    
-	    List list = new ArrayList<>();
+	    List<Queue<Integer>> list = new ArrayList<>();
 	    //Commenting these out for now, just to get quiet compilations; feel free to uncomment later
 	    /*list.add(arrayBlockingQueue); 	//0
 	    list.add(arrayDeque);			//1
@@ -160,7 +209,7 @@ public class DataStructures {
 	    }
 	    for (int i=0; i< list.size()-1; i++){
 	    	System.out.println("removing stuff from " + queueNames[i]);
-	    	Queue queue = (Queue)list.get(i);
+	    	Queue<Integer>queue = list.get(i);
 	    	while (null != queue.peek()){
 	    		System.out.println(queue.remove()); 
 	    		//ArrayBlockingQueue only has 1;
@@ -186,7 +235,7 @@ public class DataStructures {
 	    
 	}
 	
-	private static Queue forEachQueue(Queue queue){
+	private static Queue<Integer> forEachQueue(Queue<Integer> queue){
 		try{
 			//Commenting these out for now, just to get quiet compilations; feel free to uncomment later
 			//queue.add(1);
@@ -207,7 +256,7 @@ public class DataStructures {
 		return queue;
 	}
 	
-	private static void investigateSynchronousQueue(Queue synchronousQueue){
+	private static void investigateSynchronousQueue(Queue<String> synchronousQueue){
 		/*
 	    System.out.println("adding stuff to synchronousQueue");
         //SynchronousQueue has put, but Queue does not

@@ -13,14 +13,17 @@ import java.math.BigInteger;
 public class Maths {
 	
 	public static void main(String[] args) {
-//		ByteMax(); //127
-//		ShortMax(); //32767
-//		CharMax(); 	//65535
-//		IntMax(); 	//2,147,483,647
-//		LongMax();	//9,223,372,036,854,775,807
-//		FloatMax(); //3.4028235E38
-//		DoubleMax(); //1.7976931348623157E308
-		BigIntegerMax(); //complicated
+/* * /
+		ByteMax(); //127
+		ShortMax(); //32767
+		CharMax(); 	//65535
+		//IntMax(); 	//2,147,483,647
+		LongMax();	//9,223,372,036,854,775,807
+		FloatMax(); //3.4028235E38
+		DoubleMax(); //1.7976931348623157E308
+/* */
+		//BigIntegerMax(); //complicated
+		
 	}
 	
     private static void ByteMax() {
@@ -35,6 +38,10 @@ public class Maths {
         }
         System.out.println("Authoritative max of byte: " + Byte.MAX_VALUE);
         System.out.println("Max of byte found: " + count);
+        
+        Integer max = Integer.MAX_VALUE;
+		byte b = max.byteValue();
+		System.out.println("byteValue of Integer.MAX_VALUE: " + b); //-1
     }
 
 	private static void ShortMax(){
@@ -61,13 +68,14 @@ public class Maths {
 		*/
 		char c = 1;
 		char c_p = 0;
-		long count = 0;
+		int count = 0;
 		while (c_p < c){
 			c++;
 			c_p++;
 			count++;
 		}
-        System.out.println("Authoritative max of char: " + Character.MAX_VALUE);//question mark box
+		//without an int cast, prints out question mark box
+        System.out.println("Authoritative max of char: " + (int)Character.MAX_VALUE);
 		System.out.println("Max of char found : " + count);
 	}
 	
@@ -90,11 +98,12 @@ public class Maths {
 	
 	private static void LongMax(){
         System.out.println("Authoritative max of long: " + Long.MAX_VALUE);
-		System.out.println("long max is about " + getLongMaxEstimate());
+        long longEstimate = getLongMaxEstimate();
+		System.out.println("long max is about " + longEstimate);
 		//1,000,000,000,000,000,000 - 1 quintillion, same as in c++
 		
 		System.out.println("Recursively calculating long maximum...");
-		recursiveLongMaxFinder(1,10);
+		recursiveLongMaxFinder(1, 10, longEstimate);
 		//9,223,372,036,854,775,807 - about 9 quintillion, same as in c++
 	}
 	
@@ -104,33 +113,33 @@ public class Maths {
     	while (ltemp > 0){ //when ltemp exceeds the maximum, it loops around to a negative
         	myLong = ltemp;
 	        ltemp *= 10;
-    	    //System.out.println("long max guess = " + myLong + "\n");
+    	    //System.out.println("long max guess = " + ltemp + "\n");
 	    }
 	    return myLong;
 	}
 	
-	private static boolean recursiveLongMaxFinder(long candidate, int factor){
+	private static boolean recursiveLongMaxFinder(long candidate, int factor, long longEstimate){
 	    if (factor < 2){
     	    if (candidate < 0){
         	    System.out.println("something went wrong; candidate is " + candidate);;
             	return false;
 	        }else{
     	        //System.out.println("Narrowed down to factor " + factor + " and candidate is " + candidate);
-        	    long estimate = getLongMaxEstimate();
-            	return recursiveLongMaxFinderAdd(candidate, estimate);
+        	    //long estimate = getLongMaxEstimate();
+            	return recursiveLongMaxFinderAdd(candidate, longEstimate);
 	        }
     	}
 	    long product = candidate * factor;
     	if (product > 0){
-        	return recursiveLongMaxFinder(product, factor);
+        	return recursiveLongMaxFinder(product, factor, longEstimate);
 	    }
     	else{
-        	return recursiveLongMaxFinder(candidate, factor-1);
+        	return recursiveLongMaxFinder(candidate, factor-1, longEstimate);
 	    }
 	}
 	
 	private static boolean recursiveLongMaxFinderAdd(long candidate, long addend){
-		    if (addend == 1){
+		if (addend == 1){
 	        if (candidate < 0){
     	        System.out.println("something went wrong; candidate is " + candidate);
         	    return false;
@@ -158,10 +167,10 @@ public class Maths {
 
 	private static void FloatMax(){
 		System.out.println("authoritative float max: " + Float.MAX_VALUE);//3.4028235E38
-		System.out.println("float max approximately = "+getFloatMaxEstimate());//1e38
-	    System.out.println("Recursively calculating float maximum...");//3.4028235E38
     	float estimate = getFloatMaxEstimate();
-    	recursiveFloatMaxFinder(estimate, estimate / 10); //3.40282e+38
+		System.out.println("float max approximately = " + estimate);//1e38
+	    System.out.println("Recursively calculating float maximum...");//3.4028235E38
+    	recursiveFloatMaxFinder(estimate, estimate / 10, estimate); //3.40282e+38
 	}
 	
 	private static float getFloatMaxEstimate(){
@@ -171,16 +180,16 @@ public class Maths {
 	    while (fTemp != Float.POSITIVE_INFINITY){
 	        myFloat = fTemp;
 	        fTemp *= 10;
-//	        System.out.println("float max guess: "+ myFloat);
+	        //System.out.println("float max guess: " + fTemp);
 	        count++;
 	    }
 	    return myFloat; //1e+38
 	}
 	
-	private static boolean recursiveFloatMaxFinder(float candidate, float addend){
+	private static boolean recursiveFloatMaxFinder(float candidate, float addend, float estimate){
 		if (addend <= 1){
         
-	        float estimate = getFloatMaxEstimate();
+	        //float estimate = getFloatMaxEstimate();
         
     	    if (candidate < estimate){
         	    System.out.println("something went wrong; candidate: " + candidate + "; estimate: " + estimate);
@@ -211,20 +220,20 @@ public class Maths {
     
 	    if (sum != Float.POSITIVE_INFINITY && sum > candidate){
 //        System.out.println(candidate + " + " + addend + " is < " + sum);
-	        return recursiveFloatMaxFinder(sum, addend);
+	        return recursiveFloatMaxFinder(sum, addend, estimate);
     	}
     	else{
 //        System.out.println(candidate + " + " + addend + " is too much (" + sum + "); trying " + candidate + " + " + (addend / 2));
-        	return recursiveFloatMaxFinder(candidate, addend / 2);
+        	return recursiveFloatMaxFinder(candidate, addend / 2, estimate);
 	    }
 	} 
 	
 	private static void DoubleMax(){
 		System.out.println("authoritative double max: " + Double.MAX_VALUE);		//1.7976931348623157E308
-		System.out.println("double max approximately = "+getDoubleMaxEstimate());	//9.999999999999998E307
-	    System.out.println("Recursively calculating double maximum...");
     	double estimate = getDoubleMaxEstimate();
-    	recursiveDoubleMaxFinder(estimate, estimate / 10); 							//1.7976931348623157E308
+		System.out.println("double max approximately = " + estimate);	//9.999999999999998E307
+	    System.out.println("Recursively calculating double maximum...");
+    	recursiveDoubleMaxFinder(estimate, estimate / 10, estimate); 							//1.7976931348623157E308
 	}
 	
 	private static double getDoubleMaxEstimate(){
@@ -234,16 +243,16 @@ public class Maths {
 	    while (dTemp != Double.POSITIVE_INFINITY){
 	        myDouble = dTemp;
 	        dTemp *= 10;
-//	        System.out.println("double max guess: " + myDouble);
+	        System.out.println("double max guess: " + dTemp);
 	        count++;
 	    }
 	    return myDouble; //
 	}
 	
-	private static boolean recursiveDoubleMaxFinder(double candidate, double addend){
+	private static boolean recursiveDoubleMaxFinder(double candidate, double addend, double estimate){
 		if (addend <= 1){
         
-	        double estimate = getDoubleMaxEstimate();
+	        //double estimate = getDoubleMaxEstimate();
         
     	    if (candidate < estimate){
         	    System.out.println("something went wrong; candidate: " + candidate + "; estimate: " + estimate);
@@ -274,19 +283,19 @@ public class Maths {
     
 	    if (sum != Double.POSITIVE_INFINITY && sum > candidate){
 //        System.out.println(candidate + " + " + addend + " is < " + sum);
-	        return recursiveDoubleMaxFinder(sum, addend);
+	        return recursiveDoubleMaxFinder(sum, addend, estimate);
     	}
     	else{
 //        System.out.println(candidate + " + " + addend + " is too much (" + sum + "); trying " + candidate + " + " + (addend / 2));
-        	return recursiveDoubleMaxFinder(candidate, addend / 2);
+        	return recursiveDoubleMaxFinder(candidate, addend / 2, estimate);
 	    }
 	} 
 
 	private static void BigIntegerMax(){
 		//https://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html
-		//BigInteger bi = new BigInteger("1");
+		BigInteger bi = new BigInteger("1");
 		//System.out.println("BigInteger 1 = " + bi.toString());	//1
-		//bi = bi.multiply(BigInteger.TEN);
+		bi = bi.multiply(BigInteger.TEN);
 		//System.out.println("BigInteger 10 = " + bi.toString());	//10
 		
 		//This seems to have no bottom, limited only by the amount of memory one has
@@ -317,10 +326,18 @@ public class Maths {
 //		System.out.println("BigInteger 10^100k = " + bi.toString());
 		//^Fills the screen with zeroes, but completes just fine
 
-		//This is too much:
-//		bi = bi.pow(100000000); //10 ^ 100,000,000
-//		System.out.println("BigInteger 10^100M = " + bi.toString());
-
+		//This takes a long time, might crap out:
+		System.out.println("Trying with BigInteger 10^100M (takes a while)...");
+		try
+		{
+			bi = bi.pow(100000000); //10 ^ 100,000,000
+			System.out.println("BigInteger 10^100M has this many characters " 
+				+ bi.toString().length());
+		}
+		catch (Exception exception)
+		{
+			System.out.println ("Exception is caught: " + exception); 
+		}
 		//Takes a second, but it finishes
 //		bi = bi.pow(1000000); //10 ^ 1,000,000
 //		System.out.println("BigInteger 10^1M = " + bi.toString());
@@ -357,7 +374,8 @@ class MultiThreadedBigIntegerTester extends Thread
 			bi = bi.multiply(BigInteger.TEN);
 			System.out.println("BigInteger 10^10M...(takes a few seconds) = ");
 			bi = bi.pow(10000000); //10 ^ 10,000,000
-			System.out.println(bi.toString());
+			String guess = bi.toString();
+			System.out.println("\nGuess has this many characters: " + guess.length());
         } 
         catch (Exception e) 
         { 

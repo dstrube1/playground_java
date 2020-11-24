@@ -3,8 +3,8 @@ package com.dstrube.dataStructures;
 /*
 commands to compile and run:
 from ~/Projects/java
-javac -d ~/Projects/java/bin com/dstrube/dataStructures/MinStack.java 
-java -cp ~/Projects/java/bin com.dstrube.dataStructures.MinStack
+javac -d bin com/dstrube/dataStructures/MinStack.java 
+java -cp bin com.dstrube.dataStructures.MinStack
 */
 
 import java.util.Stack;
@@ -13,10 +13,11 @@ import java.util.EmptyStackException;
 /**
  *
  */
-public class MinStack extends Stack {
+public class MinStack extends Stack<Integer> {
 
     private Stack<Integer> mMin;
     public static final Integer NO_MIN = Integer.MAX_VALUE;
+    private static final long serialVersionUID=1l;
 
     public MinStack(){
         super();
@@ -63,49 +64,76 @@ public class MinStack extends Stack {
     	mMinStack = new MinStack();
     	testPush();
     	mMinStack = new MinStack();
+    	testPop();
+    	mMinStack = new MinStack();
+    	testPeek();
     }
     
     public static void testPush() {
     	if (mMinStack == null){
     		System.out.println("mMinStack is null, #1");
     		return;
-    	}
+    	}else{
+        	System.out.println("mMinStack != null, #1.");
+        }
+        
         boolean exceptionThrown = false;
 
-        try {
+        try{
             mMinStack.push(null);
-        } catch (NullPointerException e){
+        }catch (NullPointerException e){
             exceptionThrown = true;
         }
+        
         if (!exceptionThrown){
         	System.out.println("MinStack.push() should throw an exception when pushing a null.");
         	return;
+        }else{
+        	System.out.println("MinStack.push() threw an exception when pushing a null.");
         }
-        //assertTrue("MinStack.push() should throw an exception when pushing a null.", exceptionThrown);
+        
+        assert exceptionThrown : "MinStack.push() should throw an exception when pushing a null.";
 
     	if (mMinStack == null){
     		System.out.println("mMinStack is null, #2");
     		return;
-    	}
+    	}else{
+        	System.out.println("mMinStack != null, #2.");
+        }
+        
     	final Integer pushing = 0;
         if (pushing == null){
     		System.out.println("pushing is null");
     		return;
-    	}
-    	//mMinStack = new MinStack();
+    	}else{
+        	System.out.println("pushing is not null.");
+        }
+    	
+    	//TODO: pushing != null, and mMinStack != null, 
+    	//so then why is this next line necessary in order to proceed?
+    	mMinStack = new MinStack();
+    	
     	Integer pushed = 10;
     	if (pushed == null){
     		System.out.println("pushed is null");
     		return;
-    	}
+    	}else{
+        	System.out.println("pushed is not null.");
+        }
+        
 		pushed = mMinStack.push(pushing);
         if (mMinStack.peek() == null){
         	System.out.println("MinStack.peek() should be not null after pushing a non null.");
         	return;
+        }else{
+        	System.out.println("MinStack.peek() is not null after pushing a non null.");
         }
+        
         if (pushed != pushing){
         	System.out.println("pushed should be equal to pushing after push.");
         	return;
+        }else{
+        	System.out.println("pushed is equal to pushing after push.");
         }
         
         System.out.println("Done with testPush");
@@ -119,12 +147,12 @@ public class MinStack extends Stack {
         } catch (NullPointerException e){
             exceptionThrown = true;
         }
-        //assertTrue("MinStack.pop() should throw an exception when popping before a push.", exceptionThrown);
+        assert exceptionThrown : "MinStack.pop() should throw an exception when popping before a push.";
 
         final int pushed = 1;
         mMinStack.push(pushed);
         final int popped = mMinStack.pop();
-        //assertTrue("popped should equal pushed", pushed == popped);
+        assert pushed == popped : "popped should equal pushed";
     }
 
     public static void testPeek() {
@@ -134,7 +162,7 @@ public class MinStack extends Stack {
         } catch (EmptyStackException e){
             exceptionThrown = true;
         }
-        //assertTrue("MinStack.peek() should throw exception before pushing.", exceptionThrown);
+        assert exceptionThrown : "MinStack.peek() should throw exception before pushing.";
 
     }
     
