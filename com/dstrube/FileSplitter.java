@@ -1,6 +1,9 @@
 package com.dstrube;
 
 /*
+Takes in binary data of a file from given folder, 
+and splits it out into a specified output folder, in as many files as needed
+
 commands to compile and run:
 from ~/java
 javac -d bin com/dstrube/FileSplitter.java
@@ -20,7 +23,7 @@ import java.nio.file.Paths;
 
 public class FileSplitter {
 	private static final String inFileName = "";
-	private static final int chunkSize = 23 * 1024 * 1024; //23 MB
+	private static final int chunkSize = 23 * 1000 * 1000; //23 MB
 	
 	public static void main(String[] args) {
 		try {
