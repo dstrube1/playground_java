@@ -9,11 +9,45 @@ package com.dstrube;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import java.util.Scanner;
+import java.util.InputMismatchException;
 
 public class test{
 	
 	public static void main(String[] args){
+		try{
+			inputTest();
+		}catch(Exception exception){
+			System.out.println("Caught exception: " + exception);
+		}
 		System.out.println("Done");
+	}
+	
+	private static void inputTest(){
+		Scanner scanner = new Scanner(System.in);
+		boolean good = false;
+		System.out.println("Input an integer: ");
+		while (!good){
+			try{
+				int i = scanner.nextInt();
+				System.out.println("You entered: " + i);
+				good = true;
+			}catch(InputMismatchException inputMismatchException){
+				System.out.println("Try again");
+				scanner.close();
+				scanner = new Scanner(System.in);
+				//scanner.reset();
+				//^resets Delimiter, Locale, & Radix, not input
+			}
+		}
+		scanner.close();
+	}
+	
+	private static void exceptionTest() throws Exception{
+		int i = 0;
+		i++;
+		if (i > 0) 
+			throw new Exception("exceptionTest");
 	}
 	
 	private static void minuteThread(){
