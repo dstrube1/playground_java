@@ -104,6 +104,9 @@ public class QuicksortTest{
 		if (i == j || arr[i] == arr[j]) return;
 		
 		//System.out.println("Swapping arr["+i+"] with arr["+j+"]: " + arr[i] + " <=> " + arr[j]);
+		//a = a + b
+		//b = a - b
+		//a = a - b
 		arr[i] = arr[i] + arr[j];
 		arr[j] = arr[i] - arr[j];
 		arr[i] = arr[i] - arr[j];
