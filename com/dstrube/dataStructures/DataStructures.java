@@ -162,10 +162,10 @@ public class DataStructures {
 	
 	    Queue<Integer> arrayBlockingQueue	 = new ArrayBlockingQueue<>(1);//capacity must be > 0
 	    Queue<Integer> arrayDeque			 = new ArrayDeque<>();
-	    Queue<Integer> priorityQueue			 = new PriorityQueue<>();
+	    Queue<Integer> priorityQueue		 = new PriorityQueue<>();
 	    Queue<Integer> linkedList			 = new LinkedList<>();
-	    Queue<Integer> concurrentLinkedDeque	 = new ConcurrentLinkedDeque<>(); //Android requires API 21
-	    Queue<Integer> concurrentLinkedQueue	 = new ConcurrentLinkedQueue<>();
+	    Queue<Integer> concurrentLinkedDeque = new ConcurrentLinkedDeque<>(); //Android requires API 21
+	    Queue<Integer> concurrentLinkedQueue = new ConcurrentLinkedQueue<>();
 	    DelayQueue<Task> delayQueue			 = new DelayQueue<Task>();
 	    Queue<Integer>linkedBlockingDeque	 = new LinkedBlockingDeque<>();
 	    Queue<Integer>linkedBlockingQueue	 = new LinkedBlockingQueue<>();
@@ -299,7 +299,7 @@ public class DataStructures {
     			try { 
     				synchronousQueue0.put(event); 
     				// thread will block here 
-    				System.out.printf("[%s] published event : %s %n", Thread .currentThread().getName(), event); 
+    				System.out.printf("[%s] published event : %s %n", Thread.currentThread().getName(), event); 
     			} catch (InterruptedException e) { 
     				e.printStackTrace(); 
     			} 
@@ -312,7 +312,7 @@ public class DataStructures {
     			try { 
     				String event = synchronousQueue0.take(); 
     				// thread will block here 
-    				System.out.printf("[%s] consumed event : %s %n", Thread .currentThread().getName(), event); 
+    				System.out.printf("[%s] consumed event : %s %n", Thread.currentThread().getName(), event); 
     			} catch (InterruptedException e) { 
     				e.printStackTrace(); 
     			} 
