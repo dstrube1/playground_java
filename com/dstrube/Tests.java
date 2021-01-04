@@ -1,7 +1,12 @@
 /*
 From ~/java:
 
+Mac:
 javac -d bin com/dstrube/Tests.java
+java -cp bin com.dstrube.Tests
+
+Windows:
+javac -d bin com\dstrube\Tests.java
 java -cp bin com.dstrube.Tests
 
 */
@@ -14,8 +19,6 @@ import java.io.*;
 
 public class Tests {
 	public static void main(String[] args) {
-		//ArrayTest();
-		
 //		int i = 3;
 //		System.out.println("3 / 2 = " + (i/2));
 
@@ -26,13 +29,15 @@ public class Tests {
 //		System.out.println("greatest common denominator of "+m+","+n+": " + gcd(m,n));
 //		System.out.println("least common multiple of "+m+","+n+": " + lcm(m,n));
 
-//		selfListAdd();
+		//selfListAdd();
 		
 //		queueTest();
 
 		//scannerTest();
 		
 		//ioTest();
+		
+		ArrayTest();
 		
 		
 	}
@@ -74,7 +79,7 @@ public class Tests {
 	}
 	
 	private static void queueTest(){
-		Queue<Long> q = new ArrayDeque<Long>();
+		Queue<Long> q = new ArrayDeque<>();
 		q.add(0L);
 		q.add(1L);
 		for (int i = 0; i < 8181; i++) {
@@ -101,18 +106,22 @@ public class Tests {
 		//while it is permissible for lists to contain themselves as elements, 
 		//extreme caution is advised: 
 		//the equals and hashCode methods are no longer well defined on a such a list
-		List list1 = new ArrayList();
-		List list2 = new ArrayList();
+		List<Object> list1 = new ArrayList<>();
+		List<Object> list2 = new ArrayList<>();
 		list1.add(list2);
 		list2.add(list1);
+
+		System.out.println("After adding list1 to list2, and vice versa, attempting to check their equality...");
 		try{
 			System.out.println(list1.equals(list2));
 		}catch (StackOverflowError e){
 			System.out.println(e.getClass().getSimpleName());
 		}
 		
-		List list = new ArrayList();
+		List<Object> list = new ArrayList<>();
 		list.add(list);
+
+		System.out.println("After adding list to itself, attempting to print its hashcode...");
 		try{
 			System.out.println(list.hashCode());
 		}catch (StackOverflowError e){
@@ -136,8 +145,11 @@ public class Tests {
     }
     
 	private static void dotTest(){
+		System.out.println("threeDots(): "); 
 		threeDots();
+		System.out.println("threeDots(1): "); 
 		threeDots(1);
+		System.out.println("threeDots(0,1): "); 
 		threeDots(0,1);
 		//threeDots(null); //this throws a NPE
 	}
@@ -145,11 +157,14 @@ public class Tests {
 	//private static void twoDots(int.. i){} invalid syntax
 	
 	private static void threeDots(int... i){
-		for (int j = 0; j < i.length; j++)
-			System.out.println("threeDots: " + i[j]);
+		for (int j = 0; j < i.length; j++){
+			System.out.print(i[j] + " ");
+		}
+		System.out.println();
 	}
 	
 	private static void ArrayTest(){
+		/*
 		int[] a = {1};
 		int[] b = a;
 		System.out.println("a[0] = " + a[0] + "; b[0] = " + b[0]);
@@ -157,6 +172,40 @@ public class Tests {
 		System.out.println("a[0] = " + a[0] + "; b[0] = " + b[0]);
 		changeArray(a);
 		System.out.println("a[0] = " + a[0] + "; b[0] = " + b[0]);
+		*/
+		List<Integer> list = new ArrayList<>();
+		list.add(0);
+		list.add(1);
+		list.add(2);
+		System.out.println("All in list: ");
+		for(int i : list)
+			System.out.print(i + " ");
+		System.out.println();
+		
+		//ugly java8 way:
+		int[] c = list.stream().mapToInt(i -> i).toArray();
+		System.out.println("All in c via list.stream()...:");
+		for(int i : c)
+			System.out.print(i + " ");
+		System.out.println();
+		
+		
+		/*
+		Nope, can't do the following :/
+		Either the above ugly way or iterate thru the list
+		
+		c = getIntArray(list);
+		System.out.println("All in c via getIntArray:");
+		for(int i : c)
+			System.out.print(i + " ");
+		System.out.println();*/
+	}
+	
+	private static int[] getIntArray(List<Integer> list){
+		Integer[] ints = new Integer[list.size()];
+		list.toArray(ints);
+		
+		return null;//ints;
 	}
 	
 	private static void changeArray(int[] c){

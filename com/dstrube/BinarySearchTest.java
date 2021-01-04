@@ -26,20 +26,19 @@ import java.util.Random;
 public class BinarySearchTest{
 	
 	private static int[] array;
-	private static int steps;
-	private static int swaps;
+	private static int steps = 0;
 	
 	public static void main(String[] args){
-		final int size = 10000000;
+		final int size = 10000000; //10,000,000
 		final Random random = new Random();
 		final int[] initted = initArray(size);
 		final int find = random.nextInt(size);
 		System.out.println("Searching for " + formatNum(find));
-		int found = binarySearch(initted, initted.length, find);
+		int found = binarySearch(initted, find);
 		System.out.println("Found at " + formatNum(found));
 	}
 	
-	private static int[] initArray(int size){
+	private static int[] initArray(final int size){
 		
 		final List<Integer> list = new ArrayList<>(size);
 		for (int i=0; i < size; i++){
@@ -49,19 +48,19 @@ public class BinarySearchTest{
 		}
 
 		final int[] initted = new int[size];
-		Integer ints[] = new Integer[size]; 
-        ints = list.toArray(ints); 
+		//Integer ints[] = new Integer[size]; 
+        //ints = list.toArray(ints); 
         for(int i=0; i < size; i++){
         	//System.out.println("Adding to initted: " + ints[i]);
-        	initted[i] = ints[i];
+        	initted[i] = list.get(i);//ints[i];
         }
 		
 		return initted;
 	}
 
-	private static int binarySearch(int[] array, int length, int find){
+	private static int binarySearch(final int[] array, final int find){
 		int left = 0;
-		int right = length - 1;
+		int right = array.length - 1;
 		while (left <= right){
 			int mid = (left + right) / 2;
 			if (array[mid] < find){
