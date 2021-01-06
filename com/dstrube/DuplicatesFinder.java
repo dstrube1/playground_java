@@ -25,7 +25,7 @@ public class DuplicatesFinder{
 		//
 	}
 	
-	//Good - brute force
+	//Good - brute force: O(n^2)
 	private static int[] findDuplicates_1(int[] arr1, int[] arr2) {
 		final List<Integer> list = new ArrayList<>();
 		for (int i1 : arr1){
@@ -53,7 +53,7 @@ public class DuplicatesFinder{
 		return output;
 	}
 	
-	//Better - single loop with parallel indices
+	//Better - single loop with parallel indices: O(n)
 	private static int[] findDuplicates_2(int[] arr1, int[] arr2){
 		final List<Integer> duplicates = new ArrayList<>();
 		int i = 0;
@@ -76,7 +76,7 @@ public class DuplicatesFinder{
 		return output;
 	}
 	
-	//More better- use binary search on the bigger array
+	//More better- use binary search on the bigger array: O(log n)
 	private static int[] findDuplicates_3(int[] arr1, int[] arr2){
 		final List<Integer> duplicates = new ArrayList<>();
 		if(arr1.length > arr2.length){
