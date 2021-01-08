@@ -17,8 +17,6 @@ Finding duplicates, from good, to better, to more better
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-//https://docs.oracle.com/javase/8/docs/api/java/util/Random.html
 
 public class DuplicatesFinder{
 	public static void main(String[] args){
@@ -29,16 +27,16 @@ public class DuplicatesFinder{
 	private static int[] findDuplicates_1(int[] arr1, int[] arr2) {
 		final List<Integer> list = new ArrayList<>();
 		for (int i1 : arr1){
-			for(int i=0; i < arr2.length; i++){
+			for(int i = 0; i < arr2.length; i++){
 				int i2 = arr2[i];
-				while(i2<i1){
+				while(i2 < i1){
 					i++;
 					if(i < arr2.length)
 						i2 = arr2[i];
 					else
 						break;
 				}
-				if (i2>i1){
+				if (i2 > i1){
 					break;
 				}
 				if(i2 == i1){
@@ -116,3 +114,5 @@ public class DuplicatesFinder{
 		return -1;
 	}
 }
+//leetcode.com 1229
+//sjhxbug1024@gmail.com
