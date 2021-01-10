@@ -70,15 +70,3 @@ public class PancakeSorter{
 		arr[left] = arr[left] - arr[k];
 	}
 }
-
-/*
-
-interview todos:
-
-get headphones
-no spicy food for lunch
-interview well after breakfast (morning poop)
-study before
-
-what is the one thing that if accomplished in the next 3 and 6 months will make the biggest impact for this job?
-*/
