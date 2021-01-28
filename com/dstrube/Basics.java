@@ -9,7 +9,7 @@ java -cp bin com.dstrube.Basics
 Some java basics for quick reference
 */
 import java.math.BigInteger;
-//https://docs.oracle.com/javase/7/docs/api/java/math/BigInteger.html
+//https://docs.oracle.com/javase/8/docs/api/java/math/BigInteger.html
 import java.math.BigDecimal;
 import java.math.RoundingMode;//MathContext;
 
