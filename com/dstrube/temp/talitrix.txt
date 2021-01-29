@@ -1,0 +1,16 @@
+talitrix
+mobile app
+criminal justice
+ankle bracelet
+battery
+6-12$/day
+nothing for victims
+no data on wearer
+iwatch type device
+notifications for wearer and potential victims and police
+history what person has done
+type of db?
+user id based on?
+native or xamarin? ionic java dynamo aws html5
+contact wearer
+take photo as wearer if unusual circumstance

@@ -16,6 +16,9 @@ Example test:   [1, 2, 3]
 
 Example test:   [1, 3, 1, 5, 5, 2]
  output: [1,1,5,5,3,2]
+
+Example test:   [1,2,2,3,3,3,4,5,5,6,6,6]
+ output: [3,3,3,6,6,6,2,2,5,5,1,4]
 */
 
 import java.util.List;
