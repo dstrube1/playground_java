@@ -67,6 +67,15 @@ public class Basics{
 			pos = getNext(pos);
 		}
 		System.out.println("limit is " + limit.toString() + " and pos is " + pos.toString());*/
+		
+		String numS = "123";
+		int num = 0;
+		try{
+			 num = Integer.parseInt(num);
+		}catch(NumberFormatException  nfe){}
+		for(int i = 0; i < numS.length(); i++){
+			char c = numS.charAt(i);
+		}
 
 	}
 	
