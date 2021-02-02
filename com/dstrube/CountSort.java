@@ -32,14 +32,54 @@ import java.util.ArrayList;
 public class CountSort{
 	
 	public static void main(String[] args){
-		//
+		List<Integer> output = new ArrayList<>();
+		
+		final int[] in1 = {1,3,6,4,1,2};
+		output = frequenySortArray(in1);
+		print(in1, output);
+		
+		final int[] in2 = {1,2,3};
+		output = frequenySortArray(in2);
+		print(in2, output);
+
+		final int[] in3 = {1,3,1,5,5,2};
+		output = frequenySortArray(in3);
+		print(in3, output);
+		
+		final int[] in4 = {1,2,2,3,3,3,4,5,5,6,6,6};
+		output = frequenySortArray(in4);
+		print(in4, output);
+		
 	}
 	
-	public List<Integer> frequenySortArray(int arr[], int size)
+	private static void print(int[] in, List<Integer> out){
+		System.out.print("Example test: [");
+		StringBuilder sb = new StringBuilder();
+		for(int i : in){
+			sb.append(i + ",");
+		}
+		System.out.print(sb.toString().substring(0, sb.toString().length()-1));
+		
+		System.out.print("]\noutput:       [");
+		
+		sb = new StringBuilder();
+		//System.out.println("out size = " + out.size());
+		/*for(int i = 0; i < out.size(); i++){
+			//System.out.println("*" + i + " = " + out.get(i) + "*");
+			sb.append(out.get(i)+",");
+		}*/
+		for(int i : out){
+			sb.append(i + ",");
+		}
+		System.out.print(sb.toString().substring(0, sb.toString().length()-1));
+		System.out.println("]\n");
+	}
+	
+	private static List<Integer> frequenySortArray(int arr[])
 	{
-		Map<Integer, Integer> map = new HashMap<>();
-		int max = 0;
-		for(int i = 0; i < size; i++){
+		final Map<Integer, Integer> map = new HashMap<>();
+		int max = 1;
+		for(int i = 0; i < arr.length; i++){
 			if(map.containsKey(arr[i])){
 				int count = map.get(arr[i]) + 1;
 				map.replace(arr[i], count);
@@ -50,9 +90,11 @@ public class CountSort{
 				map.put(arr[i], 1);
 			}
 		}
+		//System.out.println("max = " + max);
 		List<Integer> list = new ArrayList<>();
 		for (int j = max; j > 0; j--){
 			for(Map.Entry<Integer, Integer> entry : map.entrySet()){
+				//System.out.println("Checking entry " + entry.getKey() + " with count = " + entry.getValue());
 				if(entry.getValue() == j){
 					for(int k = 0; k < j; k++){
 						list.add(entry.getKey());
@@ -62,68 +104,4 @@ public class CountSort{
 		}
 		return list;
 	}
-/*
-tmobile test id:
-277460058572488
-
-===
-public class Solution
-{
-	//https://stackoverflow.com/questions/53110374/how-to-rotate-2-d-array-in-java
-    //Function signature begins
-   int[][] rotatePictureMethod(int[][] img, int rows, int columns,
-                                       int flag)
-    {
-        //Write code here
-        if (flag != 0 && flag != 1) return null;
-        
-        if (flag == 0){
-            //System.out.println("Before rotate left: ");
-            //printArr(img, rows, columns);
-            img = rotateL(img, rows, columns);
-        }
-        else{
-            //System.out.println("Before rotate right: ");
-            //printArr(img, rows, columns);
-            img = rotateR(img, rows, columns);
-        }
-        //System.out.println("After rotation: ");
-        //printArr(img, rows, columns);
-        
-        return img;
-    }
-    //Function signature ends
-    
-    int[][] rotateL(int[][] img, int rows, int columns){
-        int[][] ret = new int[columns][rows];
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < columns; j++){
-                //System.out.println("i = " + i + "; j = " + j);
-                ret[i][j] = img[j][columns - i - 1];
-            }
-        }
-        return ret;
-    }
-    int[][] rotateR(int[][] img, int rows, int columns){
-        int[][] ret = new int[columns][rows];
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < columns; j++){
-                ret[i][j] = img[rows - j - 1][i];
-            }
-        }
-        return ret;
-    }
-    
-    void printArr(int[][] img, int rows, int columns){
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < columns; j++){
-                System.out.print(img[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println("\n");
-    }
-}
-
-*/
 }

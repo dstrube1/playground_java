@@ -197,7 +197,6 @@ public class Basics{
 		System.out.println("percentDone: " + percentDone);
 	}
 	
-	/*
 	private static boolean areDigitsAscending(final String testStr){
 		final String candidateStr = testStr;
 		final char[] chars0 = testStr.toCharArray();
@@ -213,6 +212,7 @@ public class Basics{
         return false;
 	}
 	
+	/*
 	private static BigInteger getNext0(final BigInteger pos){
 		String posStr = pos.toString();
 		for (int index = posStr.length() - 1; index > 0; index--){
