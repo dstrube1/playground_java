@@ -3,7 +3,7 @@ package com.dstrube;
 /*
 commands to compile and run:
 from ~/java
-javac -cp bin:bin/junit-4.12.jar -d bin com/dstrube/CheckWriterUnitTests.java 
+javac -cp bin:bin/junit-4.12.jar -d bin com/dstrube/CheckWriterUnitTests.java
 java -cp bin:bin/junit-4.12.jar com.dstrube.CheckWriterUnitTests
 
 java -cp bin:bin/junit-4.12.jar org.junit.runner.JUnitCore com.dstrube.CheckWriter

@@ -3,7 +3,7 @@ package com.dstrube;
 /*
 commands to compile and run:
 from ~/java
-javac -d bin com/dstrube/CheckWriter.java 
+javac -d bin com/dstrube/CheckWriter.java
 java -cp bin com.dstrube.CheckWriter
 
 title: Check Writer

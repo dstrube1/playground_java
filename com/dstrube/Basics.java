@@ -3,7 +3,7 @@ package com.dstrube;
 /*
 commands to compile and run:
 from ~/java
-javac -d bin com/dstrube/Basics.java 
+javac -d bin com/dstrube/Basics.java
 java -cp bin com.dstrube.Basics
 
 Some java basics for quick reference
