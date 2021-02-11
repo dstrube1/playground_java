@@ -1,3 +1,5 @@
+package com.dstrube;
+
 /*
 From ~/java:
 
@@ -10,8 +12,6 @@ javac -d bin com\dstrube\Tests.java
 java -cp bin com.dstrube.Tests
 
 */
-
-package com.dstrube;
 
 import java.util.*;
 import java.math.BigInteger;
@@ -129,7 +129,7 @@ public class Tests {
 		}
 	}
 	
-	// return gcd(|m|, |n|)
+	// return Greatest Common Denominator(|m|, |n|)
     private static long gcd(long m, long n) {
         if (m < 0) m = -m;
         if (n < 0) n = -n;
@@ -137,7 +137,7 @@ public class Tests {
         else return gcd(n, m % n);
     }
 	
-	// return lcm(|m|, |n|)
+	// return Least Common Multiple(|m|, |n|)
     private static long lcm(long m, long n) {
         if (m < 0) m = -m;
         if (n < 0) n = -n;

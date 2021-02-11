@@ -245,13 +245,13 @@ public class DataStructures {
 				//queue.add(3);
 				//queue.add(5);
 			} catch (IllegalStateException illegalStateException){
-				//otherwise ArrayBlockingQueue complains that queue is full on second add
+				//ArrayBlockingQueue complains that queue is full on second add
 			}
 			//queue.offer(8);
 		} catch (ClassCastException classCastException){
-			//otherwise DelayQueue complains "Integer cannot be cast to java.util.concurrent.Delayed" on first add
+			//DelayQueue complains "Integer cannot be cast to java.util.concurrent.Delayed" on first add
 		} catch (IllegalStateException illegalStateException){
-			//otherwise SynchronousQueue complains that queue is full on first add
+			//SynchronousQueue complains that queue is full on first add
 		}
 		return queue;
 	}
