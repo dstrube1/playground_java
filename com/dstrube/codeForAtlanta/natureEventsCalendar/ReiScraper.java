@@ -48,7 +48,7 @@ Compile:
 Mac:
 javac -cp bin/joda-time-2.9.9.jar -d bin com/dstrube/codeForAtlanta/natureEventsCalendar/IScraperRow.java 
 javac -cp bin:bin/joda-time-2.9.9.jar:bin/jsoup-1.11.1.jar -d bin com/dstrube/codeForAtlanta/natureEventsCalendar/ReiScraper.java
-Windowsx [unverified]:
+Windows [unverified]:
 javac -cp bin\joda-time-2.9.9.jar -d bin IScraperRow.java 
 javac -cp bin;bin\joda-time-2.9.9.jar;bin\jsoup-1.11.1.jar; -d bin ReiScraper.java
 
