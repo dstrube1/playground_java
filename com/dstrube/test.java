@@ -16,11 +16,21 @@ public class test{
 	
 	public static void main(String[] args){
 		try{
-			inputTest();
+			System.out.println("Is null numeric?: " + isNumeric(null));
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
 		}
 		System.out.println("Done");
+	}
+	
+	public static boolean isNumeric(String str) {
+		try {
+			Integer.parseInt(str);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	private static void inputTest(){
