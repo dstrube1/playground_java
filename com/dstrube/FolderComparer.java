@@ -2,7 +2,9 @@
 From ~/java:
 
 javac -d bin com/dstrube/FolderComparer.java
-java -cp bin com.dstrube.FolderComparer
+java -cp bin com.dstrube.FolderComparer {path1} {path2}
+
+or uncomment the code below specifying the folder paths
 
 This compares two folders, first comparing the file counts, then the file contents.
 */
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FileInputStream;
 import java.util.Scanner;
+import java.util.Arrays;
 
 public class FolderComparer{
 
@@ -37,6 +40,11 @@ public class FolderComparer{
 			System.out.println("Too many args");
 			return;
 		}
+		/*
+		args = new String[2];
+		args[0] = "/Users/dstrube/Documents/Qs_As";
+		args[1] = "/Users/dstrube/Documents/Documents - David’s MacBook Pro/Qs_As";
+		*/
 		try{
 			File dir1 = new File(args[0]);
 			File dir2 = new File(args[1]);
@@ -129,21 +137,29 @@ public class FolderComparer{
 			//if dir1 and dir2 have different numbers of items, they're not equal
 			File[] dir1List = dir1.listFiles(fileNameFilter);
 			File[] dir2List = dir2.listFiles(fileNameFilter);
+			Arrays.sort(dir1List);
+			Arrays.sort(dir2List);
+			String[] file1List = getFileList(dir1List);
+			String[] file2List = getFileList(dir2List);
 			if (dir1List.length != dir2List.length)
 			{
 				System.out.println("Failed base check");
 				System.out.println("dir1List.length (" + dir1List.length + ") != dir2List.length (" + dir2List.length + ")");
 				System.out.println("dir1 = " + dir1 
 					+ "\ndir2 = " + dir2);
-				System.out.println("dir1 contents:");
-				for (File file : dir1List)
+				System.out.println("Here's what dir1 has that dir2 doesn't:");
+				for (String file : file1List)
 				{
-					System.out.println("-" + file);
+					if(!arrayContains(file2List, file)){
+						System.out.println("-" + file);
+					}
 				}
-				System.out.println("dir2 contents:");
-				for (File file : dir2List)
+				System.out.println("Here's what dir2 has that dir1 doesn't:");
+				for (String file : file2List)
 				{
-					System.out.println("-" + file);
+					if(!arrayContains(file1List, file)){
+						System.out.println("-" + file);
+					}
 				}
 				
 				return false;
@@ -153,6 +169,25 @@ public class FolderComparer{
 	    	return false;
 	    }
 		return true;
+	}
+	
+	private static String[] getFileList(File[] dirList){
+		String[] result = new String[dirList.length];
+		int i = 0;
+		for(File file : dirList){
+			result[i] = ("" + file).substring(1 + ("" + file).lastIndexOf(File.separator));
+			i++;
+		}
+		return result;
+	}
+	private static boolean arrayContains(String[] arr, String find){
+		//Not as efficient as a binary search, but more transparent
+		for(String string : arr){
+			if(string.equals(find)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	//Basic checks for For loops in both phase 1 & 2
