@@ -16,15 +16,31 @@ public class test{
 	
 	public static void main(String[] args){
 		try{
-			System.out.println("Is null numeric?: " + isNumeric(null));
+			//
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
 		}
 		System.out.println("Done");
 	}
 	
+	public static void testLongOverflow(){
+		long testL = Long.MAX_VALUE;
+		System.out.println("testL before increment: " + testL);
+		try{
+			testL++;
+			System.out.println("testL after increment: " + testL); //Long.MIN_VALUE
+			System.out.println("testL reset...");
+			testL = Long.MAX_VALUE;
+			testL *= 1000;
+			System.out.println("testL * 1000: " + testL); //-1000
+		}catch(Exception exception){
+			System.out.println("Caught exception: " + exception);
+		}
+	}
+	
 	public static boolean isNumeric(String str) {
 		try {
+			//System.out.println("Is null numeric?: " + isNumeric(null));
 			Integer.parseInt(str);
 		} catch (NumberFormatException nfe) {
 			return false;
