@@ -1,29 +1,211 @@
+package com.dstrube;
+
 /*
 From ~/java:
 
-javac -d bin com/dstrube/test.java
-java -cp bin com.dstrube.test
+javac -cp bin:bin/json-20210307.jar -d bin com/dstrube/test.java
+java -cp bin:bin/json-20210307.jar com.dstrube.test
 
 */
-package com.dstrube;
 
-import java.util.Date;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.util.Base64;
 import java.util.concurrent.TimeUnit;
-import java.util.Scanner;
+import java.util.Date;
 import java.util.InputMismatchException;
+import java.util.Iterator;
+import java.util.Scanner;
+import java.util.stream.Stream;
+import java.util.UUID;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class test{
 	
 	public static void main(String[] args){
 		try{
-			//
+			//String out = 
+			//System.out.println(": '" + out + "'");
+			for(int i=1; i<=4; i++){
+				System.out.println("i: " + i);
+			}
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
 		}
 		System.out.println("Done");
 	}
 	
-	public static void testLongOverflow(){
+	private static String isVinValid(String vin) {
+			//String out = isVinValid("-1-");
+			//System.out.println("isVinValid: '" + out + "'");
+        int[] values = { 1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9,
+                2, 3, 4, 5, 6, 7, 8, 9 };
+        int[] weights = { 8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2 };
+       
+
+        String s = vin;
+        s = s.replace("-", "");
+        return s;
+    }
+	
+	private static String getUrl(String host, String port) {
+			//String out = getUrl("x", "y");
+			//System.out.println("getUrl: '" + out + "'");
+		String url = null;
+		String prefix = "https://";
+
+		if (host != null){
+			if(port != null){
+				//host != null && port != null
+				url = prefix + host + ":" + port;
+			}
+			else{
+				//host != null && port == null
+				url = prefix + host;
+			}
+		}
+
+        return url;
+	}
+	
+	private static String replaceTextValues(String text, JSONObject entityJson) {
+			//String out = "" + replaceTextValues("", new JSONObject());
+			//System.out.println("replaceTextValues: '" + out + "'");
+		if ( entityJson != null && text != null ) {
+			Iterator<?> it = entityJson.keys();
+			while( it.hasNext() ) {
+				String key = (String)it.next();
+				try {
+					String value = (entityJson.get(key) != null ) ? entityJson.get(key).toString() : null;
+					if ( value != null ) {
+						text = text.replaceAll("#" + key + "#", value);					
+					}										
+				} catch ( JSONException exception) {
+					System.out.println("Caught exception: " + exception);
+				}
+			}
+		}
+		
+		return text;
+	}
+	
+	private static boolean isDateBetweenTwoDates(ZonedDateTime startDate, ZonedDateTime endDate, ZonedDateTime checkDate) {
+			//String out = "" + isDateBetweenTwoDates(ZonedDateTime.now(), ZonedDateTime.now(), ZonedDateTime.now());
+			//System.out.println("isDateBetweenTwoDates: '" + out + "'");
+		return checkDate.isAfter(startDate) && checkDate.isBefore(endDate);
+	}
+	
+	private static Long calculateDuration(ZonedDateTime startDate, ZonedDateTime endDate) {
+			//String out = "" + calculateDuration(ZonedDateTime.now(), ZonedDateTime.now());
+			//System.out.println(": '" + out + "'");
+		return Duration.between(startDate, endDate).getSeconds();
+	}
+	
+	private static Integer daysToMinutes(Integer days) {
+			//String out = "" + daysToMinutes(null);
+			//System.out.println("daysToMinutes: '" + out + "'");
+		return days * (24 * 60);
+	}
+
+	private static ZonedDateTime retrieveZonedDateTimeWithOffsetByDay(String offset, ZonedDateTime zdt) {
+			//String out = ""+retrieveZonedDateTimeWithOffsetByDay("x", ZonedDateTime.now());
+			//System.out.println("retrieveZonedDateTimeWithOffsetByDay: '" + out + "'");
+		if(zdt == null){
+			return null;
+		}	
+		return zdt.plusDays(Long.parseLong(offset));		
+	}
+	
+	private static String convertDBDateToFormattedString(String dbDateWithTimeZone, String defaultDateFormat, String existingDBFormatPattern) throws ParseException {
+			//String out = convertDBDateToFormattedString("", null, "");
+			//System.out.println("convertDBDateToFormattedString: '" + out + "'");
+		SimpleDateFormat sdf =  new SimpleDateFormat(existingDBFormatPattern);
+		Date date = sdf.parse(dbDateWithTimeZone);		
+		return new SimpleDateFormat(defaultDateFormat).format(date);
+	}
+	
+	private static String JsonTest(String in)
+			throws JSONException {
+			//String out = JsonTest(null);
+			//System.out.println("JsonTest: '" + out +"'");
+		JSONObject qual = new JSONObject();
+		JSONArray newQual = new JSONArray();
+		newQual.put(qual);
+		newQual.put(in);
+		
+		return newQual.toString();
+	}	
+
+	private static String constructElasticsearchQualificationWithEntityId(final String entityId, String qual)
+			throws JSONException {
+			//String out = constructElasticsearchQualificationWithEntityId(null,"[2]");
+			//System.out.println("constructElasticsearchQualificationWithEntityId: '" + out +"'");
+		JSONObject jsonObj = new JSONObject(); 
+		JSONArray jsonMustArray = new JSONArray(qual);
+		
+		if ( jsonMustArray != null && jsonMustArray.length() > 0 ) {
+			JSONObject val = new JSONObject().put("x", new JSONObject().put("y", entityId));
+			jsonMustArray.put(val);
+		}
+		
+		jsonObj.put("true", new JSONObject().put("must", jsonMustArray));
+		qual = jsonObj.toString();
+		return qual;
+	}
+	
+	private static String retrieveReadableNameFromEntity(String entityName) {
+			//String out = retrieveReadableNameFromEntity("");
+			//System.out.println("retrieveReadableNameFromEntity = '" + out + "'");
+		String[] cc = entityName.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+		return String.join(" ", cc);
+	}
+	
+	private static String identityHashCodeWithTimestamp(Object obj) {
+			//String out = identityHashCodeWithTimestamp(new Object());
+			//System.out.println("out: " + out);
+		return LocalDateTime.now(ZoneOffset.UTC).atOffset(ZoneOffset.UTC).toInstant().toEpochMilli() 
+			+ "-" + System.identityHashCode(obj);
+	}
+	
+	private static UUID createRelatedKey(String entityId) {
+			//UUID uuid = createRelatedKey("");
+			//System.out.println("uuid: " + uuid);
+		return UUID.nameUUIDFromBytes(entityId.getBytes());
+	}
+	
+	private static String readFile(Path path) throws IOException {
+			//Path path = Path.of("");
+			//String content = readFile(path);
+			//System.out.println("Content: " + content);
+		StringBuilder data = new StringBuilder();
+	    Stream<String> lines = Files.lines(path);
+	    lines.forEach(line -> data.append(line).append("\n"));
+	    lines.close();
+	    
+	    return data.toString();
+	}
+	
+	private static String decrypt(String license){
+	//		String license = "license";
+	//		System.out.println("Decrypting license: " + decrypt(license));
+
+		byte[] bytes = Base64.getDecoder().decode(license.trim().getBytes());			
+		license = new String(bytes);
+		
+		return license;
+	}
+	
+	private static void testLongOverflow(){
 		long testL = Long.MAX_VALUE;
 		System.out.println("testL before increment: " + testL);
 		try{
@@ -38,9 +220,11 @@ public class test{
 		}
 	}
 	
-	public static boolean isNumeric(String str) {
+	private static boolean isNumeric(String str) {
 		try {
-			//System.out.println("Is null numeric?: " + isNumeric(null));
+	//	System.out.println("Is Integer.MIN_VALUE - 1 numeric?: " + isNumeric("-2147483649"));
+	//	System.out.println("Is Integer.MAX_VALUE + 1 numeric?: " + isNumeric("2147483648"));
+		//System.out.println("Is null numeric?: " + isNumeric(null));
 			Integer.parseInt(str);
 		} catch (NumberFormatException nfe) {
 			return false;
