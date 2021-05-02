@@ -46,27 +46,9 @@ key: _; value: /usr/bin/java
 dstrube@Strube-MacBook-Pro java % cd com
 dstrube@Strube-MacBook-Pro com % cd ..
 dstrube@Strube-MacBook-Pro java % java -cp bin com.dstrube.SystemTest
-key: PATH; value: /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Applications/VMware Fusion.app/Contents/Public:/Applications/Wireshark.app/Contents/MacOS
-key: __CFBundleIdentifier; value: com.apple.Terminal
-key: SHELL; value: /bin/zsh
-key: TERM_PROGRAM; value: Apple_Terminal
+...
 key: OLDPWD; value: /Users/dstrube/Projects/java/com
-key: TERM; value: xterm-256color
-key: USER; value: dstrube
-key: LANG; value: en_US.UTF-8
-key: TMPDIR; value: /var/folders/h1/_7yz2qps3pz0zp_ng2b2rl9w0000gp/T/
-key: SSH_AUTH_SOCK; value: /private/tmp/com.apple.launchd.NllLNQiwcn/Listeners
-key: XPC_FLAGS; value: 0x0
-key: TERM_SESSION_ID; value: 4D82C19D-9A1B-4609-B53C-F750EE92C962
-key: __CF_USER_TEXT_ENCODING; value: 0x1F6:0x0:0x0
-key: JAVA_MAIN_CLASS_4840; value: com.dstrube.SystemTest
-key: LOGNAME; value: dstrube
-key: PWD; value: /Users/dstrube/Projects/java
-key: TERM_PROGRAM_VERSION; value: 440
-key: XPC_SERVICE_NAME; value: 0
-key: SHLVL; value: 1
-key: HOME; value: /Users/dstrube
-key: _; value: /usr/bin/java
+...
 
 			*/
 		}
