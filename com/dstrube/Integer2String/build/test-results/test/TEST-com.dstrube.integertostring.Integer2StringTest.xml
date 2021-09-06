@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.dstrube.integertostring.Integer2StringTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-09-04T14:07:30" hostname="Davids-MacBook-Pro-2.local" time="0.032">
+  <properties/>
+  <testcase name="Tests of int2str" classname="com.dstrube.integertostring.Integer2StringTest" time="0.032"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
