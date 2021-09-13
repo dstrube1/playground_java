@@ -36,19 +36,6 @@ public class Temp {
 		BigInteger bi = new BigInteger("1");
 		StringBuilder sb = new StringBuilder();
 		//
-		int min = Integer.MIN_VALUE;
-		int minPlus1 = min + 1;
-		System.out.println("min: " + min);
-		System.out.println("minPlus1: " + minPlus1);
-		System.out.println("Integer.MAX_VALUE: " + Integer.MAX_VALUE);
-		int abs = Math.abs(min);
-		int abs1 = Math.abs(minPlus1);
-		System.out.println("abs: " + abs);
-		System.out.println("abs1: " + abs1);
-		int maxPlus1 = Integer.MAX_VALUE + 1;
-		int minMinus1 = Integer.MIN_VALUE - 1;
-		System.out.println("maxPlus1: " + maxPlus1);
-		System.out.println("minMinus1: " + minMinus1);
 		
 		//try{
 		//}catch(){}
