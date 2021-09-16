@@ -3,6 +3,12 @@ package com.dstrube;
 /*
 From ~/java:
 
+without json:
+javac -d bin com/dstrube/test.java
+java -cp bin com.dstrube.test
+
+
+with json:
 javac -cp bin:bin/json-20210307.jar -d bin com/dstrube/test.java
 java -cp bin:bin/json-20210307.jar com.dstrube.test
 
@@ -26,23 +32,43 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 import java.util.UUID;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+//import org.json.JSONArray;
+//import org.json.JSONException;
+//import org.json.JSONObject;
 
 public class test{
 	
 	public static void main(String[] args){
 		try{
+			String s = "c 1  2   3";
+			String t = s.trim().replaceAll("\\s+"," ");
+			System.out.println("t: '" + t + "'");
 			//String out = 
 			//System.out.println(": '" + out + "'");
-			for(int i=1; i<=4; i++){
+			/*for(int i=1; i<=4; i++){
 				System.out.println("i: " + i);
-			}
+			}*/
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
 		}
 		System.out.println("Done");
+	}
+	
+	private static void minMaxIntTest(){
+		//minMaxIntTest();
+		int min = Integer.MIN_VALUE;
+		int minPlus1 = min + 1;
+		System.out.println("min: " + min);
+		System.out.println("minPlus1: " + minPlus1);
+		System.out.println("Integer.MAX_VALUE: " + Integer.MAX_VALUE);
+		int abs = Math.abs(min);
+		int abs1 = Math.abs(minPlus1);
+		System.out.println("abs: " + abs);
+		System.out.println("abs1: " + abs1);
+		int maxPlus1 = Integer.MAX_VALUE + 1;
+		int minMinus1 = Integer.MIN_VALUE - 1;
+		System.out.println("maxPlus1: " + maxPlus1);
+		System.out.println("minMinus1: " + minMinus1);
 	}
 	
 	private static String isVinValid(String vin) {
@@ -78,7 +104,7 @@ public class test{
         return url;
 	}
 	
-	private static String replaceTextValues(String text, JSONObject entityJson) {
+	/*private static String replaceTextValues(String text, JSONObject entityJson) {
 			//String out = "" + replaceTextValues("", new JSONObject());
 			//System.out.println("replaceTextValues: '" + out + "'");
 		if ( entityJson != null && text != null ) {
@@ -97,7 +123,7 @@ public class test{
 		}
 		
 		return text;
-	}
+	}*/
 	
 	private static boolean isDateBetweenTwoDates(ZonedDateTime startDate, ZonedDateTime endDate, ZonedDateTime checkDate) {
 			//String out = "" + isDateBetweenTwoDates(ZonedDateTime.now(), ZonedDateTime.now(), ZonedDateTime.now());
@@ -134,7 +160,7 @@ public class test{
 		return new SimpleDateFormat(defaultDateFormat).format(date);
 	}
 	
-	private static String JsonTest(String in)
+	/*private static String JsonTest(String in)
 			throws JSONException {
 			//String out = JsonTest(null);
 			//System.out.println("JsonTest: '" + out +"'");
@@ -161,7 +187,7 @@ public class test{
 		jsonObj.put("true", new JSONObject().put("must", jsonMustArray));
 		qual = jsonObj.toString();
 		return qual;
-	}
+	}*/
 	
 	private static String retrieveReadableNameFromEntity(String entityName) {
 			//String out = retrieveReadableNameFromEntity("");
