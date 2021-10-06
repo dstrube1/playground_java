@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 import java.util.stream.Stream;
 import java.util.UUID;
+import java.util.Random;
 
 //import org.json.JSONArray;
 //import org.json.JSONException;
@@ -40,9 +41,7 @@ public class test{
 	
 	public static void main(String[] args){
 		try{
-			String s = "c 1  2   3";
-			String t = s.trim().replaceAll("\\s+"," ");
-			System.out.println("t: '" + t + "'");
+			randomTest();
 			//String out = 
 			//System.out.println(": '" + out + "'");
 			/*for(int i=1; i<=4; i++){
@@ -52,6 +51,34 @@ public class test{
 			System.out.println("Caught exception: " + exception);
 		}
 		System.out.println("Done");
+	}
+	
+	private static void randomTest(){
+		Random random = new Random();
+			
+		for (int i = 0; i < 50; i++){
+			int r = random.nextInt(50);
+			System.out.print(r+":");
+			for(int j = 0; j < r; j++){
+				System.out.print("#");
+			}
+			System.out.println();
+		}
+	}
+	
+	private static void arraySizeTest(final int size){
+		//arraySizeTest(4);
+		int[] arr = new int[size];
+		for (int i = 0; i < size; i++){
+			arr[i] = i;
+			System.out.println("arr["+i+"] = " + arr[i]);
+		}
+	}
+	
+	private static void duplicateSpaceRemovalRegex(final int size){
+		String s = "c 1  2   3";
+		String t = s.trim().replaceAll("\\s+"," ");
+		System.out.println("t: '" + t + "'");
 	}
 	
 	private static void minMaxIntTest(){
