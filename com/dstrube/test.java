@@ -15,6 +15,7 @@ java -cp bin:bin/json-20210307.jar com.dstrube.test
 */
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
@@ -41,7 +42,7 @@ public class test{
 	
 	public static void main(String[] args){
 		try{
-			randomTest();
+			minMaxIntTest();
 			//String out = 
 			//System.out.println(": '" + out + "'");
 			/*for(int i=1; i<=4; i++){
@@ -96,6 +97,31 @@ public class test{
 		int minMinus1 = Integer.MIN_VALUE - 1;
 		System.out.println("maxPlus1: " + maxPlus1);
 		System.out.println("minMinus1: " + minMinus1);
+		
+		String largerThanMax = "4046246937";
+		System.out.println("Larger than MAX_VALUE: " + largerThanMax);
+		int test = 0;
+		try {
+			test = Integer.parseUnsignedInt(largerThanMax);
+		}catch (NumberFormatException nfe){
+			System.out.println("Does it throw an exception? If you see this at execution, yes; "
+				+"but in reality, no.");
+		}
+		System.out.println("Larger than MAX_VALUE (bigInt): parsed as unsigned int: " + test);
+		System.out.println("How to scan and flag it as invalid?...");
+		BigInteger bigInt = new BigInteger(largerThanMax);
+		BigInteger max = new BigInteger(""+Integer.MAX_VALUE);
+		System.out.println("Digression: what happens if we increment max as a BigInteger?");
+		max = max.add(BigInteger.ONE);
+		System.out.println(max.toString());
+		System.out.println("END Digression");
+		if(max.compareTo(bigInt) < 0){
+			System.out.println("Integer.MAX_VALUE is less than bigInt");
+		}else if(max.compareTo(bigInt) == 0){
+			System.out.println("Integer.MAX_VALUE is equal to bigInt");
+		}else{//max.compareTo(bigInt) > 0
+			System.out.println("Integer.MAX_VALUE is greater than bigInt");
+		}
 	}
 	
 	private static String isVinValid(String vin) {
