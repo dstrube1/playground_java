@@ -115,11 +115,11 @@ public class Basics{
 		for (int index = 0; index < posStr.length(); index++){
 			char charAtIndex = posStr.charAt(index);
 			if (charAtIndex == '9'){
-				if (index == posStr.length() -1){
+				if (index == posStr.length() - 1){
 					//special
 					break;
 				}
-				char nextChar = posStr.charAt(index+1);
+				char nextChar = posStr.charAt(index + 1);
 				if (nextChar == '9'){
 					continue;
 				}
@@ -155,13 +155,14 @@ public class Basics{
 
 		return nextPos;
 	}
+	
 	private static String reverse(String input){
-		String reverse = "";
+		StringBuilder reverseBuilder = new StringBuilder();
         for(int i = input.length() - 1; i >= 0; i--)
         {
-            reverse = reverse + input.charAt(i);
+            reverseBuilder.append(input.charAt(i));
         }
-        return reverse;
+        return reverseBuilder.toString();
 	}
 	
 	private static void percentDoneFinder(){
