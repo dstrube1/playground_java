@@ -283,7 +283,8 @@ public class test{
 		return zdt.plusDays(Long.parseLong(offset));		
 	}
 	
-	private static String convertDBDateToFormattedString(String dbDateWithTimeZone, String defaultDateFormat, String existingDBFormatPattern) throws ParseException {
+	private static String convertDBDateToFormattedString(String dbDateWithTimeZone, 
+		String defaultDateFormat, String existingDBFormatPattern) throws ParseException {
 			//String out = convertDBDateToFormattedString("", null, "");
 			//System.out.println("convertDBDateToFormattedString: '" + out + "'");
 		SimpleDateFormat sdf =  new SimpleDateFormat(existingDBFormatPattern);
@@ -401,6 +402,7 @@ public class test{
 				good = true;
 			}catch(InputMismatchException inputMismatchException){
 				System.out.println("Try again");
+				//If we don't do this, then (with bad input) we end up in an infinite loop
 				scanner.close();
 				scanner = new Scanner(System.in);
 				//scanner.reset();
@@ -418,19 +420,21 @@ public class test{
 	}
 	
 	private static void minuteThread(){
-		final Date masterDate = new Date();
+		final Date begin = new Date();
 		long lastMinuteCount = 0;
 		while (true){
-			final Date slaveDate = new Date();
-			final long diff = slaveDate.getTime() - masterDate.getTime();
+			final Date current = new Date();
+			final long diff = current.getTime() - begin.getTime();
         	final long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(diff) % 60;
         	final long diffMinutes = TimeUnit.MILLISECONDS.toMinutes(diff);
     	    final long diffHours = TimeUnit.MILLISECONDS.toHours(diff);
     	    
 			if (diffMinutes == lastMinuteCount){
-				System.out.println("Less than 1 minute ("+diffSeconds+" seconds) has passed; sleeping for a bit...");
+				System.out.println("Less than 1 minute (" + diffSeconds 
+					+ " seconds) has passed; sleeping for a bit...");
 			}else{
-				System.out.println("1 minute has passed; total minutes: " + diffMinutes + " at " + slaveDate);
+				System.out.println("1 minute has passed; total minutes: " + diffMinutes 
+					+ " at " + current);
 				lastMinuteCount = diffMinutes;
 //				break;
 			}
