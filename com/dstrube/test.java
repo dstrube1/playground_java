@@ -42,17 +42,95 @@ public class test{
 	
 	public static void main(String[] args){
 		try{
-			minMaxIntTest();
 			//String out = 
 			//System.out.println(": '" + out + "'");
 			/*for(int i=1; i<=4; i++){
 				System.out.println("i: " + i);
 			}*/
+			
+			//System.out.println(providedSnafuMethod(true,true)); //false
+			//System.out.println(providedSnafuMethod(true,false)); // /0
+			//System.out.println(providedSnafuMethod(false,true));// /0
+			System.out.println(providedSnafuMethod(false,false)); //true
+			
+			/*
+			int k = 1/0;
+			Date date = new Date();
+			System.out.println("date: " + date); // Sun Oct 24 15:02:21 EDT 2021
+			String sDate = "" + date;
+			String sNum = sDate.substring(sDate.length()-1);
+			System.out.println("sNum = " + sNum);
+			System.out.println("date.getTime(): " + date.getTime());
+			long getTime = date.getTime();
+			long milliPerYear = 31557600000L; //not this? 365 * 24 * 60 * 60 * 1000;
+			System.out.println("milliPerYear: " + milliPerYear);
+			long diff = getTime - milliPerYear;
+			System.out.println("diff: " + diff);
+			Date lastYear = new Date(diff); //1603546361619
+			System.out.println("lastYear: " + lastYear);
+			long sum = getTime + milliPerYear;
+			System.out.println("sum: " + sum);
+			Date nextYear = new Date(sum); //1666662461855
+			System.out.println("nextYear: " + nextYear);
+			
+			sum += milliPerYear;
+			System.out.println("sum: " + sum);
+			Date d2023 = new Date(sum); //
+			System.out.println("d2023: " + d2023);
+			
+			sum += milliPerYear;
+			System.out.println("sum: " + sum);
+			Date d2024 = new Date(sum); //
+			System.out.println("d2024: " + d2024);
+			
+			sum += milliPerYear;
+			System.out.println("sum: " + sum);
+			Date d2025 = new Date(sum); //
+			System.out.println("d2025: " + d2025);
+			
+			sum += milliPerYear;
+			System.out.println("sum: " + sum);
+			Date d2026 = new Date(sum); //
+			System.out.println("d2026: " + d2026);
+			
+			sum += milliPerYear;
+			System.out.println("sum: " + sum);
+			Date d2027 = new Date(sum); //
+			System.out.println("d2027: " + d2027);
+			
+			sum += milliPerYear;
+			System.out.println("sum: " + sum);
+			Date d2028 = new Date(sum); //
+			System.out.println("d2028: " + d2028);
+			
+			sum += milliPerYear;
+			System.out.println("sum: " + sum);
+			Date d2029 = new Date(sum); //
+			System.out.println("d2029: " + d2029);
+			
+			int i = Integer.parseInt(sNum);
+			int j = 1 / (i-1);
+			System.out.println("j = " + j);*/
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
 		}
 		System.out.println("Done");
 	}
+	
+	public static boolean providedSnafuMethod(boolean a, boolean b) {
+		int x = 1;
+		int y = 1;
+		if(a)
+			x -=1; 
+		else 
+			y +=1;
+		if(b)
+			x -=1;
+		else 
+			y +=1;
+		return (y/x > 0);
+	}
+
 	
 	private static void randomTest(){
 		Random random = new Random();
