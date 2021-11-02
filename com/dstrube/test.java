@@ -33,6 +33,7 @@ import java.util.Scanner;
 import java.util.stream.Stream;
 import java.util.UUID;
 import java.util.Random;
+import java.util.Stack;
 
 //import org.json.JSONArray;
 //import org.json.JSONException;
@@ -47,7 +48,15 @@ public class test{
 			/*for(int i=1; i<=4; i++){
 				System.out.println("i: " + i);
 			}*/
-			
+			System.out.println("calculate(1+5-3): " + calculate("1+5-3"));
+
+		}catch(Exception exception){
+			System.out.println("Caught exception: " + exception);
+		}
+		System.out.println("Done");
+	}
+	
+	private static void A6Notes(){
 			//System.out.println(providedSnafuMethod(true,true)); //false
 			//System.out.println(providedSnafuMethod(true,false)); // /0
 			//System.out.println(providedSnafuMethod(false,true));// /0
@@ -111,13 +120,9 @@ public class test{
 			int i = Integer.parseInt(sNum);
 			int j = 1 / (i-1);
 			System.out.println("j = " + j);*/
-		}catch(Exception exception){
-			System.out.println("Caught exception: " + exception);
-		}
-		System.out.println("Done");
 	}
 	
-	public static boolean providedSnafuMethod(boolean a, boolean b) {
+	private static boolean providedSnafuMethod(boolean a, boolean b) {
 		int x = 1;
 		int y = 1;
 		if(a)
@@ -472,4 +477,70 @@ public class test{
        }
        return str;
 	}
+	
+	private static int calculate(String s){
+	// Write a function that takes in a string like “1+5-3” and produces the answer (3)
+    if(s == null || s.length()==0){
+        System.out.println("Null or empty string");
+        return 0;
+    }
+    String valids = "1234567890+-";
+    for(int i = 0; i < s.length(); i++){
+        char c = s.charAt(i);
+        if(!valids.contains(""+c)){
+            System.out.println("Invalid character: " + c);
+            return 0;
+        }
+    }
+    
+    Stack<Integer> stack = new Stack<>();
+    int index = 0;
+    int tally = 0;
+    StringBuilder currentNumber = new StringBuilder();
+    boolean nextOpAdd = false;
+    Character op = null;
+    
+    while (index < s.length()){
+        if(Character.isDigit(s.charAt(index))){ 
+            //assume non negatives
+            //push number onto stack
+            currentNumber.append(""+s.charAt(index));
+            index++;
+        }else if(currentNumber.toString().length() > 0){
+            //assume no NumberFormatException
+            int number = Integer.parseInt(currentNumber.toString());
+            if (op != null){
+                tally = stack.pop();
+                if(nextOpAdd){
+                    tally += number;
+                }else{
+                    tally -= number;
+                }
+                stack.push(tally);
+                op = null;
+            }else{
+                stack.push(number);
+            }
+            currentNumber = new StringBuilder();
+            //assume no ++ or --
+            op = s.charAt(index);
+            if(op == '+'){
+                nextOpAdd = true;
+            }else {
+                nextOpAdd = false;
+            }
+            index++;
+        }
+    }
+    int lastNumber = Integer.parseInt(currentNumber.toString());
+    if (op != null){
+        tally = stack.pop();
+        if(nextOpAdd){
+            tally += lastNumber;
+        }else{
+            tally -= lastNumber;
+        }
+    }
+    return tally;
+}
 }
