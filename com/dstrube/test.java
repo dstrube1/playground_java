@@ -48,12 +48,17 @@ public class test{
 			/*for(int i=1; i<=4; i++){
 				System.out.println("i: " + i);
 			}*/
-			System.out.println("calculate(1+5-3): " + calculate("1+5-3"));
+			System.out.println("getMethodName(): " + getMethodName());
 
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
 		}
 		System.out.println("Done");
+	}
+	
+	private static String getMethodName(){
+		String name = new Object(){}.getClass().getEnclosingMethod().getName();
+		return name;
 	}
 	
 	private static void A6Notes(){
@@ -136,7 +141,6 @@ public class test{
 		return (y/x > 0);
 	}
 
-	
 	private static void randomTest(){
 		Random random = new Random();
 			
