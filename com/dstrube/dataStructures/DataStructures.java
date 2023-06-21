@@ -7,15 +7,18 @@ javac -Xlint -d bin com/dstrube/dataStructures/DataStructures.java
 java -cp bin com.dstrube.dataStructures.DataStructures
 */
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Hashtable;
-import java.util.Stack;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Stack;
+import java.util.TreeMap;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -33,7 +36,7 @@ public class DataStructures {
 
 	public static void main(String[] args){
     	
-    	doArrayList();
+//    	doArrayList();
 //		System.out.println("");
 //		doHashtable();
 //		doStack();
@@ -41,6 +44,8 @@ public class DataStructures {
 		//doConcurrentHashMap();
 		//the only reason to use Hashtable is when a legacy API (from ca. 1996) requires it.
 		//https://stackoverflow.com/questions/40471/differences-between-hashmap-and-hashtable
+		
+		hashMapVsTreeMap();
 		System.out.println("done");
 		
 	}
@@ -48,7 +53,7 @@ public class DataStructures {
 	private static void doArrayList(){
         System.out.println("ArrayList:");
         try {
-            List list = new ArrayList<>();
+            List<Object> list = new ArrayList<>();
             //mixing data types is fine; be careful with datatypes when getting data out
             //Commenting these out for now, just to get quiet compilations; feel free to uncomment later
             list.add(1);
@@ -325,5 +330,109 @@ public class DataStructures {
 		final ConcurrentHashMap<String,String> concurrentHashMap = new ConcurrentHashMap<>();
 		concurrentHashMap.put("thread0","blahblahblah");
 		//For a more complete example, see MultiplicativePersistence.java
+	}
+	
+	private static void hashMapVsTreeMap(){
+		//Hmm, if max = 100 or 1000, 
+		// then this doesn't really display the disorderliness of HashMap 
+		//as compared to the orderliness of TreeMap.
+		//Must get a little big...
+		
+		//Note: This is a little easier to prove when debugging from Android Studio than from command line
+		
+		Map<Long,Integer> map1 = new HashMap<>();
+		Map<Long,Integer> map2 = new TreeMap<>();
+		int max = Integer.MAX_VALUE / 1000;
+		boolean first;
+		int prevDiff;
+		int prev;
+
+		for (int i = 0; i < max; i++){
+			if (i >= 65535 && i <= 65538){
+				//System.out.println("Putting " + i);
+			}
+			map1.put((long)i,i);
+			map2.put((long)i,i);
+		}
+		first = true;
+		prevDiff = 0;
+		prev = 0;
+		for(long L : map1.keySet()){
+			if (first){
+				first = false;
+				prev = map1.get(L);
+			}else{
+				prevDiff = map1.get(L) - prev;
+				if (prevDiff != 1){
+					System.out.println("map1: " + map1.get(L) + "; prev was " + prev);
+					System.out.println("next is " + map1.get(L+1));
+					//first instance of disorder is :
+					//65535,65537,65538
+					//Where is 65536?
+					List<Long> keys = new ArrayList<>(map1.keySet());
+					int index = keys.indexOf(65536L);
+					System.out.println("Index of first misplaced key (65536L): " + index);
+					break;
+				}
+				prev = map1.get(L);
+			}
+		}
+		first = true;
+		prevDiff = 0;
+		prev = 0;
+		for(long L : map2.keySet()){
+			if (first){
+				first = false;
+				prev = map2.get(L);
+			}else{
+				prevDiff = map2.get(L) - prev;
+				prev = map2.get(L);
+				if (prevDiff != 1){
+					System.out.println("map2: " + map2.get(L));
+					//This won't happen because TreeMap is sorted
+				}
+			}
+		}
+		first = true;
+		prevDiff = 0;
+		prev = 0;
+		for(int i : map1.values()){
+			if (first){
+				first = false;
+				prev = i;
+			}else{
+				prevDiff = i - prev;
+				if (prevDiff != 1){
+					System.out.println("map1: " + i + "; prev was " + prev);
+					System.out.println("next is " + map1.get((long)i + 1));
+					//first instance of disorder is :
+					//65535,65537,65538
+					//Where is 65536?
+					List<Long> keys = new ArrayList<>(map1.keySet());
+					int index = keys.indexOf(65536L);
+					System.out.println("Index of first misplaced key (65536L): " + index);
+
+					break;
+				}
+				prev = i;
+			}
+		}
+		first = true;
+		prevDiff = 0;
+		prev = 0;
+		for(int i : map2.values()){
+			if (first){
+				first = false;
+				prev = i;
+			}else{
+				prevDiff = i - prev;
+				prev = i;
+				if (prevDiff != 1){
+					System.out.println("map2: " + i);
+					//This won't happen because TreeMap is sorted
+				}
+			}
+		}
+		
 	}
 }
