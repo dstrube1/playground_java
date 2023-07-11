@@ -9,6 +9,8 @@ java -cp bin com.dstrube.Maths
 package com.dstrube;
 
 import java.math.BigInteger;
+import java.text.DecimalFormat;
+import java.util.Scanner;
 
 public class Maths {
 	
@@ -21,10 +23,44 @@ public class Maths {
 		LongMax();	//9,223,372,036,854,775,807
 		FloatMax(); //3.4028235E38
 		DoubleMax(); //1.7976931348623157E308
-/* */
+		
 		//BigIntegerMax(); //complicated
 		
+		roundTest();
+/* */
+		
+		long start = System.currentTimeMillis();
+		System.out.println("Hit enter when ready to continue...");
+		Scanner sc = new Scanner(System.in);
+		sc.nextLine();
+		long end = System.currentTimeMillis();
+		System.out.println("Finish time: " + getFinishTime(start, end));
 	}
+	
+	private static void roundTest(){
+		float a = 0.5f;
+		System.out.println("Round " + a + ": " + Math.round(a));
+	}
+	
+	private static String getFinishTime(long startMillis, long endMillis){
+        double start = (double)startMillis / 1000;
+        double end = (double)endMillis / 1000;
+        double seconds = end - start;
+        DecimalFormat df = new DecimalFormat("#.##");
+        if ((int)seconds / 60 == 0){
+            return df.format(seconds) + " second(s)";
+        }
+        int minutes = (int)seconds / 60;
+        seconds = seconds % 60;
+        if (minutes / 60 == 0){
+        	return minutes + " minute(s) and " + df.format(seconds) + " second(s)";
+        }
+        int hours = minutes / 60;
+        minutes = minutes % 60;
+        //Assuming this won't be called for any time span greater than 24 hours
+        return hours + " hour(s), " + minutes + " minute(s), and " + df.format(seconds) + " second(s)";
+    }
+
 	
     private static void ByteMax() {
         byte c = 1;
