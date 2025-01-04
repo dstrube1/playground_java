@@ -14,10 +14,6 @@ public class Fibonacci{
 	private static int count;
 	
 	public static void main(String[] args){
-		MyRunnable1 myRunnable1 = new MyRunnable1("inefficientFibCalc", 5); 
-		Thread myRunnable1Thread = new Thread(myRunnable1);
-		//myRunnable1Thread.start();
-		
 		//long starts failing at 92
 		//next step: BigInteger?
 		//MyRunnable2 myRunnable2 = new MyRunnable2("efficientFibCalc_0", 93); 
@@ -71,6 +67,9 @@ public class Fibonacci{
 			System.out.println("efficientFibCalc_0(" + i + ") = " + fibI);
 		}
 
+		MyRunnable1 myRunnable1 = new MyRunnable1("inefficientFibCalc", 46); 
+		Thread myRunnable1Thread = new Thread(myRunnable1);		
+		myRunnable1Thread.start();
 	}
 	
 	public static long efficientFibCalc_0(final int start) {
@@ -215,5 +214,4 @@ public class Fibonacci{
 		}
 	}
 
-	
 }
