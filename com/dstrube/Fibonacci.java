@@ -67,6 +67,8 @@ public class Fibonacci{
 			System.out.println("efficientFibCalc_0(" + i + ") = " + fibI);
 		}
 
+		//This was up top (because I wanted to go from least to most complex), 
+		//but the slow thread would overlap with the faster methods
 		MyRunnable1 myRunnable1 = new MyRunnable1("inefficientFibCalc", 46); 
 		Thread myRunnable1Thread = new Thread(myRunnable1);		
 		myRunnable1Thread.start();
@@ -98,12 +100,16 @@ public class Fibonacci{
 	private static class MyRunnable1 implements Runnable {
 	    private String mName;
 	    private long mSeed;
-	    private Date masterDate;
+	    //private Date startDate;
+	    private long startTime;
 
     	public MyRunnable1(String name, long seed) {
         	mName = name;
         	mSeed = seed;
-        	masterDate = new Date();
+        	//old: 
+        	//startDate = new Date();
+        	//new:
+        	startTime = System.nanoTime();
 	    }
 	    
 	    public String getName(){return mName;}
@@ -112,14 +118,24 @@ public class Fibonacci{
 	    public void run() {
 	    	for (long i=0; i < mSeed; i++){
         	    final long fibI = inefficientFibCalc(i);
+				/*
+				old:
 	    		final Date slaveDate = new Date();
-		    	final long diff = slaveDate.getTime() - masterDate.getTime();
+		    	final long diff = slaveDate.getTime() - startDate.getTime();
         	    final long diffMinutes = TimeUnit.MILLISECONDS.toMinutes(diff);
         	    final long diffSeconds = TimeUnit.MILLISECONDS.toSeconds(diff) % 60;
         	    final long millis = diff % 1000; //right?
 				System.out.println(getName() + "(" + i + ") = " + fibI 
 					+ " calculated in " + diffMinutes + ":" + diffSeconds + "." + millis);
-				masterDate = new Date();
+				startDate = new Date();
+				*/
+				long elapsedNanos = System.nanoTime() - startTime;
+        	    final long diffMinutes = TimeUnit.NANOSECONDS.toMinutes(elapsedNanos);
+        	    final long diffSeconds = TimeUnit.NANOSECONDS.toSeconds(elapsedNanos) % 60;
+        	    final long millis = elapsedNanos % 1000000000; //right?
+				System.out.println(getName() + "(" + i + ") = " + fibI 
+					+ " calculated in " + diffMinutes + ":" + diffSeconds + "." + millis);
+				startTime = System.nanoTime();
 			}
 	    }
 	    
