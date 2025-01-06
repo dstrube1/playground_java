@@ -13,41 +13,78 @@ package com.dstrube;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Hexify {
 	public static void main(String[] args) {
-		String input = "01=";//23456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+		//Simple:
+		//final String input = "01";
+		//Breaking:
+		//final String input = "¡"; //2 bytes
+		//final String input = "∞"; //3 bytes
+		//final String input = "§"; // 2 bytes
+		//Full good
+		final String input = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()_+-=[]{}|;:,.<>?\\/";
+		//Put all characters and their corresponding hex codes into a map and sort it
+		final Map <Byte, Character> map = new TreeMap<>();
+		boolean error = false;
+		
+		System.out.println("Hexifying: \n" + input);
+		System.out.println("First, turn it all into bytes:");
+		
 		try{
 			for (int i=0; i< input.length(); i++){
-				hexify(""+input.charAt(i),Charset.defaultCharset().name());
+				final char c = input.charAt(i);
+				final byte b = hexify("" + c, Charset.defaultCharset().name());
+				if (b == -1) {
+					error = true;
+					break;
+				}
+				map.put(b, c);
 			}
+			
+			if (error) return;
+			
+			final StringBuilder sb = new StringBuilder();
+			
+			System.out.println("\nNext, just for fun, sorted by byte value: ");
+			
+			for (Map.Entry<Byte, Character> entry : map.entrySet()){
+				System.out.print(entry.getValue());
+				//While printing out the sorteds prepare the hexified value of each character
+				sb.append(String.format("%02X ", entry.getKey()));
+			}
+	    	System.out.println();
+	    	System.out.println("Hexified: ");
+	    	System.out.println(sb.toString());
 		}catch (Exception e){
 			System.out.println("exception caught");
 		}	
 	}
 	
-	private static String hexify(String input, String charsetName) throws UnsupportedEncodingException{
-		if (input == null){
+	private static byte hexify(final String input, final String charsetName) throws UnsupportedEncodingException{
+		if (input == null || input.length() == 0){
 			throw new IllegalArgumentException();
 		}
 		
-		if (input.length() == 0) return input;
-		
         if (!Charset.isSupported(charsetName)) throw new UnsupportedEncodingException();
         
-        Charset charset = Charset.forName(charsetName);
+        final Charset charset = Charset.forName(charsetName);
         
-        byte[] bytes = input.getBytes(charset);
+        final byte[] bytes = input.getBytes(charset);
         
-        //System.out.println("printing...");
-        for (byte b : bytes){
-            System.out.println(b);
+        if (bytes.length != 1){
+        	System.out.println("\nUnexpected length of bytes: " + bytes.length + " where input = " + input + "; bytes:  ");
+	        for (byte b : bytes){
+    	        System.out.print(b + " ");
+    		}
+    		System.out.println();
+    		return -1;
     	}
     	
-    	//System.out.println("Done");
-    	return "";
-        
-    }
+    	System.out.print(bytes[0] + " ");
 
-	    
+    	return bytes[0];
+    }
 }
