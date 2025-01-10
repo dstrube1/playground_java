@@ -15,11 +15,21 @@ import java.util.Scanner;
 public class Maths {
 	
 	public static void main(String[] args) {
-/* * /
+/* */
+		//Most of these complete quickly
 		ByteMax(); //127
 		ShortMax(); //32767
 		CharMax(); 	//65535
-		//IntMax(); 	//2,147,483,647
+		
+		//Takes a few seconds
+		long start = System.currentTimeMillis();
+		/*System.out.println("Hit enter when ready to continue...");
+		Scanner sc = new Scanner(System.in);
+		sc.nextLine();*/
+		IntMax(); 	//2,147,483,647
+		long end = System.currentTimeMillis();
+		System.out.println("Finish time: " + getFinishTime(start, end));
+		
 		LongMax();	//9,223,372,036,854,775,807
 		FloatMax(); //3.4028235E38
 		DoubleMax(); //1.7976931348623157E308
@@ -29,12 +39,7 @@ public class Maths {
 		roundTest();
 /* */
 		
-		long start = System.currentTimeMillis();
-		System.out.println("Hit enter when ready to continue...");
-		Scanner sc = new Scanner(System.in);
-		sc.nextLine();
-		long end = System.currentTimeMillis();
-		System.out.println("Finish time: " + getFinishTime(start, end));
+		
 	}
 	
 	private static void roundTest(){
@@ -279,7 +284,7 @@ public class Maths {
 	    while (dTemp != Double.POSITIVE_INFINITY){
 	        myDouble = dTemp;
 	        dTemp *= 10;
-	        System.out.println("double max guess: " + dTemp);
+	        //System.out.println("double max guess: " + dTemp);
 	        count++;
 	    }
 	    return myDouble; //
