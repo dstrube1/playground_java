@@ -29,7 +29,7 @@ public class Tests {
 //		System.out.println("greatest common denominator of "+m+","+n+": " + gcd(m,n));
 //		System.out.println("least common multiple of "+m+","+n+": " + lcm(m,n));
 
-		//selfListAdd();
+		selfListAdd();
 		
 //		queueTest();
 
@@ -37,9 +37,7 @@ public class Tests {
 		
 		//ioTest();
 		
-		ArrayTest();
-		
-		
+		//ArrayTest();
 	}
 	
 	private static void xTest(){
@@ -47,7 +45,7 @@ public class Tests {
 	}
 	
 	private static void ioTest(){
-		System.out.println("Enter a number > 0 and <= 100:");
+		System.out.println("Using BufferedReader, enter a number > 0 and <= 100:");
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try{
 			String input = br.readLine();
@@ -66,7 +64,7 @@ public class Tests {
 	}
 	
 	private static void scannerTest(){
-		System.out.println("enter a number");
+		System.out.println("Using Scanner, enter a number: ");
 		Scanner scanner = new Scanner(System.in);
 		//	String temp = scanner.next();
 		//	System.out.println("temp: " + temp);
