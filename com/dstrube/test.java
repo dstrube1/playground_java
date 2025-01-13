@@ -48,6 +48,7 @@ public class test{
 			/*for(int i=1; i<=4; i++){
 				System.out.println("i: " + i);
 			}*/
+			A6Notes();
 			System.out.println("getMethodName(): " + getMethodName());
 
 		}catch(Exception exception){
@@ -62,10 +63,30 @@ public class test{
 	}
 	
 	private static void A6Notes(){
-			//System.out.println(providedSnafuMethod(true,true)); //false
-			//System.out.println(providedSnafuMethod(true,false)); // /0
-			//System.out.println(providedSnafuMethod(false,true));// /0
+		try{
+			System.out.print("Trying providedSnafuMethod(true,true): ");
+			System.out.println(providedSnafuMethod(true,true)); //false
+		}catch(Exception exception){
+			System.out.println("Caught exception: " + exception);
+		}
+		try{
+			System.out.print("Trying providedSnafuMethod(true,false): ");
+			System.out.println(providedSnafuMethod(true,false)); // /0
+		}catch(Exception exception){
+			System.out.println("Caught exception: " + exception);
+		}
+		try{
+			System.out.print("Trying providedSnafuMethod(false,true): ");
+			System.out.println(providedSnafuMethod(false,true));// /0
+		}catch(Exception exception){
+			System.out.println("Caught exception: " + exception);
+		}
+		try{
+			System.out.print("Trying providedSnafuMethod(false,false): ");
 			System.out.println(providedSnafuMethod(false,false)); //true
+		}catch(Exception exception){
+			System.out.println("Caught exception: " + exception);
+		}
 			
 			/*
 			int k = 1/0;
