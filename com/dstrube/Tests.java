@@ -31,9 +31,11 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Stream;
 import java.util.Random;
@@ -41,25 +43,26 @@ import java.util.Stack;
 import java.util.Queue;
 import java.util.UUID;
 
-import org.json.JSONArray;
+/*import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONObject;*/
 
 public class Tests{
 	
 	public static void main(String[] args){
-		try{
+		isAlmostPalindromeTest();
+		
+		/*try{
 			//String out = 
 			//System.out.println(": '" + out + "'");
 			/*for(int i=1; i<=4; i++){
 				System.out.println("i: " + i);
-			}*/
-			A6Notes();
-			System.out.println("getMethodName(): " + getMethodName());
+			}* /
 
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
-		}
+		}*/
+		
 		System.out.println("Done");
 	}
 	
@@ -68,11 +71,13 @@ public class Tests{
 	}
 	
 	private static String getMethodName(){
+		//System.out.println("getMethodName(): " + getMethodName());
 		String name = new Object(){}.getClass().getEnclosingMethod().getName();
 		return name;
 	}
 	
 	private static void A6Notes(){
+		//A6Notes();
 		try{
 			System.out.print("Trying providedSnafuMethod(true,true): ");
 			System.out.println(providedSnafuMethod(true,true)); //false
@@ -315,7 +320,7 @@ public class Tests{
 		return new SimpleDateFormat(defaultDateFormat).format(date);
 	}
 	
-	/*JSON stuff*/
+	/*JSON stuff* /
 	private static String JsonTest(String in)
 			throws JSONException {
 			//String out = JsonTest(null);
@@ -366,7 +371,7 @@ public class Tests{
 		return text;
 	}
 	
-	/*END JSON stuff*/
+	/ *END JSON stuff*/
 	
 	private static String retrieveReadableNameFromEntity(String entityName) {
 			//String out = retrieveReadableNameFromEntity("");
@@ -817,8 +822,62 @@ public class Tests{
 		return sb.toString();
 	}
 	
-	private static boolean isAlmostPalindrome(String s){
-		//TODO
-		return true;
+	private static void isAlmostPalindromeTest(){
+		boolean is;
+		String[] strings = {
+			//valids:
+			"", "x", "ab", "abcba", "abccba", "abcbda", "adbcba", "abccbca", 
+			//invalids:
+			"123", null, "abccbdda", "accbcba"};
+		for (String input : strings){
+			is = isAlmostPalindrome(input);
+			if (input != null && input.length() == 0){
+				System.out.println("'' is or almost is a palindrome: " + is);
+			}else{
+				System.out.println(input + " is or almost is a palindrome: " + is);
+			}
+		}	
 	}
+	
+	private static boolean isAlmostPalindrome(String s){
+		//Given a string s, determine if it can be a palindrome by dropping at most one char
+		//valid examples: 
+		// ""
+		// x
+		// ab
+		// abcba
+		// abccba
+		// abcbda
+		// adbcba
+		// abccbda
+		//invalid example:
+		// abccbdda
+		// 123
+		if (s == null) return false;
+		if (s.length() <= 2) return true;
+    	int left = 0, right = s.length() - 1;
+        
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) {
+                // Check by skipping either left or right character
+                return isAlmostPalindromeHelper(s, left + 1, right) 
+                	|| isAlmostPalindromeHelper(s, left, right - 1);
+            }
+            left++;
+            right--;
+        }
+        
+        return true;
+    }
+
+	private static boolean isAlmostPalindromeHelper(String s, int left, int right) {
+        while (left < right) {
+            if (s.charAt(left) != s.charAt(right)) {
+                return false;
+            }
+            left++;
+            right--;
+        }
+        return true;
+    }
 }
