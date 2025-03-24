@@ -832,10 +832,11 @@ public class Tests{
 		for (String input : strings){
 			is = isAlmostPalindrome(input);
 			if (input != null && input.length() == 0){
-				System.out.println("'' is or almost is a palindrome: " + is);
+				System.out.print("''");
 			}else{
-				System.out.println(input + " is or almost is a palindrome: " + is);
+				System.out.print(input);
 			}
+			System.out.println(" is or almost is a palindrome: " + is);
 		}	
 	}
 	
