@@ -26,6 +26,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -50,7 +51,6 @@ import org.json.JSONObject;*/
 public class Tests{
 	
 	public static void main(String[] args){
-		isAlmostPalindromeTest();
 		
 		/*try{
 			//String out = 
@@ -62,6 +62,27 @@ public class Tests{
 		}catch(Exception exception){
 			System.out.println("Caught exception: " + exception);
 		}*/
+		
+		final int size = 1_000_000_000;
+		System.out.println("getRandomIntArray...");
+		int[] arr0 = getRandomIntArray(size);
+		System.out.println("Sorting...");
+		Arrays.sort(arr0);
+		Random random = new Random();
+		int target = random.nextInt(size);;
+		int[] result  = new int[2];
+		System.out.println("Searching with twoSum_twoPointers...");
+		result = twoSum_twoPointers(arr0, target);
+		System.out.println("Result of twoSum_twoPointers: [" + result[0] + "," + result[1] + "]");
+		if(result[0] != -1){
+			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
+		}		
+		System.out.println("Searching with twoSum_bruteForce...");
+		result = twoSum_bruteForce(arr0, target);
+		System.out.println("Result of twoSum_bruteForce: [" + result[0] + "," + result[1] + "]");
+		if(result[0] != -1){
+			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
+		}		
 		
 		System.out.println("Done");
 	}
@@ -197,6 +218,18 @@ public class Tests{
 			arr[i] = i;
 			System.out.println("arr["+i+"] = " + arr[i]);
 		}
+	}
+	
+	private static int[] getRandomIntArray(final int size){
+		Random random = new Random();
+			
+		int[] arr = new int[size];
+		for (int i = 0; i < size; i++){
+			//TODO: make sure all elements are unique, like with a HashSet
+			int r = random.nextInt(size);
+			arr[i] = i;
+		}
+		return arr;
 	}
 	
 	private static void duplicateSpaceRemovalRegex(final int size){
@@ -880,5 +913,39 @@ public class Tests{
             right--;
         }
         return true;
+    }
+    
+    private static int[] twoSum_bruteForce(int[] arr, int target){
+    	//from https://newsletter.francofernando.com/p/mastering-the-two-pointers-technique
+    	//Given a sorted array of size n and a target value, find two numbers that add up to the target
+    	//Return the indices of the combination
+    	//If the combination doesn't exist, return [-1, -1]
+    	
+    	//Brute force: O(n^2) :
+    	for (int i = 0; i < arr.length; i++){
+    		for (int j = 1; j < arr.length; j++){
+    			if (i == j) {
+    				//skip combinations where the indices are equal
+    				continue;
+    			}
+    			if (arr[i] + arr[j] == target){
+    				return new int[]{i,j};
+    			}
+    		}
+    	}
+    	return new int[]{-1,-1};
+    }
+    
+    private static int[] twoSum_twoPointers(int[] arr, int target){
+    	//Using two pointers: O(n) :
+    	int left = 0; 
+    	int right = arr.length-1;
+    	while (left < right){
+    		int sum = arr[left] + arr[right];
+    		if (sum == target) return new int[]{left,right};
+    		else if (sum < target) left++;
+    		else right--;
+    	}
+    	return new int[]{-1,-1};
     }
 }
