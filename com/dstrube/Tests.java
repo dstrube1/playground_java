@@ -63,27 +63,7 @@ public class Tests{
 			System.out.println("Caught exception: " + exception);
 		}*/
 		
-		final int size = 1_000_000_000;
-		System.out.println("getRandomIntArray...");
-		int[] arr0 = getRandomIntArray(size);
-		System.out.println("Sorting...");
-		Arrays.sort(arr0);
-		Random random = new Random();
-		int target = random.nextInt(size);;
-		int[] result  = new int[2];
-		System.out.println("Searching with twoSum_twoPointers...");
-		result = twoSum_twoPointers(arr0, target);
-		System.out.println("Result of twoSum_twoPointers: [" + result[0] + "," + result[1] + "]");
-		if(result[0] != -1){
-			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
-		}		
-		System.out.println("Searching with twoSum_bruteForce...");
-		result = twoSum_bruteForce(arr0, target);
-		System.out.println("Result of twoSum_bruteForce: [" + result[0] + "," + result[1] + "]");
-		if(result[0] != -1){
-			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
-		}		
-		
+		twoPointerStuff();
 		System.out.println("Done");
 	}
 	
@@ -218,18 +198,6 @@ public class Tests{
 			arr[i] = i;
 			System.out.println("arr["+i+"] = " + arr[i]);
 		}
-	}
-	
-	private static int[] getRandomIntArray(final int size){
-		Random random = new Random();
-			
-		int[] arr = new int[size];
-		for (int i = 0; i < size; i++){
-			//TODO: make sure all elements are unique, like with a HashSet
-			int r = random.nextInt(size);
-			arr[i] = i;
-		}
-		return arr;
 	}
 	
 	private static void duplicateSpaceRemovalRegex(final int size){
@@ -915,6 +883,49 @@ public class Tests{
         return true;
     }
     
+    private static void twoPointerStuff(){
+    	//from https://newsletter.francofernando.com/p/mastering-the-two-pointers-technique
+		final int size = 100_000_000;
+		System.out.println("getRandomIntArray...");
+		int[] arr0 = getRandomIntArray(size);
+		System.out.println("Sorting...");
+		Arrays.sort(arr0);
+		Random random = new Random();
+		int target = 1000;//random.nextInt(size);
+		int[] result  = new int[2];
+		System.out.println("Searching with twoSum_twoPointers...");
+		result = twoSum_twoPointers(arr0, target);
+		System.out.println("Result of twoSum_twoPointers: [" + result[0] + "," + result[1] + "]");
+		if(result[0] != -1){
+			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
+		}		
+		System.out.println("Searching with twoSum_bruteForce...");
+		result = twoSum_bruteForce(arr0, target);
+		System.out.println("Result of twoSum_bruteForce: [" + result[0] + "," + result[1] + "]");
+		if(result[0] != -1){
+			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
+		}		
+    }
+    
+  	private static int[] getRandomIntArray(final int size){
+		Random random = new Random();
+			
+		int[] arr = new int[size];
+		for (int i = 0; i < size; i++){
+			int r = random.nextInt(size);
+			if (i % 100_000 == 0)
+				System.out.print('.');
+			//this bit is unique to the two pointer stuff
+			while (r <= 100){
+				System.out.print('#');
+				r = random.nextInt(size);
+			}
+			arr[i] = r;
+		}
+		System.out.println();
+		return arr;
+	}
+
     private static int[] twoSum_bruteForce(int[] arr, int target){
     	//from https://newsletter.francofernando.com/p/mastering-the-two-pointers-technique
     	//Given a sorted array of size n and a target value, find two numbers that add up to the target
