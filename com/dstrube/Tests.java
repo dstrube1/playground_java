@@ -913,13 +913,14 @@ public class Tests{
 		int[] arr = new int[size];
 		for (int i = 0; i < size; i++){
 			int r = random.nextInt(size);
+			//these bits are unique to the two pointer stuff
 			if (i % 100_000 == 0)
 				System.out.print('.');
-			//this bit is unique to the two pointer stuff
 			while (r <= 100){
 				System.out.print('#');
 				r = random.nextInt(size);
 			}
+			//END these bits...
 			arr[i] = r;
 		}
 		System.out.println();
