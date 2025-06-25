@@ -33,11 +33,13 @@ import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.Set;
 import java.util.stream.Stream;
 import java.util.Random;
 import java.util.Stack;
@@ -957,6 +959,20 @@ public class Tests{
     		if (sum == target) return new int[]{left,right};
     		else if (sum < target) left++;
     		else right--;
+    	}
+    	return new int[]{-1,-1};
+    }
+    
+    private static int[] twoSum_Hash(int[] arr, int target){
+    	//Using HashMap
+    	Map<Integer> map = new HashMap<>();
+    	for (int i = 0; i < arr.length; i++){
+    		int num = arr[i];
+    		int complement = target - num;
+    		if (map.containsKey(complement)){
+    			return new int[]{i, map.get(complement)};
+    		}
+    		map.put(complement, i);
     	}
     	return new int[]{-1,-1};
     }
