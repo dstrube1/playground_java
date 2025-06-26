@@ -889,20 +889,69 @@ public class Tests{
     	//from https://newsletter.francofernando.com/p/mastering-the-two-pointers-technique
 		final int size = 100_000_000;
 		System.out.println("getRandomIntArray...");
+
+		ZonedDateTime start = null;
+		ZonedDateTime end = null;
+		String timeout = null;
+		
+		start = ZonedDateTime.now();
 		int[] arr0 = getRandomIntArray(size);
+		end = ZonedDateTime.now();
+		
+		timeout = "" + calculateDuration(start, end);
+		System.out.println("Done in " + timeout + " second(s)");
+		
 		System.out.println("Sorting...");
+
+		start = ZonedDateTime.now();
 		Arrays.sort(arr0);
+		end = ZonedDateTime.now();
+
+		timeout = "" + calculateDuration(start, end);
+		System.out.println("Done in " + timeout + " second(s)");
+		
 		Random random = new Random();
 		int target = 1000;//random.nextInt(size);
 		int[] result  = new int[2];
+
 		System.out.println("Searching with twoSum_twoPointers...");
+
+		start = ZonedDateTime.now();
 		result = twoSum_twoPointers(arr0, target);
+		end = ZonedDateTime.now();
+		
+		//TODO: Need something more accurate for the rest of these
+		timeout = "" + calculateDuration(start, end);
+		System.out.println("Done in " + timeout + " second(s)");
+		
 		System.out.println("Result of twoSum_twoPointers: [" + result[0] + "," + result[1] + "]");
 		if(result[0] != -1){
 			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
-		}		
+		}
+
+		System.out.println("Searching with twoSum_Hash...");
+		
+		start = ZonedDateTime.now();
+		result = twoSum_Hash(arr0, target);
+		end = ZonedDateTime.now();
+
+		timeout = "" + calculateDuration(start, end);
+		System.out.println("Done in " + timeout + " second(s)");
+		
+		System.out.println("Result of twoSum_Hash: [" + result[0] + "," + result[1] + "]");
+		if(result[0] != -1){
+			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
+		}
+
 		System.out.println("Searching with twoSum_bruteForce...");
+		
+		start = ZonedDateTime.now();
 		result = twoSum_bruteForce(arr0, target);
+		end = ZonedDateTime.now();
+
+		timeout = "" + calculateDuration(start, end);
+		System.out.println("Done in " + timeout + " second(s)");
+		
 		System.out.println("Result of twoSum_bruteForce: [" + result[0] + "," + result[1] + "]");
 		if(result[0] != -1){
 			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
@@ -965,7 +1014,7 @@ public class Tests{
     
     private static int[] twoSum_Hash(int[] arr, int target){
     	//Using HashMap
-    	Map<Integer> map = new HashMap<>();
+    	Map<Integer, Integer> map = new HashMap<>();
     	for (int i = 0; i < arr.length; i++){
     		int num = arr[i];
     		int complement = target - num;
