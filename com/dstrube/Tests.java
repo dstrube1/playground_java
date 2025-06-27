@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.InputMismatchException;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -44,6 +45,7 @@ import java.util.stream.Stream;
 import java.util.Random;
 import java.util.Stack;
 import java.util.Queue;
+import java.util.TreeMap;
 import java.util.UUID;
 
 /*import org.json.JSONArray;
@@ -66,6 +68,7 @@ public class Tests{
 		}*/
 		
 		twoPointerStuff();
+		//findLoops();
 		System.out.println("Done");
 	}
 	
@@ -890,38 +893,51 @@ public class Tests{
 		final int size = 100_000_000;
 		System.out.println("getRandomIntArray...");
 
-		ZonedDateTime start = null;
-		ZonedDateTime end = null;
-		String timeout = null;
+		long start = 0;
+		long end = 0;
+		double timeout = 0;
 		
-		start = ZonedDateTime.now();
+		start = System.currentTimeMillis();
 		int[] arr0 = getRandomIntArray(size);
-		end = ZonedDateTime.now();
+		end = System.currentTimeMillis();
 		
-		timeout = "" + calculateDuration(start, end);
+		timeout = (end - start) / 1000.0;
 		System.out.println("Done in " + timeout + " second(s)");
 		
 		System.out.println("Sorting...");
 
-		start = ZonedDateTime.now();
+		start = System.currentTimeMillis();
 		Arrays.sort(arr0);
-		end = ZonedDateTime.now();
+		end = System.currentTimeMillis();
 
-		timeout = "" + calculateDuration(start, end);
+		timeout = (end - start) / 1000.0;
 		System.out.println("Done in " + timeout + " second(s)");
 		
 		Random random = new Random();
 		int target = 1000;//random.nextInt(size);
 		int[] result  = new int[2];
 
+		System.out.println("Searching with twoSum_bruteForce...");
+		
+		start = System.currentTimeMillis();
+		result = twoSum_bruteForce(arr0, target);
+		end = System.currentTimeMillis();
+
+		timeout = (end - start) / 1000.0;
+		System.out.println("Done in " + timeout + " second(s)");
+		
+		System.out.println("Result of twoSum_bruteForce: [" + result[0] + "," + result[1] + "]");
+		if(result[0] != -1){
+			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
+		}
+
 		System.out.println("Searching with twoSum_twoPointers...");
 
-		start = ZonedDateTime.now();
+		start = System.currentTimeMillis();
 		result = twoSum_twoPointers(arr0, target);
-		end = ZonedDateTime.now();
+		end = System.currentTimeMillis();
 		
-		//TODO: Need something more accurate for the rest of these
-		timeout = "" + calculateDuration(start, end);
+		timeout = (end - start) / 1000.0;
 		System.out.println("Done in " + timeout + " second(s)");
 		
 		System.out.println("Result of twoSum_twoPointers: [" + result[0] + "," + result[1] + "]");
@@ -931,31 +947,17 @@ public class Tests{
 
 		System.out.println("Searching with twoSum_Hash...");
 		
-		start = ZonedDateTime.now();
+		start = System.currentTimeMillis();
 		result = twoSum_Hash(arr0, target);
-		end = ZonedDateTime.now();
+		end = System.currentTimeMillis();
 
-		timeout = "" + calculateDuration(start, end);
+		timeout = (end - start) / 1000.0;
 		System.out.println("Done in " + timeout + " second(s)");
 		
 		System.out.println("Result of twoSum_Hash: [" + result[0] + "," + result[1] + "]");
 		if(result[0] != -1){
 			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
 		}
-
-		System.out.println("Searching with twoSum_bruteForce...");
-		
-		start = ZonedDateTime.now();
-		result = twoSum_bruteForce(arr0, target);
-		end = ZonedDateTime.now();
-
-		timeout = "" + calculateDuration(start, end);
-		System.out.println("Done in " + timeout + " second(s)");
-		
-		System.out.println("Result of twoSum_bruteForce: [" + result[0] + "," + result[1] + "]");
-		if(result[0] != -1){
-			System.out.println("arr0[result[0]], result[1]:  [" + arr0[result[0]] + "," + arr0[result[1]] + "]");
-		}		
     }
     
   	private static int[] getRandomIntArray(final int size){
@@ -987,6 +989,14 @@ public class Tests{
     	//Brute force: O(n^2) :
     	for (int i = 0; i < arr.length; i++){
     		for (int j = 1; j < arr.length; j++){
+	    		try{
+	    			//Weird that brute force completes so quickly without this delay
+	    			//If input isn't sorted, then no thread sleep is needed- it is very slow
+    				Thread.sleep(1);
+    			}
+    			catch (InterruptedException ie){
+    				System.out.println("Caught InterruptedException in " + getMethodName());
+	    		}
     			if (i == j) {
     				//skip combinations where the indices are equal
     				continue;
@@ -1022,7 +1032,128 @@ public class Tests{
     			return new int[]{i, map.get(complement)};
     		}
     		map.put(complement, i);
+    		try{
+    			Thread.sleep(10);
+    		}
+    		catch (InterruptedException ie){
+    			System.out.println("Caught InterruptedException in " + getMethodName());
+    		}
     	}
     	return new int[]{-1,-1};
     }
+    
+    private static void findLoops(){
+    	//For each word w in a list, find a word x that starts with the second letter in w
+    	//Repeat this until a loop is detected (e.g., alpha, lima, india, november, oscar, sierra, STOP)
+    	//Then print out the loop and size of loop for each word
+    	Map<String, String> secondChars = new HashMap<>();
+    	//TreeMap is sorted by key
+    	Map<String, Set> loops = new TreeMap<>();
+    	List<String> words = new ArrayList<>();
+    	words.add("alpha");
+    	words.add("bravo");
+    	words.add("charlie");
+    	words.add("delta");
+    	words.add("echo");
+    	words.add("foxtrot");
+    	words.add("golf");
+    	words.add("hotel");
+    	words.add("india");
+    	words.add("juliet");
+    	words.add("kilo");
+    	words.add("lima");
+    	words.add("mike");
+    	words.add("november");
+    	words.add("oscar");
+    	words.add("papa");
+    	words.add("queen");
+    	words.add("romeo");
+    	words.add("sierra");
+    	words.add("tango");
+    	words.add("uniform");
+    	words.add("victor");
+    	words.add("whiskey");
+    	words.add("xray");
+    	words.add("yankee");
+    	words.add("zulu");
+    	
+    	int count = 0;
+    	
+    	//Assign values to secondChars & loops
+    	for (String word : words) {
+    		String secondWord = null;
+    		String startsWith = "" + word.charAt(1);
+    		for (String w2 : words) {
+    			if (w2.startsWith(startsWith)) {
+    				secondWord = w2;
+    				break;
+    			}
+    		}
+    		if (secondWord == null) {
+    			System.out.println("secondWord is null for " + word);
+    			return;
+    		} else if (count < 3) {
+    			//System.out.println(word + " => " + secondWord);
+    			count++;
+    		}
+    		secondChars.put(word, secondWord);
+    		//Using LinkedHashSet because it maintains the insertion order
+    		loops.put(word, new LinkedHashSet<String>());
+    	}
+    	
+    	//Compute word sets for each word
+    	for (String secondCharsKey : secondChars.keySet()) {
+    		//eg secondCharsKey = alpha
+    		String secondWord = secondChars.get(secondCharsKey);
+    		//eg secondWord = lima
+    		Set<String> set = loops.get(secondCharsKey);
+    		while (!secondWord.equals(secondCharsKey) && !set.contains(secondWord)){
+    			set.add(secondWord);
+    			secondWord = secondChars.get(secondWord);
+    		}
+    	}
+    	
+    	//Print it all out
+    	String smallestSet = "";
+    	String largestSet = "";
+    	int smallestSetCount = 30;
+    	int largestSetCount = 0;
+    	for (String loopsKey : loops.keySet()) {
+    		Set<String> set = loops.get(loopsKey);
+    		if (set.size() < smallestSetCount){
+    			smallestSetCount = set.size() + 1; //adding 1 to include the key
+    			smallestSet = loopsKey;
+    		}
+    		if (set.size() > largestSetCount){
+    			largestSetCount = set.size() + 1;
+    			largestSet = loopsKey;
+    		}
+    		System.out.print(loopsKey);
+    		for(String loopWord : set) { 
+    			System.out.print(" => " + loopWord);
+    		}
+    		System.out.println();
+    	}
+    	System.out.println("smallestSet: " + smallestSet + "; count: " + smallestSetCount);
+    	System.out.println("largestSet: " + largestSet + "; count: " + largestSetCount);
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
