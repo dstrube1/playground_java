@@ -67,8 +67,9 @@ public class Tests{
 			System.out.println("Caught exception: " + exception);
 		}*/
 		
-		twoPointerStuff();
+		//twoPointerStuff();
 		//findLoops();
+		matrixMultiplicationStuff();
 		System.out.println("Done");
 	}
 	
@@ -914,7 +915,7 @@ public class Tests{
 		System.out.println("Done in " + timeout + " second(s)");
 		
 		Random random = new Random();
-		int target = 1000;//random.nextInt(size);
+		int target = 100_000_000;//random.nextInt(size);
 		int[] result  = new int[2];
 
 		System.out.println("Searching with twoSum_bruteForce...");
@@ -989,14 +990,16 @@ public class Tests{
     	//Brute force: O(n^2) :
     	for (int i = 0; i < arr.length; i++){
     		for (int j = 1; j < arr.length; j++){
-	    		try{
+	    		/*try{
 	    			//Weird that brute force completes so quickly without this delay
-	    			//If input isn't sorted, then no thread sleep is needed- it is very slow
+	    			//If input isn't sorted, then no thread sleep is needed- it is very slow...
+	    			//Oh, that's why sorted is so fast- because the target was set to a low 1000. 
+	    			//If set to a bigger 1_000_000, then it's slower
     				Thread.sleep(1);
     			}
     			catch (InterruptedException ie){
     				System.out.println("Caught InterruptedException in " + getMethodName());
-	    		}
+	    		}*/
     			if (i == j) {
     				//skip combinations where the indices are equal
     				continue;
@@ -1034,6 +1037,7 @@ public class Tests{
     		map.put(complement, i);
     		try{
     			Thread.sleep(10);
+    			//Without this, the timer says it completes in no time.
     		}
     		catch (InterruptedException ie){
     			System.out.println("Caught InterruptedException in " + getMethodName());
@@ -1136,6 +1140,102 @@ public class Tests{
     	}
     	System.out.println("smallestSet: " + smallestSet + "; count: " + smallestSetCount);
     	System.out.println("largestSet: " + largestSet + "; count: " + largestSetCount);
+    }
+    
+    private static void matrixMultiplicationStuff(){
+    	int[][] A0 = { {0, 0, 0, 0},
+    					{0, 0, 0, 0},
+	    				{0, 0, 0, 0},
+    					{0, 0, 0, 0} };
+    	int[][] B0 = { {0, 0, 0, 0}, 
+    					{0, 0, 0, 0}, 
+    					{0, 0, 0, 0}, 
+    					{0, 0, 0, 0}};
+    	int[][] C0 = matrixMultiplicationBruteForce(A0,B0);
+    	//printMatrix(C0);
+
+    	int[][] A1 = { {1, 1, 1, 1},
+    					{1, 1, 1, 1},
+	    				{1, 1, 1, 1},
+    					{1, 1, 1, 1} };
+    	int[][] B1 = { {1, 1, 1, 1}, 
+    					{1, 1, 1, 1}, 
+    					{1, 1, 1, 1}, 
+    					{1, 1, 1, 1}};
+    	int[][] C1 = matrixMultiplicationBruteForce(A1,B1);
+		//printMatrix(C1);
+
+    	int[][] A2 = { {2, 3, 4, 5},
+    					{3, 4, 5, 6},
+	    				{4, 5, 6, 7},
+    					{5, 6, 7, 8} };
+    	int[][] B2 = { {5, 6, 7, 8}, 
+    					{4, 5, 6, 7}, 
+    					{3, 4, 5, 6}, 
+    					{2, 3, 4, 5}};
+    	int[][] C2 = matrixMultiplicationBruteForce(A2,B2);
+		printMatrix(C2);
+
+    }
+    
+    private static void printMatrix(int[][] A){
+    	if (A == null) {
+    		System.out.println("Null matrix");
+    		return;
+    	}
+
+    	System.out.print("[");
+		for (int[] row : A) {
+	    	System.out.print("[");
+			for (int i : row) {
+				System.out.print(i + ",");
+			}
+			System.out.println("],");
+		}
+		System.out.println("]");
+    }
+    
+    private static void printMatrix0(int[][] A){
+    	if (A == null) {
+    		System.out.println("Null matrix");
+    		return;
+    	}
+
+    	System.out.print("[");
+		for (int i = 0; i < A.length; ++i) {
+			System.out.print("[");
+			for (int j = 0; j < A[i].length; ++j) {
+				System.out.print(A[i][j] + ",");
+			}
+			System.out.println("],");
+		}
+		System.out.println("]");
+    }
+    
+    private static int[][] matrixMultiplicationBruteForce(int[][] A, int[][] B){
+    	int[][] C = new int[A.length][B.length];
+    	for(int i=0; i < A.length; i++){
+    		for(int j=0; j < B[0].length; j++){
+    			for(int k=0; k < A[0].length; k++){
+    				C[i][j] += A[i][k] * B[k][j];
+    			}
+    		}
+    	}
+    	return C;
+    }
+
+	//TODO
+    private static int[][] matrixMultiplicationDivConq(int[][] A, int[][] B){
+    	//Divide and conquer
+    	int[][] C = new int[A.length][B.length];
+    	return C;
+    }
+
+	//TODO
+    private static int[][] matrixMultiplicationStrassen(int[][] A, int[][] B){
+    	//https://newsletter.francofernando.com/p/multiplying-matrix
+    	int[][] C = new int[A.length][B.length];
+    	return C;
     }
 }
 
