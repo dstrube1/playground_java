@@ -67,8 +67,6 @@ public class Tests{
 			System.out.println("Caught exception: " + exception);
 		}*/
 		
-		//twoPointerStuff();
-		//findLoops();
 		matrixMultiplicationStuff();
 		System.out.println("Done");
 	}
@@ -1152,7 +1150,13 @@ public class Tests{
     					{0, 0, 0, 0}, 
     					{0, 0, 0, 0}};
     	int[][] C0 = matrixMultiplicationBruteForce(A0,B0);
-    	//printMatrix(C0);
+    	printMatrix(C0);
+    	/*
+[[0,0,0,0,],
+[0,0,0,0,],
+[0,0,0,0,],
+[0,0,0,0,]]
+    	*/
 
     	int[][] A1 = { {1, 1, 1, 1},
     					{1, 1, 1, 1},
@@ -1164,6 +1168,12 @@ public class Tests{
     					{1, 1, 1, 1}};
     	int[][] C1 = matrixMultiplicationBruteForce(A1,B1);
 		//printMatrix(C1);
+		/*
+[[4,4,4,4,],
+[4,4,4,4,],
+[4,4,4,4,],
+[4,4,4,4,]]
+		*/
 
     	int[][] A2 = { {2, 3, 4, 5},
     					{3, 4, 5, 6},
@@ -1174,7 +1184,13 @@ public class Tests{
     					{3, 4, 5, 6}, 
     					{2, 3, 4, 5}};
     	int[][] C2 = matrixMultiplicationBruteForce(A2,B2);
-		printMatrix(C2);
+		//printMatrix(C2);
+		/*
+[[44,58,72,86,],
+[58,76,94,112,],
+[72,94,116,138,],
+[86,112,138,164,]]
+		*/
 
     }
     
