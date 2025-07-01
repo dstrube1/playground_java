@@ -1150,6 +1150,7 @@ public class Tests{
     					{0, 0, 0, 0}, 
     					{0, 0, 0, 0}};
     	int[][] C0 = matrixMultiplicationBruteForce(A0,B0);
+    	System.out.println("Brute force matrix multiplication of 2 empty 4 x 4s:");
     	printMatrix(C0);
     	/*
 [[0,0,0,0,],
@@ -1157,6 +1158,14 @@ public class Tests{
 [0,0,0,0,],
 [0,0,0,0,]]
     	*/
+
+    	//Test compare against matrixMultiplicationDivConq:
+    	int[] startA = {0,0};
+    	int[] startB = {0,0};
+    	int size = A0.length; //Assuming they're the same size and both size is a power of 2
+    	int[][] C0a = matrixMultiplicationDivConq(A0,B0, startA, startB, size);
+    	System.out.println("Testing brute force against divide-and-conquer:");
+    	printMatrix(C0a);
 
     	int[][] A1 = { {1, 1, 1, 1},
     					{1, 1, 1, 1},
@@ -1167,13 +1176,34 @@ public class Tests{
     					{1, 1, 1, 1}, 
     					{1, 1, 1, 1}};
     	int[][] C1 = matrixMultiplicationBruteForce(A1,B1);
-		//printMatrix(C1);
+    	System.out.println("Brute force matrix multiplication of two 4 x 4s of 1s:");
+		printMatrix(C1);
 		/*
 [[4,4,4,4,],
 [4,4,4,4,],
 [4,4,4,4,],
 [4,4,4,4,]]
 		*/
+
+		//Test brute force against 1 x 1 matrices:
+    	/*
+    	int[][] A1a = { {0} };
+    	int[][] B1a = { {0} };
+    	int[][] C1a = matrixMultiplicationBruteForce(A1a,B1a);
+    	System.out.println("Testing brute force against 1 x 1 matrices:");
+		printMatrix(C1a);
+		*/
+		
+		/*
+    	int[][] A1b = { {1} };
+    	int[][] B1b = { {1} };
+    	int[][] C1b = matrixMultiplicationBruteForce(A1b,B1b);
+		printMatrix(C1b);
+		*/
+		
+		int[][] C1c = matrixMultiplicationDivConq(A1,B1, startA, startB, size);
+    	System.out.println("Testing brute force against divide-and-conquer:");
+    	printMatrix(C1c);
 
     	int[][] A2 = { {2, 3, 4, 5},
     					{3, 4, 5, 6},
@@ -1184,14 +1214,17 @@ public class Tests{
     					{3, 4, 5, 6}, 
     					{2, 3, 4, 5}};
     	int[][] C2 = matrixMultiplicationBruteForce(A2,B2);
-		//printMatrix(C2);
+    	System.out.println("Brute force matrix multiplication of two more complicated 4 x 4s:");
+		printMatrix(C2);
 		/*
 [[44,58,72,86,],
 [58,76,94,112,],
 [72,94,116,138,],
 [86,112,138,164,]]
 		*/
-
+		int[][] C2a = matrixMultiplicationDivConq(A2,B2, startA, startB, size);
+    	System.out.println("Testing brute force against divide-and-conquer:");
+    	printMatrix(C2a);
     }
     
     private static void printMatrix(int[][] A){
@@ -1240,18 +1273,145 @@ public class Tests{
     	return C;
     }
 
-	//TODO
-    private static int[][] matrixMultiplicationDivConq(int[][] A, int[][] B){
+    private static int[][] matrixMultiplicationDivConq(int[][] A, int[][] B, int[] startA, int[] startB, int size){
     	//Divide and conquer
-    	int[][] C = new int[A.length][B.length];
+    	//Starting from here:
+    	//https://github.com/FrancoFernando/Data-Structures-and-Algorithms/blob/main/python/math/square_matrix_multiplication.py
+    	
+    	//Works if both A and B matrices have size n x n and n is a power of 2. However, if the above conditions are not satisfied, 
+    	// it’s always possible to pad the matrices with 0 for this method to work
+    	
+    	int rowA = startA[0];
+    	int colA = startA[1];
+    	int rowB = startB[0];
+    	int colB = startB[1];
+    	
+    	if (size == 1) {
+    		int[][] result = { { (A[rowA][colA] * B[rowB][colB]) } };
+    		return result;
+    	}
+    	
+    	//Divide matrices into quadrants
+    	int newSize = size / 2;
+    	
+    	//Calculate quadrants
+    	int[][] A11_B11 = matrixMultiplicationDivConq(A, B, startA, startB, newSize);
+    	int[][] A12_B21 = matrixMultiplicationDivConq(A, B, new int[] {rowA, colA + newSize}, new int[] {rowB + newSize, colB}, newSize);
+    	int[][] A11_B12 = matrixMultiplicationDivConq(A, B, startA, new int[] {rowB, colB + newSize}, newSize);
+    	int[][] A12_B22 = matrixMultiplicationDivConq(A, B, new int[] {rowA, colA + newSize}, new int[] {rowB + newSize, colB + newSize}, newSize);
+    	int[][] A21_B11 = matrixMultiplicationDivConq(A, B, new int[] {rowA + newSize, colA}, startB, newSize);
+    	int[][] A22_B21 = matrixMultiplicationDivConq(A, B, new int[] {rowA + newSize, colA + newSize}, new int[] {rowB + newSize, colB}, newSize);
+    	int[][] A21_B12 = matrixMultiplicationDivConq(A, B, new int[] {rowA + newSize, colA}, new int[] {rowB, colB + newSize}, newSize);
+    	int[][] A22_B22 = matrixMultiplicationDivConq(A, B, new int[] {rowA + newSize, colA + newSize}, new int[] {rowB + newSize, colB + newSize}, newSize);
+    	
+    	//Next, add matrices...
+    	int[][] C11 = addMatrices(A11_B11, A12_B21, newSize);
+    	int[][] C12 = addMatrices(A11_B12, A12_B22, newSize);
+    	int[][] C21 = addMatrices(A21_B11, A22_B21, newSize);
+    	int[][] C22 = addMatrices(A21_B12, A22_B22, newSize);
+
+    	return matrixConqer(C11, C12, C21, C22, newSize);
+    }
+    
+    private static int[][] addMatrices(int[][] A, int[][] B, int size){
+		//Add two matrices element-wise.
+		int[][] C = new int[size][size];
+    	for(int row = 0; row < size; row++){
+    		for(int col = 0; col < size; col++){
+    			C[row][col] = A[row][col] + B[row][col];
+    		}
+    	}
+    	return C;
+    }
+    
+    private static int[][] subtractMatrices(int[][] A, int[][] B, int size){
+		//Subtract two matrices element-wise.
+		int[][] C = new int[size][size];
+    	for(int row = 0; row < size; row++){
+    		for(int col = 0; col < size; col++){
+    			if(A[row][col] >= B[row][col]){
+	    			C[row][col] = A[row][col] - B[row][col];
+    			}else{
+    				C[row][col] = B[row][col] - A[row][col]; //TODO: This might not be right or necessary
+    			}
+    		}
+    	}
+    	return C;
+    }
+    
+    private static int[][] matrixConqer(int[][] C11, int[][] C12, int[][] C21, int[][] C22, int size){
+    	//Combine the four quadrants into a single matrix.
+    	int[][] C = new int[size * 2][size * 2];
+    	for(int row = 0; row < size; row++){
+    		for(int col = 0; col < size; col++){
+    			C[row][col] = C11[row][col];
+    			C[row][col + size] = C12[row][col];
+    			C[row + size][col] = C21[row][col];
+    			C[row + size][col + size] = C22[row][col];
+    		}
+    	}
     	return C;
     }
 
 	//TODO
     private static int[][] matrixMultiplicationStrassen(int[][] A, int[][] B){
     	//https://newsletter.francofernando.com/p/multiplying-matrix
-    	int[][] C = new int[A.length][B.length];
-    	return C;
+    	//https://en.wikipedia.org/wiki/Strassen_algorithm
+    	//https://www.geeksforgeeks.org/dsa/strassens-matrix-multiplication/#
+    	
+    	/*
+    	P1 = A11 * (B12 - B22)
+    	P2 = (A11 + A12) * B22
+    	P3 = (A21 + A22) * B11
+    	P4 = A22 * (B21 - B11)
+    	P5 = (A11 + A22) * (B11 - B22)
+    	P6 = (A12 + A22) * (B21 - B22)
+    	P7 = (A11 + A21) * (B11 - B12)
+    	
+    	C11 = P5 + P4 - P2 + P6
+    	C12 = P1 + P2
+    	C21 = P3 + P4
+    	C22 = P5 + P1 - P3 + P7
+    	*/
+    	
+    	int size = A.length;
+    	
+    	if (size == 1) {
+    		int[][] result = { { (A[rowA][colA] * B[rowB][colB]) } };
+    		return result;
+    	}
+
+    	//Divide matrices into quadrants
+    	int newSize = size / 2;
+
+    	int[][] A11 = new int[newSize][newSize];
+    	int[][] A12 = new int[newSize][newSize];
+    	int[][] A21 = new int[newSize][newSize];
+    	int[][] A22 = new int[newSize][newSize];
+    	int[][] B11 = new int[newSize][newSize];
+    	int[][] B12 = new int[newSize][newSize];
+    	int[][] B21 = new int[newSize][newSize];
+    	int[][] B22 = new int[newSize][newSize];
+    	for (int i = 0; i < newSize; i++){
+    		for (int j = 0; j < newSize; j++){
+    			A11[i][j] = A[i][j];
+    			A12[i][j] = A[i][j + newSize];
+    			A21[i][j] = A[i + newSize][j];
+    			A22[i][j] = A[i + newSize][j + newSize];
+    			B11[i][j] = B[i][j];
+    			B12[i][j] = B[i][j + newSize];
+    			B21[i][j] = B[i + newSize][j];
+    			B22[i][j] = B[i + newSize][j + newSize];
+    		}
+    	}
+
+    	int[][] B12MinusB22 = subtractMatrices(B12, B22, newSize);
+    	int[][] A11PlusA12 = addMatrices(A11, A12, newSize);
+    	int[][] A21PlusA22 = addMatrices(A21, A22, newSize);
+    	
+
+
+    	return matrixConqer(C11, C12, C21, C22, newSize);
     }
 }
 
