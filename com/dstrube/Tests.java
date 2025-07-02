@@ -1164,8 +1164,12 @@ public class Tests{
     	int[] startB = {0,0};
     	int size = A0.length; //Assuming they're the same size and both size is a power of 2
     	int[][] C0a = matrixMultiplicationDivConq(A0,B0, startA, startB, size);
-    	System.out.println("Testing brute force against divide-and-conquer:");
+    	System.out.println("Testing against divide-and-conquer:");
     	printMatrix(C0a);
+    	
+    	int[][] C0b = matrixMultiplicationStrassen(A0, B0);//, startA, startB, size);
+    	System.out.println("Testing against Strassen:");
+    	printMatrix(C0b);
 
     	int[][] A1 = { {1, 1, 1, 1},
     					{1, 1, 1, 1},
@@ -1202,8 +1206,12 @@ public class Tests{
 		*/
 		
 		int[][] C1c = matrixMultiplicationDivConq(A1,B1, startA, startB, size);
-    	System.out.println("Testing brute force against divide-and-conquer:");
+    	System.out.println("Testing against divide-and-conquer:");
     	printMatrix(C1c);
+
+		int[][] C1d = matrixMultiplicationStrassen(A1, B1);//, startA, startB, size);
+    	System.out.println("Testing against Strassen:");
+    	printMatrix(C1d);
 
     	int[][] A2 = { {2, 3, 4, 5},
     					{3, 4, 5, 6},
@@ -1213,7 +1221,7 @@ public class Tests{
     					{4, 5, 6, 7}, 
     					{3, 4, 5, 6}, 
     					{2, 3, 4, 5}};
-    	int[][] C2 = matrixMultiplicationBruteForce(A2,B2);
+    	int[][] C2 = matrixMultiplicationBruteForce(A2, B2);
     	System.out.println("Brute force matrix multiplication of two more complicated 4 x 4s:");
 		printMatrix(C2);
 		/*
@@ -1222,9 +1230,46 @@ public class Tests{
 [72,94,116,138,],
 [86,112,138,164,]]
 		*/
-		int[][] C2a = matrixMultiplicationDivConq(A2,B2, startA, startB, size);
-    	System.out.println("Testing brute force against divide-and-conquer:");
+		int[][] C2a = matrixMultiplicationDivConq(A2, B2, startA, startB, size);
+    	System.out.println("Testing against divide-and-conquer:");
     	printMatrix(C2a);
+
+		int[][] C2b = matrixMultiplicationStrassen(A2, B2);//, startA, startB, size);
+    	System.out.println("Testing against Strassen:");
+    	printMatrix(C2b);
+    	/*
+    	Not quite:
+[[96,94,88,86,],
+[122,120,114,112,],
+[148,146,140,138,],
+[174,172,166,164,]]    	
+
+		First debug with a smaller matrix, like 1 x 1, then 2 x 2, of ns > 1
+    	*/
+
+    	int[][] A2c = { {2 } };
+    	int[][] B2c = { {5 }};
+    	int[][] C2c = matrixMultiplicationBruteForce(A2c, B2c);
+    	System.out.println("Brute force matrix multiplication of two more complicated 1 x 1s:");
+		printMatrix(C2c);
+		
+		int[][] C2d = matrixMultiplicationStrassen(A2c, B2c);//, startA, startB, size);
+    	System.out.println("Testing against Strassen:");
+    	printMatrix(C2d);
+
+	   	
+	   	int[][] A2e = { {2, 3 },
+    					{5, 6 } };
+    	int[][] B2e = { {5, 6 }, 
+    					{2, 3 }};
+    	int[][] C2e = matrixMultiplicationBruteForce(A2e, B2e);
+    	System.out.println("Brute force matrix multiplication of two more complicated 2 x 2s:");
+		printMatrix(C2e);
+
+		int[][] C2f = matrixMultiplicationStrassen(A2e, B2e);//, startA, startB, size);
+    	System.out.println("Testing against Strassen:");
+    	printMatrix(C2f);
+
     }
     
     private static void printMatrix(int[][] A){
@@ -1353,7 +1398,6 @@ public class Tests{
     	return C;
     }
 
-	//TODO
     private static int[][] matrixMultiplicationStrassen(int[][] A, int[][] B){
     	//https://newsletter.francofernando.com/p/multiplying-matrix
     	//https://en.wikipedia.org/wiki/Strassen_algorithm
@@ -1374,10 +1418,10 @@ public class Tests{
     	C22 = P5 + P1 - P3 + P7
     	*/
     	
-    	int size = A.length;
+    	int size = A.length; //if this function doesn't terminate, it is probably because we're not passing in size
     	
     	if (size == 1) {
-    		int[][] result = { { (A[rowA][colA] * B[rowB][colB]) } };
+    		int[][] result = { { (A[0][0] * B[0][0]) } };
     		return result;
     	}
 
@@ -1406,9 +1450,34 @@ public class Tests{
     	}
 
     	int[][] B12MinusB22 = subtractMatrices(B12, B22, newSize);
+    	int[][] P1 = matrixMultiplicationStrassen(A11, B12MinusB22);
     	int[][] A11PlusA12 = addMatrices(A11, A12, newSize);
+    	int[][] P2 = matrixMultiplicationStrassen(A11PlusA12, B22);
     	int[][] A21PlusA22 = addMatrices(A21, A22, newSize);
+    	int[][] P3 = matrixMultiplicationStrassen(A21PlusA22, B11);
+    	int[][] B21MinusB11 = subtractMatrices(B21, B11, newSize);
+    	int[][] P4 = matrixMultiplicationStrassen(A22, B21MinusB11);
     	
+    	int[][] A11PlusA22 = addMatrices(A11, A22, newSize);
+    	int[][] B11MinusB22 = subtractMatrices(B11, B22, newSize);
+    	int[][] P5 = matrixMultiplicationStrassen(A11PlusA22, B11MinusB22);
+    	
+    	int[][] A12PlusA22 = addMatrices(A12, A22, newSize);
+    	int[][] B21MinusB22 = subtractMatrices(B21, B22, newSize);
+    	int[][] P6 = matrixMultiplicationStrassen(A12PlusA22, B21MinusB22);
+    	
+    	int[][] A11PlusA21 = addMatrices(A11, A21, newSize);
+    	int[][] B11MinusB12 = subtractMatrices(B11, B12, newSize);
+    	int[][] P7 = matrixMultiplicationStrassen(A11PlusA21, B11MinusB12);
+    	
+    	int[][] P5PlusP4 = addMatrices(P5, P4, newSize);
+    	int[][] P2PlusP6 = addMatrices(P2, P6, newSize);
+    	int[][] C11 = subtractMatrices(P5PlusP4, P2PlusP6, newSize);
+    	int[][] C12 = addMatrices(P1, P2, newSize);
+    	int[][] C21 = addMatrices(P3, P4, newSize);
+    	int[][] P5PlusP1 = addMatrices(P5, P1, newSize);
+    	int[][] P3PlusP7 = addMatrices(P3, P7, newSize);
+    	int[][] C22 = subtractMatrices(P5PlusP1, P3PlusP7, newSize);
 
 
     	return matrixConqer(C11, C12, C21, C22, newSize);
