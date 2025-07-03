@@ -1141,7 +1141,7 @@ public class Tests{
     }
     
     private static void matrixMultiplicationStuff(){
-    	int[][] A0 = { {0, 0, 0, 0},
+    	/*int[][] A0 = { {0, 0, 0, 0},
     					{0, 0, 0, 0},
 	    				{0, 0, 0, 0},
     					{0, 0, 0, 0} };
@@ -1157,7 +1157,7 @@ public class Tests{
 [0,0,0,0,],
 [0,0,0,0,],
 [0,0,0,0,]]
-    	*/
+    	* /
 
     	//Test compare against matrixMultiplicationDivConq:
     	int[] startA = {0,0};
@@ -1203,7 +1203,7 @@ public class Tests{
     	int[][] B1b = { {1} };
     	int[][] C1b = matrixMultiplicationBruteForce(A1b,B1b);
 		printMatrix(C1b);
-		*/
+		* /
 		
 		int[][] C1c = matrixMultiplicationDivConq(A1,B1, startA, startB, size);
     	System.out.println("Testing against divide-and-conquer:");
@@ -1229,7 +1229,7 @@ public class Tests{
 [58,76,94,112,],
 [72,94,116,138,],
 [86,112,138,164,]]
-		*/
+		* /
 		int[][] C2a = matrixMultiplicationDivConq(A2, B2, startA, startB, size);
     	System.out.println("Testing against divide-and-conquer:");
     	printMatrix(C2a);
@@ -1245,7 +1245,7 @@ public class Tests{
 [174,172,166,164,]]    	
 
 		First debug with a smaller matrix, like 1 x 1, then 2 x 2, of ns > 1
-    	*/
+    	* /
 
     	int[][] A2c = { {2 } };
     	int[][] B2c = { {5 }};
@@ -1256,7 +1256,7 @@ public class Tests{
 		int[][] C2d = matrixMultiplicationStrassen(A2c, B2c);//, startA, startB, size);
     	System.out.println("Testing against Strassen:");
     	printMatrix(C2d);
-
+*/
 	   	
 	   	int[][] A2e = { {2, 3 },
     					{5, 6 } };
