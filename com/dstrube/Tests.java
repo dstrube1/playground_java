@@ -67,7 +67,10 @@ public class Tests{
 			System.out.println("Caught exception: " + exception);
 		}*/
 		
-		matrixMultiplicationStuff();
+		//matrixMultiplicationStuff();
+		
+		
+		
 		System.out.println("Done");
 	}
 	
@@ -1262,12 +1265,21 @@ public class Tests{
     					{5, 6 } };
     	int[][] B2e = { {5, 6 }, 
     					{2, 3 }};
-    	int[][] C2e = matrixMultiplicationBruteForce(A2e, B2e);
     	System.out.println("Brute force matrix multiplication of two more complicated 2 x 2s:");
+    	System.out.println("Beginning matrix A:");
+		printMatrix(A2e);
+    	System.out.println("Beginning matrix B:");
+		printMatrix(B2e);
+    	int[][] C2e = matrixMultiplicationBruteForce(A2e, B2e);
+    	System.out.println("End of brute force matrix multiplication: ");
 		printMatrix(C2e);
 
-		int[][] C2f = matrixMultiplicationStrassen(A2e, B2e);//, startA, startB, size);
     	System.out.println("Testing against Strassen:");
+    	System.out.println("Beginning matrix A:");
+		printMatrix(A2e);
+    	System.out.println("Beginning matrix B:");
+		printMatrix(B2e);
+		int[][] C2f = matrixMultiplicationStrassen(A2e, B2e);//, startA, startB, size);
     	printMatrix(C2f);
 
     }
@@ -1311,7 +1323,10 @@ public class Tests{
     	for(int i=0; i < A.length; i++){
     		for(int j=0; j < B[0].length; j++){
     			for(int k=0; k < A[0].length; k++){
+    				System.out.println("C["+i+"]["+j+"]("+C[i][j]+")+=A["+i+"]["+k+"]("+A[i][k]+")*B["+k+"]["+j+"]("+B[k][j]+")");
     				C[i][j] += A[i][k] * B[k][j];
+    				System.out.println("Brute force progress: ");
+    				printMatrix(C);
     			}
     		}
     	}
@@ -1422,11 +1437,14 @@ public class Tests{
     	
     	if (size == 1) {
     		int[][] result = { { (A[0][0] * B[0][0]) } };
+	    	System.out.println("size = 1; result = ");
+	    	printMatrix(result);
     		return result;
     	}
 
     	//Divide matrices into quadrants
     	int newSize = size / 2;
+    	System.out.println("size: " + size + "; newSize: " + newSize);
 
     	int[][] A11 = new int[newSize][newSize];
     	int[][] A12 = new int[newSize][newSize];
