@@ -7,7 +7,6 @@ without json:
 javac -d bin com/dstrube/Tests.java
 java -cp bin com.dstrube.Tests
 
-
 with json:
 javac -cp bin:bin/json-20210307.jar -d bin com/dstrube/Tests.java
 java -cp bin:bin/json-20210307.jar com.dstrube.Tests
@@ -67,9 +66,7 @@ public class Tests{
 			System.out.println("Caught exception: " + exception);
 		}*/
 		
-		//matrixMultiplicationStuff();
-		
-		
+		matrixMultiplicationStuff();
 		
 		System.out.println("Done");
 	}
@@ -963,20 +960,20 @@ public class Tests{
     }
     
   	private static int[] getRandomIntArray(final int size){
-		Random random = new Random();
+		final Random random = new Random();
 			
-		int[] arr = new int[size];
+		final int[] arr = new int[size];
 		for (int i = 0; i < size; i++){
-			int r = random.nextInt(size);
-			//these bits are unique to the two pointer stuff
+			int randInt = random.nextInt(size);
+			//the following is specifically for twoPointerStuff()
 			if (i % 100_000 == 0)
 				System.out.print('.');
-			while (r <= 100){
+			while (randInt <= 100){
 				System.out.print('#');
-				r = random.nextInt(size);
+				randInt = random.nextInt(size);
 			}
-			//END these bits...
-			arr[i] = r;
+			//END the following...
+			arr[i] = randInt;
 		}
 		System.out.println();
 		return arr;
@@ -1053,7 +1050,24 @@ public class Tests{
     	//Then print out the loop and size of loop for each word
     	Map<String, String> secondChars = new HashMap<>();
     	//TreeMap is sorted by key
-    	Map<String, Set> loops = new TreeMap<>();
+    	Map<String, Set<String>> loops = new TreeMap<>();
+    	/*Note, if the above line doesn't have a type for the set, like this:
+    Map<String, Set> loops = new TreeMap<>();
+    	this compiling will give a warning like this:
+	Note: com/dstrube/Tests.java uses unchecked or unsafe operations.
+	Note: Recompile with -Xlint:unchecked for details.
+		And recompiling like this will show the warning detail:
+	javac -d bin -Xlint:unchecked com/dstrube/Tests.java
+		=>
+	com/dstrube/Tests.java:1115: warning: [unchecked] unchecked conversion
+	    		Set<String> set = loops.get(secondCharsKey);
+	    		                           ^
+	required: Set<String>
+	found:    Set
+		This can be suppressed by putting this at the top of the method:
+    @SuppressWarnings("unchecked")
+    	But better to declare the map correctly.
+    	*/
     	List<String> words = new ArrayList<>();
     	words.add("alpha");
     	words.add("bravo");
@@ -1111,6 +1125,8 @@ public class Tests{
     		//eg secondCharsKey = alpha
     		String secondWord = secondChars.get(secondCharsKey);
     		//eg secondWord = lima
+    		
+    		//warning: [unchecked] unchecked conversion
     		Set<String> set = loops.get(secondCharsKey);
     		while (!secondWord.equals(secondCharsKey) && !set.contains(secondWord)){
     			set.add(secondWord);
@@ -1124,6 +1140,7 @@ public class Tests{
     	int smallestSetCount = 30;
     	int largestSetCount = 0;
     	for (String loopsKey : loops.keySet()) {
+    		//warning: [unchecked] unchecked conversion
     		Set<String> set = loops.get(loopsKey);
     		if (set.size() < smallestSetCount){
     			smallestSetCount = set.size() + 1; //adding 1 to include the key
