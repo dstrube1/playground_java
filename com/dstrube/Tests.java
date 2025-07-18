@@ -643,13 +643,19 @@ public class Tests{
 
 //		long m = 64;
 //		long n = 2;
-//		System.out.println("greatest common denominator of "+m+","+n+": " + gcd(m,n));
-//		System.out.println("least common multiple of "+m+","+n+": " + lcm(m,n));
+//		System.out.println("greatest common denominator of " + m + " and " + n + ": " + gcd(m,n));
+//		System.out.println("least common multiple of "+m+" and "+n+": " + lcm(m,n));
 
         if (m < 0) m = -m;
         if (n < 0) n = -n;
-        if (0 == n) return m;
-        else return gcd(n, m % n);
+        if (0 == n) {
+        	//System.out.println("m = " + m + " and n = " + n + "...");
+			return m;
+        }
+        else {
+        	//System.out.println("gcd(n, m % n), where m = " + m + " and n = " + n + "...");
+        	return gcd(n, m % n);
+        }
     }
 	
     private static long lcm(long m, long n) {
