@@ -66,7 +66,7 @@ public class Tests{
 			System.out.println("Caught exception: " + exception);
 		}*/
 		
-		matrixMultiplicationStuff();
+		//matrixMultiplicationStuff();
 		
 		System.out.println("Done");
 	}
@@ -1523,6 +1523,45 @@ public class Tests{
 
     	return matrixConqer(C11, C12, C21, C22, newSize);
     }
+    
+    private static String windowsToUnix(String input) {
+    	/*
+    	Tests:
+    	String input = "";
+		String output = windowsToUnix(input);
+		System.out.println("input length: " + input.length() + "; output.length: " + output.length());
+		
+		input = "Line 1\r\n";
+		output = windowsToUnix(input);
+		System.out.println("input length: " + input.length() + "; output.length: " + output.length());
+		
+		input = "Line 1\r\nLine 2\r\n";
+		output = windowsToUnix(input);
+		System.out.println("input length: " + input.length() + "; output.length: " + output.length());
+		
+		*/
+		if (input == null || input.legnth() == 0) return input;
+		
+        char[] chars = input.toCharArray();
+        int writeIndex = 0;
+
+        for (int readIndex = 0; readIndex < chars.length; readIndex++) {
+            if (chars[readIndex] == '\r') {
+                // Check if next character is \n (i.e., a Windows line ending)
+                if (readIndex + 1 < chars.length && chars[readIndex + 1] == '\n') {
+                    chars[writeIndex++] = '\n'; // Replace \r\n with \n
+                    readIndex++; // Skip over the \n
+                } else {
+                    chars[writeIndex++] = chars[readIndex]; // Just a lone \r
+                }
+            } else {
+                chars[writeIndex++] = chars[readIndex]; // Normal char or \n
+            }
+        }
+
+        return new String(chars, 0, writeIndex);
+    }
+    
 }
 
 
