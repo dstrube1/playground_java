@@ -68,6 +68,8 @@ public class Tests{
 		
 		//matrixMultiplicationStuff();
 		
+
+		
 		System.out.println("Done");
 	}
 	
@@ -1540,7 +1542,7 @@ public class Tests{
 		System.out.println("input length: " + input.length() + "; output.length: " + output.length());
 		
 		*/
-		if (input == null || input.legnth() == 0) return input;
+		if (input == null || input.length() == 0) return input;
 		
         char[] chars = input.toCharArray();
         int writeIndex = 0;
@@ -1562,6 +1564,63 @@ public class Tests{
         return new String(chars, 0, writeIndex);
     }
     
+   	private static <T> boolean isContiguousSublist(List<T> A, List<T> B){
+    	/*
+    	Tests:
+    	1- A is null			= false
+    	2- B is null			= false
+    	3- B is bigger than A	= false
+    	4- B is empty			= true
+    	5- normal searches		= true / false
+
+		List<Integer> A = null;
+    	List<Integer> B = Arrays.asList(1,2,3,1,2,1,2,4,2,3,4,5,6);
+    	boolean result = isContiguousSublist(A, B);
+    	System.out.println("isContiguousSublist: A is null: " + result);
+
+    	A = Arrays.asList(1,2,3,1,2,1,2,4,2,3,4,5,6);
+    	B = null;
+    	result = isContiguousSublist(A, B);
+    	System.out.println("isContiguousSublist: B is null: " + result);
+    	
+    	A = Arrays.asList(1,2,3,1,2,1,2,4,2,3,4,5,6);
+    	B = Arrays.asList(1,2,3,1,2,1,2,4,2,3,4,5,6,7);;
+    	result = isContiguousSublist(A, B);
+    	System.out.println("isContiguousSublist: B is bigger than A: " + result);
+    	
+    	A = Arrays.asList(1,2,3,1,2,1,2,4,2,3,4,5,6);
+    	B = Arrays.asList();
+    	result = isContiguousSublist(A, B);
+    	System.out.println("isContiguousSublist: B is empty: " + result);
+    	
+    	A = Arrays.asList(1,2,3,1,2,1,2,4,2,3,4,5);
+    	B = Arrays.asList(2,3,4,5,6);
+    	result = isContiguousSublist(A, B);
+    	System.out.println("isContiguousSublist: Normal search 1: " + result);
+    	
+    	A = Arrays.asList(1,2,3,1,2,1,2,4,2,3,4,5,6);
+    	B = Arrays.asList(2,3,4,5,6);
+    	result = isContiguousSublist(A, B);
+    	System.out.println("isContiguousSublist: Normal search 2: " + result);
+
+    	*/
+    	
+    	if (A == null || B == null || B.size() > A.size()) return false;
+    	if (B.isEmpty()) return true;
+    	final int aSize = A.size();
+    	final int bSize = B.size();
+    	for (int i = 0; i <= aSize - bSize; i++){
+    		boolean match = true;
+    		for (int j = 0; j < bSize; j++){
+    			if (!A.get(i + j).equals(B.get(j))){
+    				match = false;
+    				break;
+    			}
+    		}
+    		if (match) return true;
+    	}
+    	return false;
+    }
 }
 
 
