@@ -71,10 +71,17 @@ public class Basics{
 		String numS = "123";
 		int num = 0;
 		try{
-			 num = Integer.parseInt(num);
+			 num = Integer.parseInt(numS);
 		}catch(NumberFormatException  nfe){}
+		
 		for(int i = 0; i < numS.length(); i++){
 			char c = numS.charAt(i);
+		}
+		
+		String input = "123;234;345";
+		String[] num_array = input.split(";");
+		for (String num_item : num_array){
+			System.out.println("num_item: " + num_item);
 		}
 
 	}
