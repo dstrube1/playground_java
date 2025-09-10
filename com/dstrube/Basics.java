@@ -83,6 +83,9 @@ public class Basics{
 		for (String num_item : num_array){
 			System.out.println("num_item: " + num_item);
 		}
+		
+		A a = new B();
+		a.method0("This a (A) is really a B");
 
 	}
 	
@@ -267,4 +270,16 @@ public class Basics{
 		return nextPos;
 	}
 	*/
+	
+	static interface A{
+		public String method0(String s1);
+	}
+	static class B implements A{
+		//no need to specify the default constructor if it doesn't do anything extra
+		//public B(){}
+		public String method0(String s1){
+			System.out.println("This prints and returns what's passed in: " + s1);
+			return s1;
+		}
+	}
 }
