@@ -16,9 +16,9 @@ public class LeftTruncatablePrimes{
 		//According to this:
 		// https://www.youtube.com/watch?v=azL5ehbw_24
 		//this is the largest left truncatable prime:
-		BigInteger num = new BigInteger("357686312646216567629137");
-		boolean is = num.isProbablePrime(1);
-		System.out.println("Is " + num + " probably prime? " + is);
+		BigInteger largestLeft = new BigInteger("357686312646216567629137");
+		boolean is = largestLeft.isProbablePrime(1);
+		System.out.println("Is " + largestLeft + " probably prime? " + is);
 		
 		//TODO: Prove it with brute force
 		
@@ -40,11 +40,11 @@ public class LeftTruncatablePrimes{
 		//TODO: Would it incorrectly tell us there is a larger LeftTruncatablePrimes than 357686312646216567629137?
 		
 		//At 5:24, the above video says this is the largest right truncatable prime:
-		BigInteger numLargestRight = new BigInteger("73939133");
+		BigInteger largestRight = new BigInteger("73939133");
 		//TODO: Prove it with brute force
 		
 		//Maybe todo:
-		BigInteger numLargestLeftRight = new BigInteger("739397");
+		BigInteger largestLeftRight = new BigInteger("739397");
 		
 		//Not todo: prove that any-deleteable primes are infinite :-p
 	}
