@@ -1,5 +1,8 @@
 package com.dstrube;
 
+import java.util.List;
+import java.util.ArrayList;
+
 /*
 From ~/java:
 
@@ -14,14 +17,54 @@ https://www.algolist.net/Algorithms/Number_theoretic/Sieve_of_Eratosthenes
 
 public class Sieve {
 	public static void main(String[] args) {
-		runEratosthenesSieve(Integer.MAX_VALUE / 2);
+		// Exception in thread "main" java.lang.NegativeArraySizeException: -2147483648
+		//final int upperBound = Integer.MAX_VALUE;
+		
+		// Exception in thread "main" java.lang.OutOfMemoryError: Requested array size exceeds VM limit
+		//final int upperBound = Integer.MAX_VALUE - 1;
+		
+		// This  (half of MAX_VALUE) works (dot count: 3512), but can we do better?
+		//final int upperBound = Integer.MAX_VALUE / 2;
+		
+		// 3 / 4 of MAX_VALUE - dot count: 4216
+		//int upperBound = Integer.MAX_VALUE / 4;
+		//upperBound *= 3;
+		
+		// 9 / 10 of MAX_VALUE - dot count: 4573
+		//int upperBound = Integer.MAX_VALUE / 10;
+		//upperBound *= 9;
+		
+		// 99 / 100 of MAX_VALUE - dot count: 4771
+		//int upperBound = Integer.MAX_VALUE / 100;
+		//upperBound *= 99;
+		
+		// 999 / 1,000 of MAX_VALUE - dot count: 4790
+		//int upperBound = Integer.MAX_VALUE / 1_000;
+		//upperBound *= 999;
+		
+		// 9,999 / 10,000 of MAX_VALUE - dot count: 4792
+		int upperBound = Integer.MAX_VALUE / 10_000;
+		upperBound *= 9_999;
+		
+		// 99,999 / 100,000 of MAX_VALUE - dot count: 4792 - no change; above approach seems optimal
+		//int upperBound = Integer.MAX_VALUE / 100_000;
+		//upperBound *= 99_999;
+		
+		List<Integer> primes = runEratosthenesSieve(upperBound);
+		
+		//TODO:
+		//1- return list of primes
+		//2- if file "primes.txt" not exists, create and write to it
+		
+		System.out.println("Done");
 	}
 	
-	public static void runEratosthenesSieve(int upperBound) {
+	public static List<Integer> runEratosthenesSieve(final int upperBound) {
 		int upperBoundSquareRoot = (int) Math.sqrt(upperBound);
 		boolean[] isComposite = new boolean[upperBound + 1];
 		int dotCount = 0;
 		int hashCount = 0;
+		List<Integer> primes = new ArrayList<>();
 		for (int m = 2; m <= upperBoundSquareRoot; m++) {
 			if (!isComposite[m]) {
 				//System.out.print(m + " ");
@@ -52,5 +95,6 @@ public class Sieve {
 			}
 		}
 		//System.out.println("hash count: " + hashCount);
+		return primes;
 	}
 }
