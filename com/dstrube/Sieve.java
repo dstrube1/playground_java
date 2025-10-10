@@ -1,5 +1,6 @@
 package com.dstrube;
 
+import java.io.File;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -52,19 +53,31 @@ public class Sieve {
 		
 		List<Integer> primes = runEratosthenesSieve(upperBound);
 		
-		//TODO:
-		//1- return list of primes
-		//2- if file "primes.txt" not exists, create and write to it
+		// look at list of primes
+		System.out.println("Size of primes list: " + primes.size());
+		
+		//TODO: if file "primes.txt" not exists, create and write to it
+		
+		final String fileName = "primes.txt";
+		File file = new File(fileName);
+		if (file.exists()){
+			System.out.println("File " + fileName + " found.");
+		}else{
+			//Create the file
+			System.out.println("File " + fileName + " not found...");
+			//...
+		}
+
 		
 		System.out.println("Done");
 	}
 	
 	public static List<Integer> runEratosthenesSieve(final int upperBound) {
-		int upperBoundSquareRoot = (int) Math.sqrt(upperBound);
-		boolean[] isComposite = new boolean[upperBound + 1];
+		final int upperBoundSquareRoot = (int) Math.sqrt(upperBound);
+		final boolean[] isComposite = new boolean[upperBound + 1];
 		int dotCount = 0;
 		int hashCount = 0;
-		List<Integer> primes = new ArrayList<>();
+		System.out.println("Finding primes");
 		for (int m = 2; m <= upperBoundSquareRoot; m++) {
 			if (!isComposite[m]) {
 				//System.out.print(m + " ");
@@ -75,7 +88,7 @@ public class Sieve {
 					isComposite[k] = true;
 			}
 		}
-		System.out.println("dot count: " + dotCount);
+		//System.out.println("dot count: " + dotCount);
 
 		//int debugPrintLimit = 0;
 
@@ -92,6 +105,13 @@ public class Sieve {
 					System.out.print("# ");
 					
 				}
+			}
+		}
+		System.out.println("Creating primes list...");
+		final List<Integer> primes = new ArrayList<>();
+		for (int m = 2; m <= upperBound; m++) { // "<=" shouldn't throw error because "new boolean[upperBound + 1];"
+			if (!isComposite[m]){
+				primes.add(m);
 			}
 		}
 		//System.out.println("hash count: " + hashCount);
