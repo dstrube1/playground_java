@@ -87,6 +87,10 @@ public class Basics{
 		A a = new B();
 		a.method0("This a (A) is really a B");
 
+		Ba ba = new Ba();
+		ba.method0("");
+		ba.method0();
+
 	}
 	
 	private static void manipList(List<Integer> list){
@@ -274,6 +278,7 @@ public class Basics{
 	static interface A{
 		public String method0(String s1);
 	}
+	
 	static class B implements A{
 		//no need to specify the default constructor if it doesn't do anything extra
 		//public B(){}
@@ -282,4 +287,20 @@ public class Basics{
 			return s1;
 		}
 	}
+	
+	static abstract class Aa implements A{ 
+		public abstract void method0(); 
+	}
+	
+	static class Ba extends Aa{
+		public String method0(String s1){
+			System.out.println("This is method0 from A");
+			return s1;
+		}
+		
+		public void method0(){
+			System.out.println("This is method0 from Aa");
+		}
+	}
+	
 }
