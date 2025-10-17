@@ -69,7 +69,7 @@ public class Sieve {
 		// look at list of primes
 		System.out.println("Size of primes list: " + primes.size()); //105,087,370
 		
-		//TODO: if file "primes.txt" not exists, create and write to it
+		//If file "primes.txt" not exists, create and write to it
 		
 		final String fileName = "primes.txt";
 		final File file = new File(fileName);
@@ -78,7 +78,11 @@ public class Sieve {
 		}else{
 			//Create the file
 			System.out.println("File " + fileName + " not found. Creating it...");
-			writeFile(primes, fileName);
+			if (writeFile(primes, fileName)){
+				System.out.println("Success");
+			}else{
+				System.out.println("Failure");
+			}
 		}
 
 		
@@ -132,17 +136,23 @@ public class Sieve {
 		return primes;
 	}
 	
-	private static void writeFile(final List<Integer> primes, final String fileName){
+	private static boolean writeFile(final List<Integer> primes, final String fileName){
 		//Files.write() requires an Iterable<? extends CharSequence> 
-		final List<String> records = new ArrayList<>();
-		for(int i : primes){
-			//System.out.println("DEBUG: Adding " + i);
-			//Hrm:
-			//Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
-			//Solution: increase heap size - see updated run command above
-			records.add("" + i);
+		final List<String> records;
+		try{
+			records = new ArrayList<>();
+			for(int i : primes){
+				//System.out.println("DEBUG: Adding " + i);
+				//Hrm:
+				//Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+				//Solution: increase heap size - see updated run command above
+				records.add("" + i);
+			}
+		//This OutOfMemoryError can be caught
+		} catch (OutOfMemoryError oome){
+			System.out.println("\nCaught exception: " + oome);
+			return false;
 		}
-		//TODO - see if this can be caught in a try/catch
 		
 		//Write data to file, assuming it doesn't exist already
 		try{
@@ -153,8 +163,10 @@ public class Sieve {
 			
 			Files.write(path, records, charset, options);
 		}
-		catch(IOException e){
-			System.out.println("\nCaught exception: " + e);		
+		catch(IOException ioe){
+			System.out.println("\nCaught exception: " + ioe);		
+			return false;
 		}
+		return true;
 	}
 }
