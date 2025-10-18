@@ -84,12 +84,12 @@ public class Basics{
 			System.out.println("num_item: " + num_item);
 		}
 		
-		A a = new B();
-		a.method0("This a (A) is really a B");
+		AInterface a = new B();
+		a.method0("This a (AInterface) is really a B");
 
 		Ba ba = new Ba();
-		ba.method0("");
-		ba.method0();
+		ba.method0(""); //method0 from AInterface
+		ba.method0(); //method0 from Aabstract
 
 	}
 	
@@ -275,11 +275,11 @@ public class Basics{
 	}
 	*/
 	
-	static interface A{
+	static interface AInterface{
 		public String method0(String s1);
 	}
 	
-	static class B implements A{
+	static class B implements AInterface{
 		//no need to specify the default constructor if it doesn't do anything extra
 		//public B(){}
 		public String method0(String s1){
@@ -288,18 +288,18 @@ public class Basics{
 		}
 	}
 	
-	static abstract class Aa implements A{ 
+	static abstract class Aabstract implements AInterface{ 
 		public abstract void method0(); 
 	}
 	
-	static class Ba extends Aa{
+	static class Ba extends Aabstract{
 		public String method0(String s1){
-			System.out.println("This is method0 from A");
+			System.out.println("This is method0 from AInterface");
 			return s1;
 		}
 		
 		public void method0(){
-			System.out.println("This is method0 from Aa");
+			System.out.println("This is method0 from Aabstract");
 		}
 	}
 	
