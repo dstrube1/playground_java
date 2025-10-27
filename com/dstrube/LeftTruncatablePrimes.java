@@ -26,20 +26,25 @@ public class LeftTruncatablePrimes{
 		//this is the largest left truncatable prime:
 		BigInteger largestLeft = new BigInteger("357686312646216567629137");
 		boolean is = largestLeft.isProbablePrime(1);
-		System.out.println("Is " + largestLeft + " probably prime? " + is);
+		System.out.println("Is " + largestLeft + " probably prime? " + is); //true
 		
-		//TODO: Prove it, not with isProbablePrime, but with the Sieve of Eratosthenes
-		// On second thought, can Sieve of Eratosthenes work here? It's dependent on an array of booleans, 
+		// Can I prove it, not with isProbablePrime, but with the Sieve of Eratosthenes?
+		// Can Sieve of Eratosthenes work here? It's dependent on an array of booleans, 
 		// which is limited by Integer.MAX_VALUE; it can output a large number of primes,
-		// but is its largest big enough for this? TBD by Sieve.java...
-		// In the mean time, prepare to read from file:
+		// but is its largest big enough for this? Largest from Sieve.java: 2147265203
+		// Clearly smaller. Okay, what is the largest left truncatable prime in Sieve's list?...
+		
+		// Read from file:
 		final String fileName = "primes.txt";
 		File file = new File(fileName);
+		List<Integer> primes = null;
 		if (file.exists()){
 			System.out.println("File " + fileName + " found. Getting the contents...");
 			Path path = Path.of(fileName);
 			try{
-				List<Integer> primes = readFile(path);
+				//This might have thrown an OutOfMemoryError (like it did in Sieve), but doesn't;
+				// probably because of how efficiently readFile adds to the primes List
+				primes = readFile(path);
 				System.out.println("Size of contents: " + primes.size());
 			} catch(IOException ioe){
 				System.out.println("Caught: " + ioe.getMessage());
@@ -51,6 +56,28 @@ public class LeftTruncatablePrimes{
 			//return;
 		}
 		
+		if (primes == null || primes.size() == 0){
+			System.out.println("Primes list not populated. Maybe try again or rethink this?");
+			return;
+		}
+		
+		// This takes a few minutes
+		// Result: isProbablePrime works for all these
+		/*
+		System.out.println("Verifying all items in the list pass a test by BigInteger's isProbablePrime...");
+		for(int i : primes){
+			BigInteger test = new BigInteger(""+i);
+			if (!test.isProbablePrime(1)){
+				System.out.println("BigInteger thinks this is not probably prime: " + i);
+				return;
+			}
+		}
+		*/
+		
+		int lastInList = primes.get(primes.size() - 1);
+		System.out.println("Last int in primes list: " + lastInList); // 2147265203
+		// TODO: Start looking for left truncatable primes in the primes list...
+		
 		//Why use any certainty other than 1?
 		//https://stackoverflow.com/questions/27430092/what-is-a-possible-use-case-of-bigintegers-isprobableprime
 		//https://en.wikipedia.org/wiki/Probable_prime
@@ -59,11 +86,11 @@ public class LeftTruncatablePrimes{
 		//https://stackoverflow.com/questions/21740745/clarification-of-the-certainty-factor-in-isprobableprime
 		BigInteger pseudo1 = new BigInteger("1195068768795265792518361315725116351898245581");
 		is = pseudo1.isProbablePrime(1);
-		System.out.println("Is " + pseudo1 + " probably prime? " + is); //false
+		//System.out.println("Is " + pseudo1 + " probably prime? " + is); //false
 		
 		BigInteger pseudo2 = new BigInteger("8038374574536394912570796143419421081388376882875581458374889175222974273765333652186502336163960045457915042023603208766569966760987284043965408232928738791850869166857328267761771029389697739470167082304286871099974399765441448453411558724506334092790222752962294149842306881685404326457534018329786111298960644845216191652872597534901");
 		is = pseudo2.isProbablePrime(1);
-		System.out.println("Is " + pseudo2 + " probably prime? " + is); //false
+		//System.out.println("Is " + pseudo2 + " probably prime? " + is); //false
 		
 		//All these tests are giving what seem to be right answers. At what point does isProbablePrime(1) start to fail?
 		//TODO: Would it incorrectly tell us there is a larger LeftTruncatablePrimes than 357686312646216567629137?
