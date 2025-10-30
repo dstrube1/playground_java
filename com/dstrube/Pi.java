@@ -14,6 +14,9 @@ https://docs.oracle.com/javase/8/docs/api/java/math/BigDecimal.html
 */
 
 import java.math.BigDecimal;
+import java.util.Map;
+import java.util.HashMap;
+
 
 public class Pi{
 	private static float piF = 4.0f;
@@ -89,7 +92,7 @@ public class Pi{
 		//Google says pi =~ 					  3.14159265359
 		System.out.println("Float pi: " + piF); //3.1415968
 		
-		//calcDoublePi_GL(); //This won't end anytime soon
+		calcDoublePi_GL(); //This won't end anytime soon
 		//System.out.println("Double pi: " + piD);
 		//System.out.println("Double.MAX_VALUE = " + Double.MAX_VALUE);//1.7976931348623157E308
 		
@@ -146,7 +149,35 @@ note: 1000000000000000000 is a few orders of magnitude bigger than 790800000000
 		minus = true;
 		count = 1;
 		final boolean debug = true;
-		while (count > 0){//piB4 != piD) {//
+		final Map<Long,Double> progressGL = new HashMap<>();
+		progressGL.put(Long.parseLong("1000000000"), (double)3.1415926525880504);
+		progressGL.put(Long.parseLong("2000000000"), (double)3.1415926530880767);
+		progressGL.put(Long.parseLong("3000000000"), (double)3.1415926532549254); 
+		//started failing 				^ here if putting the number not in a string, even if trying to cast it like "(long)"
+		progressGL.put(Long.parseLong("4000000000"), (double)3.1415926533379395);
+		progressGL.put(Long.parseLong("5000000000"), (double)3.141592653388201);
+		progressGL.put(Long.parseLong("6000000000"), (double)3.141592653421575);
+		progressGL.put(Long.parseLong("7000000000"), (double)3.1415926534453438);
+		progressGL.put(Long.parseLong("8000000000"), (double)3.1415926534632597);
+		progressGL.put(Long.parseLong("9000000000"), (double)3.1415926534771974);
+		progressGL.put(Long.parseLong("10000000000"), (double)3.141592653488346);
+		progressGL.put(Long.parseLong("11000000000"), (double)3.1415926534974092);
+		progressGL.put(Long.parseLong("12000000000"), (double)3.14159265350503);
+		progressGL.put(Long.parseLong("13000000000"), (double)3.1415926535114695);
+		progressGL.put(Long.parseLong("14000000000"), (double)3.1415926535169376);
+		progressGL.put(Long.parseLong("15000000000"), (double)3.1415926535216876);
+		progressGL.put(Long.parseLong("16000000000"), (double)3.141592653525827);
+		progressGL.put(Long.parseLong("17000000000"), (double)3.141592653529473);
+		progressGL.put(Long.parseLong("18000000000"), (double)3.1415926535327663);
+		progressGL.put(Long.parseLong("19000000000"), (double)3.141592653535702);
+		progressGL.put(Long.parseLong("20000000000"), (double)3.1415926535383965);
+		progressGL.put(Long.parseLong("21000000000"), (double)3.1415926535407954);
+		progressGL.put(Long.parseLong("22000000000"), (double)3.1415926535429324);
+		progressGL.put(Long.parseLong("23000000000"), (double)3.1415926535449397);
+		progressGL.put(Long.parseLong("24000000000"), (double)3.141592653546772);
+		
+		//while (piB4 != piD) {//this comparison is no longer as useful as checking for an overflow
+		while (count > 0){
 			piB4 = piD;
 			denominator += 2;
 			if (minus){
@@ -158,7 +189,7 @@ note: 1000000000000000000 is a few orders of magnitude bigger than 790800000000
 			}
 			count++;
 			if (debug && count % 1000000000 == 0){
-				System.out.println("count: "+count+"; Double pi progress: " + piD);
+				//System.out.println("count: "+count+"; Double pi progress: " + piD);
 				/*
 count: 1000000000; Double pi progress: 3.1415926525880504
 count: 2000000000; Double pi progress: 3.1415926530880767
@@ -185,9 +216,21 @@ count: 22000000000; Double pi progress: 3.1415926535429324
 count: 23000000000; Double pi progress: 3.1415926535449397
 count: 24000000000; Double pi progress: 3.141592653546772
 				*/
-				//TODO: First, let's verify that re-running this gives the same numbers,
-				//then check each to see how far off they each are, if they're getting closer or farther, or bouncing around
-				//this see if some other algorithms do better or worse
+				//TODO:
+				//1- verify that re-running this gives the same numbers (done)
+				//2- check each to see how far off they each are, if they're getting closer or farther, or bouncing around
+				//3- see if some other algorithms do better or worse
+				if (progressGL.containsKey(count)) {
+					if (progressGL.get(count) != piD){
+						System.out.println("Alert: " + progressGL.get(count) + " != " + piD);
+					}else{
+						System.out.println("At count " + count + ", progress = " + piD);
+					}
+				}else{
+					System.out.println("progressGL does not contain key " + count);
+					System.out.println("End of progressGL; exiting...");
+					break;
+				} 
 			}
 		}
 		System.out.println("Double pi stopped calculating after this many cycles: " + count);
