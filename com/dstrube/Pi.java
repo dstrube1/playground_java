@@ -25,6 +25,10 @@ public class Pi{
 	private static boolean minus;
 	private static long count;
 	
+	// All BigDecimal constructors have at least 1 param, so can't just start off like this:
+	//BigDecimal bd = new BigDecimal();
+	private static final BigDecimal bd = new BigDecimal("3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230");
+	
 	public static void main(String[] args){
 		System.out.println("Math.Pi: " + Math.PI);							// 3.141592653589793
 		//System.out.println("Float.SIZE = " + Float.SIZE);					// 32
@@ -76,6 +80,7 @@ public class Pi{
 		//1- Which (if either) extraDigits is accurate?
 		//According to this:
 		//https://www.piday.org/million/
+		//this is the first line in an sufficiently long and accurate approximation of pi:
 		//3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230
 		//first:  6535897930152714 - no
 		//3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230
@@ -85,9 +90,6 @@ public class Pi{
 		//Several algorithms to choose from here:
 		//https://en.wikipedia.org/wiki/Pi
 		
-		// All BigDecimal constructors have at least 1 param, so can't just start off like this:
-		//BigDecimal bd = new BigDecimal();
-
 		calcFloatPi();
 		//Google says pi =~ 					  3.14159265359
 		System.out.println("Float pi: " + piF); //3.1415968
@@ -101,7 +103,7 @@ public class Pi{
 		double bigPi = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230;
 		//System.out.println("Testing : bigPi: " + bigPi);
 		//What about ...
-		BigDecimal bd = new BigDecimal("3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230");
+		
 		System.out.println("bigPi stored as a BigDecimal: " + bd.toPlainString()); //nice, now we're cooking...
 
 		System.out.println("Done");
@@ -153,7 +155,8 @@ note: 1000000000000000000 is a few orders of magnitude bigger than 790800000000
 		progressGL.put(Long.parseLong("1000000000"), (double)3.1415926525880504);
 		progressGL.put(Long.parseLong("2000000000"), (double)3.1415926530880767);
 		progressGL.put(Long.parseLong("3000000000"), (double)3.1415926532549254); 
-		//started failing 				^ here if putting the number not in a string, even if trying to cast it like "(long)"
+		//if "put"ting the number literal (i.e. not in a string), even if trying to cast it like "(long)", 
+		//then putting values in the map started failing here at 3 billion, thinking it's too big to be an int -_-
 		progressGL.put(Long.parseLong("4000000000"), (double)3.1415926533379395);
 		progressGL.put(Long.parseLong("5000000000"), (double)3.141592653388201);
 		progressGL.put(Long.parseLong("6000000000"), (double)3.141592653421575);
@@ -175,6 +178,9 @@ note: 1000000000000000000 is a few orders of magnitude bigger than 790800000000
 		progressGL.put(Long.parseLong("22000000000"), (double)3.1415926535429324);
 		progressGL.put(Long.parseLong("23000000000"), (double)3.1415926535449397);
 		progressGL.put(Long.parseLong("24000000000"), (double)3.141592653546772);
+		
+		BigDecimal previousDrift = BigDecimal.ZERO;
+		BigDecimal currentDifference = BigDecimal.ZERO;
 		
 		//while (piB4 != piD) {//this comparison is no longer as useful as checking for an overflow
 		while (count > 0){
@@ -225,6 +231,37 @@ count: 24000000000; Double pi progress: 3.141592653546772
 						System.out.println("Alert: " + progressGL.get(count) + " != " + piD);
 					}else{
 						System.out.println("At count " + count + ", progress = " + piD);
+						final BigDecimal piBD = new BigDecimal(piD);
+						final int compareResult = bd.compareTo(piBD); 
+						//-1, 0, or 1 as this BigDecimal (bd) is numerically less than, equal to, or greater than val (piBD).
+						if (compareResult == -1){
+							currentDifference = piBD.subtract(bd);
+							System.out.println("Progress is greater than pi, by " + currentDifference.toPlainString());
+						}else if (compareResult == 1){
+							currentDifference = bd.subtract(piBD);
+							System.out.println("Pi is greater than progress, by " + currentDifference.toPlainString());
+						}else{
+							//0 - highly unlikely
+							System.out.println("compareResult == 0 ?!?!?!?!");
+							return;
+						}
+						if (previousDrift.equals(BigDecimal.ZERO)){
+							System.out.println("First comparison; no previous to compare to...");
+						}else{
+							System.out.println("Previous difference was " + previousDrift.toPlainString());
+							final int previousCompareResult = currentDifference.compareTo(previousDrift); 
+							if (previousCompareResult == -1){
+								System.out.println("currentDifference is less than previousDrift");
+							}else if (previousCompareResult == 1){
+								System.out.println("previousDrift is less than currentDifference");
+							}else{
+								//0 - seems a little less unlikely, but who knows by how much
+								System.out.println("previousCompareResult == 0 ?!?!?!?!");
+							
+							}
+						}
+						System.out.println();//need a new line to keep these print outs clearer
+						previousDrift = currentDifference;
 					}
 				}else{
 					System.out.println("progressGL does not contain key " + count);
