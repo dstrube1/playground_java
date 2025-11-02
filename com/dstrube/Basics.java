@@ -19,6 +19,7 @@ import java.util.Comparator;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.Collections;
 
 public class Basics{
 	private static final ConcurrentHashMap<String,String> startingTemplates = new ConcurrentHashMap<>();
@@ -98,6 +99,21 @@ public class Basics{
 		final Comparator<Integer> cd = new SortByIntDescending();
 		final Comparator<Integer> ca = new SortByIntAscending();
 		list.sort(cd);
+		
+		/*
+		see also:
+			https://docs.oracle.com/javase/8/docs/api/java/util/Collections.html#sort-java.util.List-
+		Time Complexity: O(N log N) as time complexity of Collections.sort() is O(nlog(n)).
+		Auxiliary Space: O(1)  		
+		*/
+		Collections.sort(list);
+
+		/*
+		https://www.geeksforgeeks.org/java/collections-sort-java-examples/
+		Arrays.sort() uses a Dual-Pivot Quicksort algorithm which gives a time complexity of O(N.log N) which is typically faster than traditional Quicksort algorithms. On the other hand, Collections.sort() creates an array of list elements, sorts them using an adaptive Mergesort algorithm, and iterates over the list to position each element at its correct location. Thus for primitive datatypes like int, char, double, etc. Arrays.sort() proves to be way more time efficient than Collections.sort(). Problems involving primitive datatypes should be tried to solve using Arrays.sort() for better optimisation.
+		*/
+		int[] intArr = list.stream().mapToInt(Integer::intValue).toArray();
+		Arrays.sort(intArr);
 	}
 	
 	static final class SortByIntDescending implements Comparator<Integer> 	{ 
