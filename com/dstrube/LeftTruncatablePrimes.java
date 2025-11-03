@@ -4,7 +4,8 @@ package com.dstrube;
 commands to compile and run:
 from ~/java
 javac -d bin com/dstrube/LeftTruncatablePrimes.java
-java -cp bin com.dstrube.LeftTruncatablePrimes
+
+java -Xms4G -Xmx10G -cp bin com.dstrube.LeftTruncatablePrimes
 
 */
 import java.io.File;
@@ -16,49 +17,66 @@ import java.nio.file.Path;
 import java.util.stream.Stream;
 import java.util.List;
 import java.util.ArrayList;
-
+import java.util.Set;
+import java.util.LinkedHashSet; // like HashSet, but orderly
 
 public class LeftTruncatablePrimes{
+
+	private static Set<Integer> primes = new LinkedHashSet<>();
 	
 	public static void main(String[] args){
 		//According to this:
 		// https://www.youtube.com/watch?v=azL5ehbw_24
 		//this is the largest left truncatable prime:
-		BigInteger largestLeft = new BigInteger("357686312646216567629137");
+		BigInteger largestLeft = new BigInteger("357686312646216567629137"); //357_686_312_646_216_567_629_137 =~ 357 sextillion
 		boolean is = largestLeft.isProbablePrime(1);
-		System.out.println("Is " + largestLeft + " probably prime? " + is); //true
+		//System.out.println("Is " + largestLeft + " probably prime? " + is); //true
 		
 		// Can I prove it, not with isProbablePrime, but with the Sieve of Eratosthenes?
 		// Can Sieve of Eratosthenes work here? It's dependent on an array of booleans, 
-		// which is limited by Integer.MAX_VALUE; it can output a large number of primes,
-		// but is its largest big enough for this? Largest from Sieve.java: 2147265203
+		// which is limited by Integer.MAX_VALUE. It can output a large number of primes,
+		// but is its largest big enough for this? Largest from Sieve.java: 2_147_265_203 =~ 2 billion
 		// Clearly smaller. Okay, what is the largest left truncatable prime in Sieve's list?...
 		
 		// Read from file:
 		final String fileName = "primes.txt";
-		File file = new File(fileName);
-		List<Integer> primes = null;
+		final File file = new File(fileName);
 		if (file.exists()){
 			System.out.println("File " + fileName + " found. Getting the contents...");
 			Path path = Path.of(fileName);
-			try{
-				//This might have thrown an OutOfMemoryError (like it did in Sieve), but doesn't;
-				// probably because of how efficiently readFile adds to the primes List
-				primes = readFile(path);
-				System.out.println("Size of contents: " + primes.size());
-			} catch(IOException ioe){
-				System.out.println("Caught: " + ioe.getMessage());
+			//This might have thrown an OutOfMemoryError (like it did in Sieve), but doesn't;
+			// probably because of how efficiently readFile adds to the primes List
+			
+			// UPDATE: /interestingly, it does throw an OutOfMemoryError if using a Set / LinkedHashSet
+			// instead of a List / ArrayList; thus the -Xmx parameter.
+			/*
+			Peculiar stack trace:
+Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
+	at java.base/java.util.LinkedHashMap.newNode(LinkedHashMap.java:281)
+	at java.base/java.util.HashMap.putVal(HashMap.java:638)
+	at java.base/java.util.HashMap.put(HashMap.java:619)
+	at java.base/java.util.HashSet.add(HashSet.java:230)
+	at com.dstrube.LeftTruncatablePrimes.lambda$readFile$0(LeftTruncatablePrimes.java:116)
+	
+			Note, this error came from when readFile returned a Set, not a boolean.
+			*/
+			
+			if (!readFile(path)) {
+				System.out.println("readFile returned false");
+				return;
 			}
 		}else{
-			//create the file?
-			//or tell the user to run Sieve to create the file?
+			//File not found. Tell the user to run Sieve to create the file
 			System.out.println("File " + fileName + " not found...");
-			//return;
+			System.out.println("Run Sieve.java to create the file.");
+			return;
 		}
 		
 		if (primes == null || primes.size() == 0){
 			System.out.println("Primes list not populated. Maybe try again or rethink this?");
 			return;
+		}else{
+			System.out.println("Size of contents: " + primes.size()); // 105_087_370
 		}
 		
 		// This takes a few minutes
@@ -74,8 +92,9 @@ public class LeftTruncatablePrimes{
 		}
 		*/
 		
-		int lastInList = primes.get(primes.size() - 1);
-		System.out.println("Last int in primes list: " + lastInList); // 2147265203
+		List<Integer> primesList = new ArrayList<>(primes);
+		int lastInList = primesList.get(primes.size() - 1);
+		System.out.println("Last int in primes list: " + lastInList); // 2_147_265_203
 		// TODO: Start looking for left truncatable primes in the primes list...
 		
 		//Why use any certainty other than 1?
@@ -107,18 +126,33 @@ public class LeftTruncatablePrimes{
 		System.out.println("Done");
 	}
 	
-	private static List<Integer> readFile(Path path) throws IOException {
-			//Path path = Path.of("");
-			//String content = readFile(path);
-			//System.out.println("Content: " + content);
-		//StringBuilder data = new StringBuilder();
-	    Stream<String> lines = Files.lines(path);
-	    List<Integer> primes = new ArrayList<>();
-	    lines.forEach(line -> primes.add(Integer.parseInt(line)));
-	    lines.close();
-	    
-	    return primes;
+	private static boolean readFile(Path path) {
+		boolean success = false;
+	    Stream<String> lines = null;
+	    try{
+		    lines = Files.lines(path);
+		    lines.forEach(line -> primes.add(Integer.parseInt(line)));
+	    }catch(IOException ioe){
+	    	System.out.println("Caught IOException: " + ioe.getMessage());
+	    }finally{
+	    	if(lines != null){
+	    		lines.close();
+	    		success = true;
+	    	}else{
+		    	System.out.println("Stream<String> lines was unexpectedly null");
+	    	}
+	    }
+	    return success;
 	}
 	
-		
+	private static boolean isLeftTruncatablePrime(int candidate){
+		//TODO
+		//1- if this is not in the set of primes, return false
+		//1.5 if this is 1 digit and is in the set of primes, return true
+		//2- turn to string; trim off first digit; 
+		//2.5- while new first digit is 0, trim off first digit; 
+		//turn string to int new number
+		// return isLeftTruncatablePrime(new number) 
+		return false;
+	}
 }
