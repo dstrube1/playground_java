@@ -95,7 +95,23 @@ Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 		List<Integer> primesList = new ArrayList<>(primes);
 		int lastInList = primesList.get(primes.size() - 1);
 		System.out.println("Last int in primes list: " + lastInList); // 2_147_265_203
-		// TODO: Start looking for left truncatable primes in the primes list...
+		
+		System.out.println("Looking for left truncatable primes in the primes list...");
+		/*
+		int largestLeftTruncatable = 0;
+		for(int i : primesList){
+			if (isLeftTruncatablePrime(i))
+				largestLeftTruncatable = i;
+		}
+		System.out.println("Largest left truncatable found: " + largestLeftTruncatable);
+		*/
+		//Better to look for it in reverse...
+		for (int i = primesList.size() - 1; i > 0; i--){
+			if (isLeftTruncatablePrime(primesList.get(i))){
+				System.out.println("Largest left truncatable found: " + primesList.get(i)); //2_139_998_017
+				break;
+			}
+		}
 		
 		//Why use any certainty other than 1?
 		//https://stackoverflow.com/questions/27430092/what-is-a-possible-use-case-of-bigintegers-isprobableprime
@@ -146,13 +162,27 @@ Exception in thread "main" java.lang.OutOfMemoryError: Java heap space
 	}
 	
 	private static boolean isLeftTruncatablePrime(int candidate){
-		//TODO
-		//1- if this is not in the set of primes, return false
-		//1.5 if this is 1 digit and is in the set of primes, return true
-		//2- turn to string; trim off first digit; 
-		//2.5- while new first digit is 0, trim off first digit; 
-		//turn string to int new number
-		// return isLeftTruncatablePrime(new number) 
-		return false;
+		//If this is not in the set of primes, return false
+		if (!primes.contains(candidate)){
+			return false;
+		}
+		
+		//If this is 1 digit and is in the set of primes, return true
+		if (candidate < 10 && primes.contains(candidate)){
+			return true;
+		}
+		
+		//Turn to string; trim off first digit; 
+		String numString = "" + candidate;
+		numString = numString.substring(1);
+		
+		//While new first digit is 0, trim off first digit
+		while(numString.charAt(0) == '0'){
+			numString = numString.substring(1);
+		}
+		
+		//turn string to a new number
+		int newNumber = Integer.parseInt(numString);
+		return isLeftTruncatablePrime(newNumber);
 	}
 }
