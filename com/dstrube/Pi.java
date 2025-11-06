@@ -12,7 +12,6 @@ https://docs.oracle.com/javase/8/docs/api/java/math/BigDecimal.html
 
 https://en.wikipedia.org/wiki/Pi
 ^ around "Rate of convergence"
-	
 
 */
 
@@ -30,13 +29,38 @@ public class Pi{
 	private static long denominator;
 	private static boolean isMinus;
 	private static long count;
-	private static final long limit = Long.parseLong("24_000_000_000");
+	private static final long limit = Long.parseLong("24000000000"); //24_000_000_000 => 24 billion
 	
 	// All BigDecimal constructors have at least 1 param, so can't just start off like this:
 	//BigDecimal bd = new BigDecimal();
 	private static final BigDecimal bd = new BigDecimal("3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230");
 	
 	public static void main(String[] args){
+	
+		//piExplorationBasics();
+		
+		//calcFloatPi();
+		//Google says pi =~ 					  3.14159265359
+		//System.out.println("Float pi: " + piF); //3.1415968
+		
+		//calcPi_GL(); //Gregory–Leibniz series
+		//System.out.println("Double pi: " + piD);
+		//System.out.println("Double.MAX_VALUE = " + Double.MAX_VALUE);//1.7976931348623157E308
+		
+		calcPi_N(); //Nilakantha series
+		
+		// print out precision ends... v here by default
+		double bigPi = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230;
+		//System.out.println("Testing : bigPi: " + bigPi);
+
+		//What about ...		
+		//System.out.println("bigPi stored as a BigDecimal: " + bd.toPlainString()); 
+		//nice - prints out the whole thing - now we're cooking...
+
+		System.out.println("Done");
+	}
+	
+	private static void piExplorationBasics(){
 		System.out.println("Math.Pi: " + Math.PI);							// 3.141592653589793
 		//System.out.println("Float.SIZE = " + Float.SIZE);					// 32
 		//System.out.println("Float.MIN_VALUE = " + Float.MIN_VALUE);		// 1.4E-45
@@ -96,28 +120,9 @@ public class Pi{
 		//2- Can we do better with BigDecimal and an improved algorithm?
 		//Several algorithms to choose from here:
 		//https://en.wikipedia.org/wiki/Pi
-		
-		calcFloatPi();
-		//Google says pi =~ 					  3.14159265359
-		//System.out.println("Float pi: " + piF); //3.1415968
-		
-		//calcDoublePi_GL(); //This won't end anytime soon
-		//System.out.println("Double pi: " + piD);
-		//System.out.println("Double.MAX_VALUE = " + Double.MAX_VALUE);//1.7976931348623157E308
-		
-		calcDoublePi_N();
-		
-		// print out precision ends... v here
-		double bigPi = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230;
-		//System.out.println("Testing : bigPi: " + bigPi);
-		//What about ...
-		
-		//System.out.println("bigPi stored as a BigDecimal: " + bd.toPlainString()); //nice, now we're cooking...
-
-		System.out.println("Done");
 	}
 	
-	public static void calcFloatPi() {
+	private static void calcFloatPi() {
 		//Gregory–Leibniz series
 		float piB4 = 0.0f;
 		denominator = 1;
@@ -138,7 +143,7 @@ public class Pi{
 		System.out.println("Float pi stopped changing after this many cycles: " + count); //16,777,216
 	}
 
-	public static void calcDoublePi_GL() {
+	private static void calcPi_GL() {
 		//More Gregory–Leibniz series
 		//Next try Nilakantha...
 		double piB4 = 0.0;
@@ -193,7 +198,7 @@ by the time count is very big (790800000000), the calculation is pretty close (3
 note: 1000000000000000000 is a few orders of magnitude bigger than 790800000000
 */
 		//while (piB4 != piD) {//this comparison is no longer as useful as checking for an overflow
-		while (count > 0){
+		while (count <= limit){
 			piB4 = piD;
 			denominator += 2;
 			if (isMinus){
@@ -234,7 +239,7 @@ count: 24000000000; Double pi progress: 3.141592653546772
 				*/
 				//1- verify that re-running this gives the same numbers
 				//2- check each to see how far off they each are, if they're getting closer or farther, or bouncing around
-				//3- TODO: see if some other algorithms do better or worse
+				//3- do other algorithms do better or worse?
 				if (progressGL.containsKey(count)) {
 					if (progressGL.get(count) != piD){
 						System.out.println("Alert: " + progressGL.get(count) + " != " + piD);
@@ -282,9 +287,10 @@ count: 24000000000; Double pi progress: 3.141592653546772
 		System.out.println("Double pi stopped calculating after this many cycles: " + count);
 	}
 	
-	public static void calcDoublePi_N() {
+	private static void calcPi_N() {
 		//Nilakantha series
-		//converges more rapidly than the Gregory–Leibniz series
+		//"converges more rapidly than the Gregory–Leibniz series"; //quote from wikipedia
+		//but, unlike Gregory–Leibniz series, the Nilakantha series seems not to consistently get closer to actual pi
 		double piB4 = 0.0;
 		
 		//So that this can be called before or after other functions:
@@ -298,6 +304,35 @@ count: 24000000000; Double pi progress: 3.141592653546772
 		isMinus = false;
 		count = 1;
 		final boolean debug = true;
+		
+		final Map<Long,Double> progressN = new HashMap<>();
+		progressN.put(Long.parseLong("1000000000"), (double)3.141592653656787);
+		progressN.put(Long.parseLong("2000000000"), (double)3.141592653623129);
+		progressN.put(Long.parseLong("3000000000"), (double)3.141592653636524); 
+		progressN.put(Long.parseLong("4000000000"), (double)3.1415926535171392);
+		progressN.put(Long.parseLong("5000000000"), (double)3.141592654604429);
+		progressN.put(Long.parseLong("6000000000"), (double)3.1415926481982037);
+		progressN.put(Long.parseLong("7000000000"), (double)3.1415926478103313);
+		progressN.put(Long.parseLong("8000000000"), (double)3.1415926467436424);
+		progressN.put(Long.parseLong("9000000000"), (double)3.141592646963207);
+		progressN.put(Long.parseLong("10000000000"), (double)3.141592646404458);
+		progressN.put(Long.parseLong("11000000000"), (double)3.1415926480128578);
+		progressN.put(Long.parseLong("12000000000"), (double)3.141592694294119);
+		progressN.put(Long.parseLong("13000000000"), (double)3.1415926890000505);
+		progressN.put(Long.parseLong("14000000000"), (double)3.141592693834243);
+		progressN.put(Long.parseLong("15000000000"), (double)3.1415926947776684);
+		progressN.put(Long.parseLong("16000000000"), (double)3.141592694986635);
+		progressN.put(Long.parseLong("17000000000"), (double)3.1415926880236005);
+		progressN.put(Long.parseLong("18000000000"), (double)3.141592687566944);
+		progressN.put(Long.parseLong("19000000000"), (double)3.1415926875863174);
+		progressN.put(Long.parseLong("20000000000"), (double)3.1415926867359114);
+		progressN.put(Long.parseLong("21000000000"), (double)3.1415926865598167);
+		progressN.put(Long.parseLong("22000000000"), (double)3.141592687112181);
+		progressN.put(Long.parseLong("23000000000"), (double)3.1415926857157044);
+		progressN.put(Long.parseLong("24000000000"), (double)3.1415926847803513);
+		
+		BigDecimal previousDrift = BigDecimal.ZERO;
+		BigDecimal currentDifference = BigDecimal.ZERO;
 		while (count <= limit){
 			
 			piB4 = piD;
@@ -316,33 +351,68 @@ count: 24000000000; Double pi progress: 3.141592653546772
 			if (debug && count % 1000000000 == 0){
 				System.out.println("count: " + count + "; Double pi progress (Nilakantha series): " + piD);
 				/*
-count: 1000000000; Double pi progress (Nilakantha series): 3.141592653656787
-count: 2000000000; Double pi progress (Nilakantha series): 3.141592653623129
-count: 3000000000; Double pi progress (Nilakantha series): 3.141592653636524
-count: 4000000000; Double pi progress (Nilakantha series): 3.1415926535171392
-count: 5000000000; Double pi progress (Nilakantha series): 3.141592654604429
-count: 6000000000; Double pi progress (Nilakantha series): 3.1415926481982037
-count: 7000000000; Double pi progress (Nilakantha series): 3.1415926478103313
-count: 8000000000; Double pi progress (Nilakantha series): 3.1415926467436424
-count: 9000000000; Double pi progress (Nilakantha series): 3.141592646963207
-count: 10000000000; Double pi progress (Nilakantha series): 3.141592646404458
-count: 11000000000; Double pi progress (Nilakantha series): 3.1415926480128578
-count: 12000000000; Double pi progress (Nilakantha series): 3.141592694294119
-count: 13000000000; Double pi progress (Nilakantha series): 3.1415926890000505
-count: 14000000000; Double pi progress (Nilakantha series): 3.141592693834243
-count: 15000000000; Double pi progress (Nilakantha series): 3.1415926947776684
-count: 16000000000; Double pi progress (Nilakantha series): 3.141592694986635
-count: 17000000000; Double pi progress (Nilakantha series): 3.1415926880236005
-count: 18000000000; Double pi progress (Nilakantha series): 3.141592687566944
-count: 19000000000; Double pi progress (Nilakantha series): 3.1415926875863174
-count: 20000000000; Double pi progress (Nilakantha series): 3.1415926867359114
-count: 21000000000; Double pi progress (Nilakantha series): 3.1415926865598167
-count: 22000000000; Double pi progress (Nilakantha series): 3.141592687112181
-count: 23000000000; Double pi progress (Nilakantha series): 3.1415926857157044
-count: 24000000000; Double pi progress (Nilakantha series): 3.1415926847803513
 				*/
+				if (progressN.containsKey(count)) {
+					if (progressN.get(count) != piD){
+						System.out.println("Alert: " + progressN.get(count) + " != " + piD);
+					}else{
+						System.out.println("At count " + count + ", progress = " + piD);
+						final BigDecimal piBD = new BigDecimal(piD);
+						final int compareResult = bd.compareTo(piBD); 
+						//-1, 0, or 1 as this BigDecimal (bd) is numerically less than, equal to, or greater than val (piBD).
+						if (compareResult == -1){
+							currentDifference = piBD.subtract(bd);
+							System.out.println("Progress is greater than pi, by " + currentDifference.toPlainString());
+						}else if (compareResult == 1){
+							currentDifference = bd.subtract(piBD);
+							System.out.println("Pi is greater than progress, by " + currentDifference.toPlainString());
+						}else{
+							//0 - highly unlikely
+							System.out.println("compareResult == 0 ?!?!?!?!");
+							return;
+						}
+						if (previousDrift.equals(BigDecimal.ZERO)){
+							System.out.println("First comparison; no previous to compare to...");
+						}else{
+							System.out.println("Previous difference was " + previousDrift.toPlainString());
+							final int previousCompareResult = currentDifference.compareTo(previousDrift); 
+							if (previousCompareResult == -1){
+								System.out.println("currentDifference is less than previousDrift - getting closer :)");
+							}else if (previousCompareResult == 1){
+								System.out.println("previousDrift is less than currentDifference - getting farther :(");
+							}else{
+								//0 - seems a little less unlikely, but who knows by how much
+								System.out.println("previousCompareResult == 0 ?!?!?!?!");
+							
+							}
+						}
+						System.out.println();//need a new line to keep these print outs clearer
+						previousDrift = currentDifference;
+					}
+				}else{
+					System.out.println("progressN does not contain key " + count);
+					System.out.println("End of progressN; exiting...");
+					break;
+				} 
 			}
 		}
 	}
-
+	
+	private static void calcPi_M() {
+		//https://en.wikipedia.org/wiki/Machin-like_formula
+		//TODO
+	}
+	
+	private static void calcPi_C() {
+		//https://en.wikipedia.org/wiki/Chudnovsky_algorithm
+		//TODO
+	}
+	
+	private static BigDecimal inverse(final BigDecimal value) {
+		//Useful for Chudnovsky algorithm
+		if (value == null || value.compareTo(BigDecimal.ZERO) == 0) {
+			throw new ArithmeticException("Cannot calculate inverse of zero or null");
+		}
+		return BigDecimal.ONE.divide(value, 20, BigDecimal.ROUND_HALF_UP); // 20 is the scale
+	}
 }
