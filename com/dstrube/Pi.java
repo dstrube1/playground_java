@@ -16,6 +16,7 @@ https://en.wikipedia.org/wiki/Pi
 */
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Map;
 import java.util.HashMap;
 
@@ -47,7 +48,8 @@ public class Pi{
 		//System.out.println("Double pi: " + piD);
 		//System.out.println("Double.MAX_VALUE = " + Double.MAX_VALUE);//1.7976931348623157E308
 		
-		calcPi_N(); //Nilakantha series
+		//calcPi_N(); //Nilakantha series
+		calcPi_M(); //Machin-like formula
 		
 		// print out precision ends... v here by default
 		double bigPi = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230;
@@ -400,7 +402,101 @@ count: 24000000000; Double pi progress: 3.141592653546772
 	
 	private static void calcPi_M() {
 		//https://en.wikipedia.org/wiki/Machin-like_formula
+		
+		//So that this can be called before or after other functions:
+		//Reset piD
+		piD = 0.0;
+		
+		isMinus = false;
+		count = 0;
+		double n = 1.0;
+		final boolean debug = true;
+		while (count <= 24){
+			if (isMinus){
+				piD -= calcPi_M_step(n);
+				isMinus = false;
+			} else{
+				piD += calcPi_M_step(n);
+				isMinus = true;
+			}
+			count++;
+			n += 2.0;
+			if (debug){//} && count % 100 == 0){
+				System.out.println("count: " + count + "; Double pi progress (Machin-like formula): " + piD);
+				/*
+				Interesting:
+count: 1000000000; Double pi progress (Machin-like formula): 3.1415926535897944
+count: 2000000000; Double pi progress (Machin-like formula): 3.1415926535897944
+count: 3000000000; Double pi progress (Machin-like formula): 3.1415926535897944
+
+				Let's try with limit / 10 and count mod / 10...
+				Same:
+count: 100000000; Double pi progress (Machin-like formula): 3.1415926535897944
+count: 200000000; Double pi progress (Machin-like formula): 3.1415926535897944
+count: 300000000; Double pi progress (Machin-like formula): 3.1415926535897944
+				
+				How about /100? Same. /1000? Same. 
+				
+				How quickly does it converge? Pretty quickly:
+count: 1; Double pi progress (Machin-like formula): 3.18326359832636
+count: 2; Double pi progress (Machin-like formula): 3.1405970293260608
+count: 3; Double pi progress (Machin-like formula): 3.141621029325035
+count: 4; Double pi progress (Machin-like formula): 3.1415917721821778
+count: 5; Double pi progress (Machin-like formula): 3.1415926824044
+count: 6; Double pi progress (Machin-like formula): 3.141592652615309
+count: 7; Double pi progress (Machin-like formula): 3.1415926536235554
+count: 8; Double pi progress (Machin-like formula): 3.141592653588603
+count: 9; Double pi progress (Machin-like formula): 3.1415926535898366
+count: 10; Double pi progress (Machin-like formula): 3.1415926535897927
+count: 11; Double pi progress (Machin-like formula): 3.1415926535897944
+count: 12; Double pi progress (Machin-like formula): 3.1415926535897944
+Compare to the authority...							 3.14159265358979323846264338327950...
+
+				TODO: Can it get more accurate using BigDecimal?
+				*/
+			}
+		}
+	}
+	
+	private static double calcPi_M_step(double n){
+		double result = 0.0;
+		double termA = 1.0 / n;
+		double termB = 16.0 / Math.pow(5.0, n);
+		double termC = 4.0 / Math.pow(239.0, n);
+		result = termA * (termB - termC);
+		return result;
+	}
+	
+	private static void calcPi_M_BD() {
+		//https://en.wikipedia.org/wiki/Machin-like_formula
+		//with BigDecimal
+		
+		BigDecimal piBD = BigDecimal.ZERO;
+		isMinus = false;
+		count = 0;
+		int n = 1;
+		final boolean debug = true;
 		//TODO
+		
+	}
+	
+	private static BigDecimal calcPi_M_step_BD(int n){
+		BigDecimal result = BigDecimal.ZERO;
+		final BigDecimal termA = inverse(new BigDecimal(n));
+		
+		final BigDecimal termB1 = new BigDecimal(16);
+		final BigDecimal termB2 = new BigDecimal(5);
+		final BigDecimal termB3 = termB2.pow(n);
+		final BigDecimal termB = termB1.divide(termB3);
+		
+		final BigDecimal termC1 = new BigDecimal(4);
+		final BigDecimal termC2 = new BigDecimal(239);
+		final BigDecimal termC3 = termC2.pow(n);
+		final BigDecimal termC = termC1.divide(termC3);
+
+		final BigDecimal termBC = termB.subtract(termC);
+
+		return termA.multiply(termBC);
 	}
 	
 	private static void calcPi_C() {
@@ -409,10 +505,12 @@ count: 24000000000; Double pi progress: 3.141592653546772
 	}
 	
 	private static BigDecimal inverse(final BigDecimal value) {
-		//Useful for Chudnovsky algorithm
+		//Useful for Chudnovsky algorithm, and Machin-like formula
 		if (value == null || value.compareTo(BigDecimal.ZERO) == 0) {
 			throw new ArithmeticException("Cannot calculate inverse of zero or null");
 		}
-		return BigDecimal.ONE.divide(value, 20, BigDecimal.ROUND_HALF_UP); // 20 is the scale
+		//https://docs.oracle.com/javase/8/docs/api/java/math/RoundingMode.html
+		//BigDecimal.ROUND_HALF_UP is deprecated
+		return BigDecimal.ONE.divide(value, 20, RoundingMode.HALF_UP); // 20 is the scale
 	}
 }
