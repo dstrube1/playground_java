@@ -16,6 +16,7 @@ https://en.wikipedia.org/wiki/Pi
 */
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Map;
 import java.util.HashMap;
@@ -49,7 +50,8 @@ public class Pi{
 		//System.out.println("Double.MAX_VALUE = " + Double.MAX_VALUE);//1.7976931348623157E308
 		
 		//calcPi_N(); //Nilakantha series
-		calcPi_M(); //Machin-like formula
+		//calcPi_M(); //Machin-like formula
+		calcPi_M_BD(); //Machin-like formula with BigDecimal
 		
 		// print out precision ends... v here by default
 		double bigPi = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230;
@@ -476,12 +478,34 @@ Compare to the authority...							 3.14159265358979323846264338327950...
 		count = 0;
 		int n = 1;
 		final boolean debug = true;
-		//TODO
-		
+
+		while (count <= 2){
+			if (isMinus){
+				piBD.subtract(calcPi_M_step_BD(n));
+				isMinus = false;
+			} else{
+				piBD.add(calcPi_M_step_BD(n));
+				isMinus = true;
+			}
+			count++;
+			n += 2.0;
+			if (debug){//} && count % 100 == 0){
+				System.out.println("count: " + count + "; BD Pi progress (Machin-like formula): " + piBD.toPlainString());
+				/*
+				TODO: Debug
+At step 1 result = 3.1832635983263598326359832635983263600000000000000000000
+count: 1; BD Pi progress (Machin-like formula): 0
+At step 3 result = 0.042666569000299518331025491329094466499552145096475692049838
+count: 2; BD Pi progress (Machin-like formula): 0
+At step 5 result = 0.00102399999897411074230141053717917155646801900000000000000000000
+count: 3; BD Pi progress (Machin-like formula): 0
+				*/
+			}
+		}
+
 	}
 	
 	private static BigDecimal calcPi_M_step_BD(int n){
-		BigDecimal result = BigDecimal.ZERO;
 		final BigDecimal termA = inverse(new BigDecimal(n));
 		
 		final BigDecimal termB1 = new BigDecimal(16);
@@ -492,11 +516,13 @@ Compare to the authority...							 3.14159265358979323846264338327950...
 		final BigDecimal termC1 = new BigDecimal(4);
 		final BigDecimal termC2 = new BigDecimal(239);
 		final BigDecimal termC3 = termC2.pow(n);
-		final BigDecimal termC = termC1.divide(termC3);
+		final BigDecimal termC = termC1.divide(termC3, MathContext.DECIMAL128);
 
 		final BigDecimal termBC = termB.subtract(termC);
+		final BigDecimal result = termA.multiply(termBC);
+		System.out.println("At step " + n + " result = " + result.toPlainString());
 
-		return termA.multiply(termBC);
+		return result;
 	}
 	
 	private static void calcPi_C() {
