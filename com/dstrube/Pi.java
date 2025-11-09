@@ -454,7 +454,7 @@ count: 11; Double pi progress (Machin-like formula): 3.1415926535897944
 count: 12; Double pi progress (Machin-like formula): 3.1415926535897944
 Compare to the authority...							 3.14159265358979323846264338327950...
 
-				TODO: Can it get more accurate using BigDecimal?
+				Let's try to get more accurate using BigDecimal...
 				*/
 			}
 		}
@@ -479,26 +479,32 @@ Compare to the authority...							 3.14159265358979323846264338327950...
 		int n = 1;
 		final boolean debug = true;
 
-		while (count <= 2){
+		while (count <= 24){
+			final BigDecimal result = calcPi_M_step_BD(n);
+			//System.out.println("In calcPi_M_BD, result: " + result.toPlainString());
+		
 			if (isMinus){
-				piBD.subtract(calcPi_M_step_BD(n));
+				piBD = piBD.subtract(result, MathContext.DECIMAL128);
 				isMinus = false;
 			} else{
-				piBD.add(calcPi_M_step_BD(n));
+				piBD = piBD.add(result, MathContext.DECIMAL128);
 				isMinus = true;
 			}
 			count++;
-			n += 2.0;
-			if (debug){//} && count % 100 == 0){
+			n += 2;
+			if (debug){
 				System.out.println("count: " + count + "; BD Pi progress (Machin-like formula): " + piBD.toPlainString());
 				/*
-				TODO: Debug
-At step 1 result = 3.1832635983263598326359832635983263600000000000000000000
-count: 1; BD Pi progress (Machin-like formula): 0
-At step 3 result = 0.042666569000299518331025491329094466499552145096475692049838
-count: 2; BD Pi progress (Machin-like formula): 0
-At step 5 result = 0.00102399999897411074230141053717917155646801900000000000000000000
-count: 3; BD Pi progress (Machin-like formula): 0
+				Seems to converge around iteration 23:
+				
+count: 21; BD Pi progress (Machin-like formula): 3.141592653589793238463070625346883
+count: 22; BD Pi progress (Machin-like formula): 3.141592653589793238463070625346556
+count: 23; BD Pi progress (Machin-like formula): 3.141592653589793238463070625346569
+count: 24; BD Pi progress (Machin-like formula): 3.141592653589793238463070625346569
+count: 25; BD Pi progress (Machin-like formula): 3.141592653589793238463070625346569
+Compare to the authority...						 3.141592653589793238462643383279502...
+				Indeed seemingly a little better with BigDecimal
+				Up next, Chudnovsky_algorithm...
 				*/
 			}
 		}
@@ -511,7 +517,7 @@ count: 3; BD Pi progress (Machin-like formula): 0
 		final BigDecimal termB1 = new BigDecimal(16);
 		final BigDecimal termB2 = new BigDecimal(5);
 		final BigDecimal termB3 = termB2.pow(n);
-		final BigDecimal termB = termB1.divide(termB3);
+		final BigDecimal termB = termB1.divide(termB3, MathContext.DECIMAL128);
 		
 		final BigDecimal termC1 = new BigDecimal(4);
 		final BigDecimal termC2 = new BigDecimal(239);
@@ -520,7 +526,7 @@ count: 3; BD Pi progress (Machin-like formula): 0
 
 		final BigDecimal termBC = termB.subtract(termC);
 		final BigDecimal result = termA.multiply(termBC);
-		System.out.println("At step " + n + " result = " + result.toPlainString());
+		//System.out.println("At step " + n + " result = " + result.toPlainString());
 
 		return result;
 	}
