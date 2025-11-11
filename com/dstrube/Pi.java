@@ -503,7 +503,8 @@ count: 23; BD Pi progress (Machin-like formula): 3.14159265358979323846307062534
 count: 24; BD Pi progress (Machin-like formula): 3.141592653589793238463070625346569
 count: 25; BD Pi progress (Machin-like formula): 3.141592653589793238463070625346569
 Compare to the authority...						 3.141592653589793238462643383279502...
-				Indeed seemingly a little better with BigDecimal
+				Indeed seemingly a little better with BigDecimal. 
+				Might do better with different MathContexts, but this is good enough for now.
 				Up next, Chudnovsky_algorithm...
 				*/
 			}
@@ -533,7 +534,50 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 	
 	private static void calcPi_C() {
 		//https://en.wikipedia.org/wiki/Chudnovsky_algorithm
-		//TODO
+		//Jumping straight to using BigDecimal
+		BigDecimal piBD = BigDecimal.ZERO;
+
+		//12 * sum = inverse of pi
+		BigDecimal sum = BigDecimal.ZERO;
+
+		isMinus = false;
+		count = 0;
+		int kFactor = 0;
+		final boolean debug = true;
+		final BigDecimal TWELVE = new BigDecimal(12);
+
+		while (count <= 24){
+			final BigDecimal result = calcPi_C_step_BD(kFactor);
+		
+			if (isMinus){
+				sum = sum.subtract(result, MathContext.DECIMAL128);
+				isMinus = false;
+			} else{
+				sum = sum.add(result, MathContext.DECIMAL128);
+				isMinus = true;
+			}
+			piBD = inverse(sum.multiply(TWELVE));
+			count++;
+			kFactor++;
+			if (debug){
+				System.out.println("count: " + count + "; BD Pi progress (Chudnovsky algorithm): " + piBD.toPlainString());
+			}
+		}
+	}
+	
+	private static BigDecimal calcPi_C_step_BD(int kFactor){
+		BigDecimal result = BigDecimal.ZERO;
+		final BigDecimal termA = factorial(6 * kFactor);
+		final BigDecimal termB = new BigDecimal((545140134 * kFactor) + 13591409);
+		final BigDecimal termAB = termA.multiply(termB);
+		
+		final BigDecimal termC = factorial(3 * kFactor);
+		final BigDecimal termD = factorial(kFactor).intValue().pow(3);
+		//TODO : the rest
+		//https://mathinsight.org/exponentiation_basic_rules
+		//final BigDecimal termE1 = new BigDecimal(Math.pow());
+		//final BigDecimal termE2 = ;
+		return result;
 	}
 	
 	private static BigDecimal inverse(final BigDecimal value) {
@@ -545,4 +589,13 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 		//BigDecimal.ROUND_HALF_UP is deprecated
 		return BigDecimal.ONE.divide(value, 20, RoundingMode.HALF_UP); // 20 is the scale
 	}
+
+	private static BigDecimal factorial(int value) {
+		BigDecimal result = BigDecimal.ONE;
+		for (int i = 2; i <= value; i++) {
+			result = result.multiply(BigDecimal.valueOf(i));
+		}
+		return result;
+	}
+	
 }
