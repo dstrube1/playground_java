@@ -49,10 +49,6 @@ public class Pi{
 		//System.out.println("Double pi: " + piD);
 		//System.out.println("Double.MAX_VALUE = " + Double.MAX_VALUE);//1.7976931348623157E308
 		
-		//calcPi_N(); //Nilakantha series
-		//calcPi_M(); //Machin-like formula
-		calcPi_M_BD(); //Machin-like formula with BigDecimal
-		
 		// print out precision ends... v here by default
 		double bigPi = 3.14159265358979323846264338327950288419716939937510582097494459230781640628620899862803482534211706798214808651328230;
 		//System.out.println("Testing : bigPi: " + bigPi);
@@ -61,6 +57,11 @@ public class Pi{
 		//System.out.println("bigPi stored as a BigDecimal: " + bd.toPlainString()); 
 		//nice - prints out the whole thing - now we're cooking...
 
+		//calcPi_N(); //Nilakantha series
+		//calcPi_M(); //Machin-like formula
+		//calcPi_M_BD(); //Machin-like formula with BigDecimal
+		calcPi_C(); //Chudnovsky_algorithm
+		
 		System.out.println("Done");
 	}
 	
@@ -561,22 +562,44 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 			kFactor++;
 			if (debug){
 				System.out.println("count: " + count + "; BD Pi progress (Chudnovsky algorithm): " + piBD.toPlainString());
+/*
+TODO: Converges quickly, but something is definitely wrong here...
+count: 1; BD Pi progress (Chudnovsky algorithm): 1288083468960.35321418124245495123
+count: 2; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064722198
+count: 3; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709576
+count: 4; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709576
+
+*/
 			}
 		}
 	}
 	
 	private static BigDecimal calcPi_C_step_BD(int kFactor){
-		BigDecimal result = BigDecimal.ZERO;
+		
 		final BigDecimal termA = factorial(6 * kFactor);
 		final BigDecimal termB = new BigDecimal((545140134 * kFactor) + 13591409);
+		
 		final BigDecimal termAB = termA.multiply(termB);
 		
 		final BigDecimal termC = factorial(3 * kFactor);
-		final BigDecimal termD = factorial(kFactor).intValue().pow(3);
-		//TODO : the rest
+		final BigDecimal termD = factorial(kFactor).pow(3);
+
+		//Term E is complicated
 		//https://mathinsight.org/exponentiation_basic_rules
-		//final BigDecimal termE1 = new BigDecimal(Math.pow());
-		//final BigDecimal termE2 = ;
+		final int termEfactor = 640320;
+		final BigDecimal termEbase = new BigDecimal(termEfactor);
+		final BigDecimal termE1 = termEbase.pow(3 * kFactor);
+		final BigDecimal termE2a = termEbase.pow(3);
+		//BigDecimal square root became available in Java 9 ^_^
+		//https://docs.oracle.com/javase/9/docs/api/java/math/BigDecimal.html#sqrt-java.math.MathContext-
+		//Huzzah!, that makes this a little easier
+		final BigDecimal termE2b = termEbase.sqrt(MathContext.DECIMAL128);
+		final BigDecimal termE = termE1.multiply(termE2a.multiply(termE2b));
+		
+		final BigDecimal termCDE = termC.multiply(termD.multiply(termE));
+		
+		// (A * B) / (C * D * E)
+		final BigDecimal result = termAB.divide(termCDE, MathContext.DECIMAL128);
 		return result;
 	}
 	
@@ -599,3 +622,39 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 	}
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
