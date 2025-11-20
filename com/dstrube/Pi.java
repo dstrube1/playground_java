@@ -23,6 +23,8 @@ import java.util.HashMap;
 
 
 public class Pi{
+	private static final boolean debug = true;
+
 	//A float approximation of pi
 	private static float piF = 4.0f;
 	//A double approximation of pi
@@ -160,7 +162,6 @@ public class Pi{
 		denominator = 1;
 		isMinus = true;
 		count = 1;
-		final boolean debug = true;
 		final Map<Long,Double> progressGL = new HashMap<>();
 		progressGL.put(Long.parseLong("1000000000"), (double)3.1415926525880504);
 		progressGL.put(Long.parseLong("2000000000"), (double)3.1415926530880767);
@@ -308,7 +309,6 @@ count: 24000000000; Double pi progress: 3.141592653546772
 		long denominatorC = 2;
 		isMinus = false;
 		count = 1;
-		final boolean debug = true;
 		
 		final Map<Long,Double> progressN = new HashMap<>();
 		progressN.put(Long.parseLong("1000000000"), (double)3.141592653656787);
@@ -413,7 +413,6 @@ count: 24000000000; Double pi progress: 3.141592653546772
 		isMinus = false;
 		count = 0;
 		double n = 1.0;
-		final boolean debug = true;
 		while (count <= 24){
 			if (isMinus){
 				piD -= calcPi_M_step(n);
@@ -478,7 +477,6 @@ Compare to the authority...							 3.14159265358979323846264338327950...
 		isMinus = false;
 		count = 0;
 		int n = 1;
-		final boolean debug = true;
 
 		while (count <= 24){
 			final BigDecimal result = calcPi_M_step_BD(n);
@@ -544,10 +542,9 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 		isMinus = false;
 		count = 0;
 		int kFactor = 0;
-		final boolean debug = true;
 		final BigDecimal TWELVE = new BigDecimal(12);
 
-		while (count <= 24){
+		while (count <= 1){
 			final BigDecimal result = calcPi_C_step_BD(kFactor);
 		
 			if (isMinus){
@@ -600,6 +597,16 @@ count: 4; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709
 		
 		// (A * B) / (C * D * E)
 		final BigDecimal result = termAB.divide(termCDE, MathContext.DECIMAL128);
+		if (debug){
+			System.out.println("kFactor: " + kFactor);
+			System.out.println("A: " + termA.toPlainString());
+			System.out.println("B: " + termB.toPlainString());
+			System.out.println("AB: " + termAB.toPlainString());
+			System.out.println("C: " + termC.toPlainString());
+			System.out.println("D: " + termD.toPlainString());
+			System.out.println("E: " + termE.toPlainString());
+			System.out.println("CDE: " + termCDE.toPlainString());
+		}
 		return result;
 	}
 	
