@@ -61,8 +61,8 @@ public class Pi{
 
 		//calcPi_N(); //Nilakantha series
 		//calcPi_M(); //Machin-like formula
-		//calcPi_M_BD(); //Machin-like formula with BigDecimal
-		calcPi_C(); //Chudnovsky_algorithm
+		calcPi_M_BD(); //Machin-like formula with BigDecimal
+		//calcPi_C(); //Chudnovsky_algorithm
 		
 		System.out.println("Done");
 	}
@@ -505,6 +505,13 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 				Indeed seemingly a little better with BigDecimal. 
 				Might do better with different MathContexts, but this is good enough for now.
 				Up next, Chudnovsky_algorithm...
+
+After improvement to the inverse function:
+count: 22; BD Pi progress (Machin-like formula): 3.141592653589793238462643383279492
+count: 23; BD Pi progress (Machin-like formula): 3.141592653589793238462643383279505
+count: 24; BD Pi progress (Machin-like formula): 3.141592653589793238462643383279505
+Compare to the authority...						 3.141592653589793238462643383279502...
+Better ^_^
 				*/
 			}
 		}
@@ -544,7 +551,7 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 		int kFactor = 0;
 		final BigDecimal TWELVE = new BigDecimal(12);
 
-		while (count <= 1){
+		while (count <= 24){
 			final BigDecimal result = calcPi_C_step_BD(kFactor);
 		
 			if (isMinus){
@@ -560,12 +567,21 @@ Compare to the authority...						 3.141592653589793238462643383279502...
 			if (debug){
 				System.out.println("count: " + count + "; BD Pi progress (Chudnovsky algorithm): " + piBD.toPlainString());
 /*
-TODO: Converges quickly, but something is definitely wrong here...
+Converges quickly, but something is definitely wrong here...
 count: 1; BD Pi progress (Chudnovsky algorithm): 1288083468960.35321418124245495123
 count: 2; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064722198
 count: 3; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709576
 count: 4; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709576
 
+Fixed:
+count: 1; BD Pi progress (Chudnovsky algorithm): 3.141592653589734207668453591578299
+count: 2; BD Pi progress (Chudnovsky algorithm): 3.141592653589793238462643383587350
+count: 3; BD Pi progress (Chudnovsky algorithm): 3.141592653589793238462643383279503
+count: 4; BD Pi progress (Chudnovsky algorithm): 3.141592653589793238462643383279503
+Compare to the authority...						 3.141592653589793238462643383279502884...
+
+That's pretty good.
+Note, this is with an improvement to the inverse function. Revisiting calcPi_M_BD...
 */
 			}
 		}
@@ -583,21 +599,26 @@ count: 4; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709
 
 		//Term E is complicated
 		//https://mathinsight.org/exponentiation_basic_rules
-		final int termEfactor = 640320;
-		final BigDecimal termEbase = new BigDecimal(termEfactor);
+		final BigDecimal termEbase = new BigDecimal(640320);
 		final BigDecimal termE1 = termEbase.pow(3 * kFactor);
-		final BigDecimal termE2a = termEbase.pow(3);
+		//Wrong:
+		//final BigDecimal termE2a = termEbase.pow(3);
+		//final BigDecimal termE2b = termEbase.sqrt(MathContext.DECIMAL128);
+		//final BigDecimal termE = termE1.multiply(termE2a.multiply(termE2b));
+
+		//Right:
+		final BigDecimal termE2 = termEbase.multiply(termEbase.sqrt(MathContext.DECIMAL128));
+		final BigDecimal termE = termE1.multiply(termE2);
+		
 		//BigDecimal square root became available in Java 9 ^_^
 		//https://docs.oracle.com/javase/9/docs/api/java/math/BigDecimal.html#sqrt-java.math.MathContext-
 		//Huzzah!, that makes this a little easier
-		final BigDecimal termE2b = termEbase.sqrt(MathContext.DECIMAL128);
-		final BigDecimal termE = termE1.multiply(termE2a.multiply(termE2b));
-		
+
 		final BigDecimal termCDE = termC.multiply(termD.multiply(termE));
 		
 		// (A * B) / (C * D * E)
 		final BigDecimal result = termAB.divide(termCDE, MathContext.DECIMAL128);
-		if (debug){
+		/*if (debug){
 			System.out.println("kFactor: " + kFactor);
 			System.out.println("A: " + termA.toPlainString());
 			System.out.println("B: " + termB.toPlainString());
@@ -606,7 +627,7 @@ count: 4; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709
 			System.out.println("D: " + termD.toPlainString());
 			System.out.println("E: " + termE.toPlainString());
 			System.out.println("CDE: " + termCDE.toPlainString());
-		}
+		}*/
 		return result;
 	}
 	
@@ -617,7 +638,9 @@ count: 4; BD Pi progress (Chudnovsky algorithm): 1288083468960.37741737960064709
 		}
 		//https://docs.oracle.com/javase/8/docs/api/java/math/RoundingMode.html
 		//BigDecimal.ROUND_HALF_UP is deprecated
-		return BigDecimal.ONE.divide(value, 20, RoundingMode.HALF_UP); // 20 is the scale
+		//return BigDecimal.ONE.divide(value, 20, RoundingMode.HALF_UP); // 20 is the scale
+		//Better:
+		return BigDecimal.ONE.divide(value, MathContext.DECIMAL128);
 	}
 
 	private static BigDecimal factorial(int value) {
