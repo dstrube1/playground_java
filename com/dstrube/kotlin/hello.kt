@@ -119,3 +119,28 @@ fun fun1(param1:Any) : Unit {
 
 // Shorter syntax for return:
 fun myFunction(x: Int, y: Int) = x + y
+
+// Superclass
+open class MyParentClass {
+  val x = 5
+}
+
+// Subclass
+class MyChildClass: MyParentClass() {
+  fun myFunction() {
+    println(x) // x is now inherited from the superclass
+  }
+}
+
+class Car(var brand: String, var model: String, var year: Int) {
+  // Class function
+  fun drive() {
+    println("Wrooom!")
+  }
+  
+  // Class function with parameters
+  fun speed(maxSpeed: Int) {
+    println("Max speed is: " + maxSpeed)
+  }
+}
+
