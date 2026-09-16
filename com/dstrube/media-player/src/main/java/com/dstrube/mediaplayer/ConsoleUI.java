@@ -7,8 +7,8 @@ public class ConsoleUI {
 
     private final MediaLibrary library;
     private final MediaPlayerController controller;
-
     private Playlist playlist;
+    private final MediaMetadataCache metadataCache;
 
     public ConsoleUI(
             MediaLibrary library,
@@ -16,6 +16,7 @@ public class ConsoleUI {
 
         this.library = library;
         this.controller = controller;
+        metadataCache = new MediaMetadataCache();
     }
 
     public void run() {
@@ -96,6 +97,7 @@ public class ConsoleUI {
         controller.stop();
 
         System.out.println("Goodbye.");
+        System.exit(0);
     }
 
     private void printWelcome() {
@@ -136,13 +138,15 @@ public class ConsoleUI {
                         ? "*"
                         : " ";
 
-        	System.out.printf(
-                "%s %d. %s [%s]%n",
-                marker,
-                i + 1,
-                file.getFileName(),
-                file.getType()
-	        );
+	        String duration = metadataCache.getDuration(file);
+
+			System.out.printf(
+			        "%s %d. %s [%s]%n",
+			        marker,
+			        i + 1,
+			        file.getFileName(),
+			        duration
+			);
     	}
 	}
 
