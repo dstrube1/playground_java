@@ -6,23 +6,31 @@ import java.util.Map;
 
 public class MediaMetadataCache {
 
-    private final Map<Path, String> durationCache = new HashMap<>();
+    private final Map<Path, Double> durationCache = new HashMap<>();
 
-    public String getDuration(MediaFile mediaFile) {
+    public double getDurationSeconds(MediaFile mediaFile) {
 
         Path path = mediaFile.getPath();
 
-        String cachedDuration = durationCache.get(path);
+        Double cachedDuration = durationCache.get(path);
 
         if (cachedDuration != null) {
             return cachedDuration;
         }
 
-        String duration = MediaMetadata.getDuration(mediaFile);
+        double duration =
+                MediaMetadata.getDurationSeconds(mediaFile);
 
         durationCache.put(path, duration);
 
         return duration;
+    }
+
+    public String getFormattedDuration(MediaFile mediaFile) {
+
+        double duration = getDurationSeconds(mediaFile);
+
+        return MediaMetadata.formatDuration(duration);
     }
 
     public void clear() {

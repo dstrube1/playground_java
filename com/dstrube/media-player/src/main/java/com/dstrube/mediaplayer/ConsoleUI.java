@@ -9,6 +9,7 @@ public class ConsoleUI {
     private final MediaPlayerController controller;
     private Playlist playlist;
     private final MediaMetadataCache metadataCache;
+    private final Scanner scanner;
 
     public ConsoleUI(
             MediaLibrary library,
@@ -17,6 +18,7 @@ public class ConsoleUI {
         this.library = library;
         this.controller = controller;
         metadataCache = new MediaMetadataCache();
+        scanner = new Scanner(System.in);
     }
 
     public void run() {
@@ -35,62 +37,65 @@ public class ConsoleUI {
 
         printWelcome();
 
-        try (Scanner scanner = new Scanner(System.in)) {
 
             boolean running = true;
 
-            while (running) {
+        while (running) {
 
-                printMenu();
+            printMenu();
 
-                System.out.print("> ");
+            System.out.print("> ");
 
-                String command = scanner.nextLine()
-                        .trim()
-                        .toLowerCase();
+            String command = scanner.nextLine()
+                    .trim()
+                    .toLowerCase();
 
-                switch (command) {
+            switch (command) {
 
-                    case "1":
-                        listMedia();
-                        break;
+                case "1":
+                    listMedia();
+                    break;
 
-                    case "2":
-                        playMedia(scanner);
-                        break;
+                case "2":
+                    playMedia();
+                    break;
 
-                    case "3":
-                        controller.pause();
-                        System.out.println("Paused.");
-                        break;
+                case "3":
+                    controller.pause();
+                    System.out.println("Paused.");
+                    break;
 
-                    case "4":
-                        controller.resume();
-                        System.out.println("Resumed.");
-                        break;
+                case "4":
+                    controller.resume();
+                    System.out.println("Resumed.");
+                    break;
 
-                    case "5":
-                        controller.stop();
-                        System.out.println("Stopped.");
-                        break;
+                case "5":
+                    controller.stop();
+                    System.out.println("Stopped.");
+                    break;
 
-                    case "6":
-					    playNext();
-					    break;
+                case "6":
+				    playNext();
+					break;
 
-					case "7":
-					    playPrevious();
-					    break;
+				case "7":
+				    playPrevious();
+				    break;
 
-					case "8":
-					    running = false;
-					    break;
+				case "8":
+					sortMedia();//scanner);
+					break;
 
-                    default:
-                        System.out.println(
-                                "Unknown command."
-                        );
-                }
+				case "9":
+                    controller.stop();
+				    running = false;
+				    break;
+
+                default:
+                    System.out.println(
+                            "Unknown command."
+                    );
             }
         }
 
@@ -119,7 +124,8 @@ public class ConsoleUI {
         System.out.println("5. Stop");
         System.out.println("6. Next");
 		System.out.println("7. Previous");
-		System.out.println("8. Quit");
+		System.out.println("8. Sort");
+		System.out.println("9. Quit");
     }
 
 	private void listMedia() {
@@ -138,7 +144,7 @@ public class ConsoleUI {
                         ? "*"
                         : " ";
 
-	        String duration = metadataCache.getDuration(file);
+	        String duration = metadataCache.getFormattedDuration(file);
 
 			System.out.printf(
 			        "%s %d. %s [%s]%n",
@@ -150,7 +156,7 @@ public class ConsoleUI {
     	}
 	}
 
-    private void playMedia(Scanner scanner) {
+    private void playMedia() {
 
         if (playlist.isEmpty()) {
             System.out.println("No media files available.");
@@ -213,6 +219,55 @@ public class ConsoleUI {
 
 	    System.out.println("Automatically playing: " + next.getFileName());
     	controller.play(next);
+	}
+
+	private void sortMedia(){ //Scanner scanner) {
+
+    	if (playlist.isEmpty()) {
+        	System.out.println("The playlist is empty.");
+    	    return;
+	    }
+
+	    System.out.println();
+    	System.out.println("Sort media by:");
+	    System.out.println("1. Name - ascending");
+    	System.out.println("2. Name - descending");
+	    System.out.println("3. Duration - ascending");
+    	System.out.println("4. Duration - descending");
+	    System.out.print("Choose an option: ");
+
+    	String input = scanner.nextLine();
+
+	    Playlist.SortOrder sortOrder;
+
+	    switch (input) {
+
+    	    case "1":
+        	    sortOrder = Playlist.SortOrder.NAME_ASCENDING;
+            	break;
+
+	        case "2":
+    	        sortOrder = Playlist.SortOrder.NAME_DESCENDING;
+        	    break;
+
+	        case "3":
+    	        sortOrder = Playlist.SortOrder.DURATION_ASCENDING;
+        	    break;
+
+	        case "4":
+    	        sortOrder = Playlist.SortOrder.DURATION_DESCENDING;
+        	    break;
+
+    	    default:
+        	    System.out.println("Invalid sort option.");
+            	return;
+	    }
+
+	    playlist.sort(sortOrder, metadataCache);
+
+	    System.out.println("Media sorted.");
+
+	    listMedia();
 	}
 }
 

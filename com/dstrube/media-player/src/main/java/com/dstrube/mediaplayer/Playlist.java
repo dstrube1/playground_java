@@ -2,6 +2,7 @@ package com.dstrube.mediaplayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
 
 public class Playlist {
 
@@ -98,4 +99,60 @@ public class Playlist {
 
         return List.copyOf(mediaFiles);
     }
+    
+    public enum SortOrder {
+ 	   NAME_ASCENDING,
+	    NAME_DESCENDING,
+    	DURATION_ASCENDING,
+    	DURATION_DESCENDING
+	}
+	
+	public void sort(
+        SortOrder sortOrder,
+        MediaMetadataCache metadataCache) {
+
+	    MediaFile currentFile = current();
+
+    	Comparator<MediaFile> comparator;
+
+	    switch (sortOrder) {
+
+    	    case NAME_ASCENDING:
+        	    comparator = Comparator.comparing(
+                    MediaFile::getFileName,
+                    String.CASE_INSENSITIVE_ORDER
+            	);
+            	break;
+
+	        case NAME_DESCENDING:
+    	        comparator = Comparator.comparing(
+                    MediaFile::getFileName,
+                    String.CASE_INSENSITIVE_ORDER
+        	    ).reversed();
+            	break;
+
+	        case DURATION_ASCENDING:
+    	        comparator = Comparator.comparingDouble(
+                    metadataCache::getDurationSeconds
+            	);
+        	    break;
+
+	        case DURATION_DESCENDING:
+    	        comparator = Comparator.comparingDouble(
+                    metadataCache::getDurationSeconds
+        	    ).reversed();
+            	break;
+
+	        default:
+    	        throw new IllegalArgumentException(
+                    "Unknown sort order: " + sortOrder
+        	    );
+	    }
+
+    	mediaFiles.sort(comparator);
+
+	    if (currentFile != null) {
+        	currentIndex = mediaFiles.indexOf(currentFile);
+    	}
+	}
 }

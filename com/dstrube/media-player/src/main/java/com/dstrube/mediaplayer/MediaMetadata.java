@@ -7,7 +7,44 @@ import java.util.concurrent.CountDownLatch;
 
 public class MediaMetadata {
 
-    public static String getDuration(MediaFile mediaFile) {
+	public static double getDurationSeconds(MediaFile mediaFile) {
+
+        Media media = new Media(
+                mediaFile.getPath().toUri().toString()
+        );
+
+        MediaPlayer player = new MediaPlayer(media);
+
+        CountDownLatch latch = new CountDownLatch(1);
+
+        final double[] duration = { -1 };
+
+        player.setOnReady(() -> {
+
+            duration[0] = media.getDuration().toSeconds();
+
+            latch.countDown();
+        });
+
+        player.setOnError(latch::countDown);
+
+        try {
+            latch.await();
+        } catch (InterruptedException e) {
+
+            Thread.currentThread().interrupt();
+
+            player.dispose();
+
+            return -1;
+        }
+
+        player.dispose();
+
+        return duration[0];
+    }
+    
+    /*public static String getDuration(MediaFile mediaFile) {
 
         Media media = new Media(
                 mediaFile.getPath().toUri().toString()
@@ -46,10 +83,14 @@ public class MediaMetadata {
         player.dispose();
 
         return duration[0];
-    }
+    }*/
 
-    private static String formatDuration(double totalSeconds) {
-
+    public static String formatDuration(double totalSeconds) {
+		
+		if (totalSeconds < 0) {
+            return "Unknown";
+        }
+        
         int totalSecondsInt = (int) totalSeconds;
 
         int minutes = totalSecondsInt / 60;
