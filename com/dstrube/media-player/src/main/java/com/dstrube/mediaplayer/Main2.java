@@ -49,8 +49,7 @@ public class Main2 extends Application {
         );
 
         MediaFile mediaFile = new MediaFile(
-                audioFile,
-                MediaFile.MediaType.AUDIO
+                audioFile
         );
 
         controller = new MediaPlayerController();

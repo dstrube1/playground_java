@@ -43,47 +43,6 @@ public class MediaMetadata {
 
         return duration[0];
     }
-    
-    /*public static String getDuration(MediaFile mediaFile) {
-
-        Media media = new Media(
-                mediaFile.getPath().toUri().toString()
-        );
-
-        MediaPlayer player = new MediaPlayer(media);
-
-        CountDownLatch latch = new CountDownLatch(1);
-
-        final String[] duration = { "Unknown" };
-
-        player.setOnReady(() -> {
-
-            duration[0] = formatDuration(
-                    media.getDuration().toSeconds()
-            );
-
-            latch.countDown();
-        });
-
-        player.setOnError(() -> {
-            latch.countDown();
-        });
-
-        try {
-            latch.await();
-        } catch (InterruptedException e) {
-
-            Thread.currentThread().interrupt();
-
-            player.dispose();
-
-            return "Unknown";
-        }
-
-        player.dispose();
-
-        return duration[0];
-    }*/
 
     public static String formatDuration(double totalSeconds) {
 		

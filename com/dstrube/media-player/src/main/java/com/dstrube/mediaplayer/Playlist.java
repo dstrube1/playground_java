@@ -9,6 +9,8 @@ public class Playlist {
     private final List<MediaFile> mediaFiles;
 
     private int currentIndex = -1;
+    
+    private SortOrder sortOrder = SortOrder.NAME_ASCENDING;
 
     public Playlist(List<MediaFile> mediaFiles) {
 
@@ -107,9 +109,15 @@ public class Playlist {
     	DURATION_DESCENDING
 	}
 	
+	public SortOrder getSortOrder() {
+    	return sortOrder;
+	}
+	
 	public void sort(
         SortOrder sortOrder,
         MediaMetadataCache metadataCache) {
+        
+        this.sortOrder = sortOrder;
 
 	    MediaFile currentFile = current();
 
@@ -132,15 +140,17 @@ public class Playlist {
             	break;
 
 	        case DURATION_ASCENDING:
-    	        comparator = Comparator.comparingDouble(
-                    metadataCache::getDurationSeconds
+    	        comparator = createDurationComparator(
+                    metadataCache, 
+                    false
             	);
         	    break;
 
 	        case DURATION_DESCENDING:
-    	        comparator = Comparator.comparingDouble(
-                    metadataCache::getDurationSeconds
-        	    ).reversed();
+    	        comparator = createDurationComparator(
+                    metadataCache,
+                    true
+        	    );
             	break;
 
 	        default:
@@ -155,4 +165,48 @@ public class Playlist {
         	currentIndex = mediaFiles.indexOf(currentFile);
     	}
 	}
+	
+	private Comparator<MediaFile> createDurationComparator(
+    	    MediaMetadataCache metadataCache,
+        	boolean descending) {
+
+	    return (file1, file2) -> {
+
+    	    double duration1 =
+                metadataCache.getDurationSeconds(file1);
+
+	        double duration2 =
+                metadataCache.getDurationSeconds(file2);
+
+    	    boolean unknown1 = duration1 < 0;
+        	boolean unknown2 = duration2 < 0;
+
+	        // Unknown durations always go to the end.
+    	    if (unknown1 && unknown2) {
+            	return 0;
+        	}
+
+	        if (unknown1) {
+        	    return 1;
+    	    }
+
+	        if (unknown2) {
+        	    return -1;
+    	    }
+
+	        if (descending) {
+        	    return Double.compare(duration2, duration1);
+    	    }
+
+        	return Double.compare(duration1, duration2);
+    	};
+	}
 }
+
+
+
+
+
+
+
+

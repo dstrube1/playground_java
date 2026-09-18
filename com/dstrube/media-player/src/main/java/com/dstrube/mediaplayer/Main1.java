@@ -33,8 +33,7 @@ public class Main1 {
             System.out.printf(
                     "%d. %s [%s]%n",
                     i + 1,
-                    file.getFileName(),
-                    file.getType()
+                    file.getFileName()
             );
         }
     }

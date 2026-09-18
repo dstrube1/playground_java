@@ -25,7 +25,8 @@ public class MediaPlayerController {
 
         player.setOnReady(() -> {
             System.out.println("Playing: " + mediaFile.getFileName());
-            System.out.println("Duration: " + betterDuration(media.getDuration()));
+            System.out.println("Duration: " + 
+            	MediaMetadata.formatDuration(media.getDuration().toSeconds()));
 
             player.play();
         });
@@ -50,13 +51,6 @@ public class MediaPlayerController {
             System.err.println(media.getError());
         });
     }
-    
-	private String betterDuration(Duration duration) {
-	    int totalSeconds = (int) duration.toSeconds();
-	    int minutes = totalSeconds / 60;
-    	int seconds = totalSeconds % 60;
-    	return String.format("%d:%02d", minutes, seconds);
-	}
 
     public void pause() {
 
@@ -81,12 +75,6 @@ public class MediaPlayerController {
         }
     }
 
-    /*public void setVolume(double volume) {
-        if (player != null) {
-            player.setVolume(volume);
-        }
-    }*/
-
     public boolean isPlaying() {
         return player != null
                 && player.getStatus() == MediaPlayer.Status.PLAYING;
@@ -95,9 +83,4 @@ public class MediaPlayerController {
     public void setOnTrackFinished(Runnable callback) {
     	this.onTrackFinished = callback;
 	}
-
-    /*public void shutdown() {
-        stop();
-        Platform.exit();
-    }*/
 }

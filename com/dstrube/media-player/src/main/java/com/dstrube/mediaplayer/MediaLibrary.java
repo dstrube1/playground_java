@@ -11,11 +11,7 @@ import java.util.Locale;
 public class MediaLibrary {
 
     private static final List<String> AUDIO_EXTENSIONS = List.of(
-            ".mp3"
-    );
-
-    private static final List<String> VIDEO_EXTENSIONS = List.of(
-            ".mp4"
+            ".mp3", ".m4a"
     );
 
     private final Path rootDirectory;
@@ -66,17 +62,7 @@ public class MediaLibrary {
         for (String extension : AUDIO_EXTENSIONS) {
             if (fileName.endsWith(extension)) {
                 return new MediaFile(
-                        path,
-                        MediaFile.MediaType.AUDIO
-                );
-            }
-        }
-
-        for (String extension : VIDEO_EXTENSIONS) {
-            if (fileName.endsWith(extension)) {
-                return new MediaFile(
-                        path,
-                        MediaFile.MediaType.VIDEO
+                        path
                 );
             }
         }

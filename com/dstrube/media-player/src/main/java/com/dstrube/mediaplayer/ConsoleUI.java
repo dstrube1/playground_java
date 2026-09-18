@@ -135,7 +135,9 @@ public class ConsoleUI {
     	}
 
 	    System.out.println();
-    	System.out.println("Media:");
+    	System.out.println("Media (sorted by " + 
+    		playlist.getSortOrder().toString().toLowerCase().replace('_', ' ') 
+    		+ "):");
 
 	    for (int i = 0; i < playlist.size(); i++) {
 	        MediaFile file = playlist.get(i);
