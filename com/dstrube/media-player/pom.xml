@@ -57,6 +57,10 @@
                     <mainClass>
                         com.dstrube.mediaplayer.Main
                     </mainClass>
+		    		<options>
+        				<option>--enable-native-access=javafx.graphics</option>
+        				<option>--enable-native-access=javafx.media</option>
+		    		</options>
                 </configuration>
             </plugin>
 
