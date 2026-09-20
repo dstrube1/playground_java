@@ -84,10 +84,14 @@ public class ConsoleUI {
 				    break;
 
 				case "8":
-					sortMedia();//scanner);
+					sortMedia();
 					break;
 
 				case "9":
+                    shuffle();
+				    break;
+
+				case "10":
                     controller.stop();
 				    running = false;
 				    break;
@@ -125,7 +129,8 @@ public class ConsoleUI {
         System.out.println("6. Next");
 		System.out.println("7. Previous");
 		System.out.println("8. Sort");
-		System.out.println("9. Quit");
+		System.out.println("9. Shuffle");
+		System.out.println("10. Quit");
     }
 
 	private void listMedia() {
@@ -194,12 +199,22 @@ public class ConsoleUI {
     }
     
     private void playNext() {
+
 	    MediaFile next = playlist.next();
+
 	    if (next == null) {
-	        System.out.println("Already at the end of the playlist.");
-	        return;
-	    }
-	    controller.play(next);
+        	System.out.println("No next track.");
+        	return;
+    	}
+
+	    System.out.println();
+    	System.out.println("Playing: " + next.getFileName());
+    	System.out.println(
+        	"Duration: " +
+    	    metadataCache.getFormattedDuration(next)
+	    );
+
+    	controller.play(next);
 	}
 	
 	private void playPrevious() {
@@ -223,7 +238,7 @@ public class ConsoleUI {
     	controller.play(next);
 	}
 
-	private void sortMedia(){ //Scanner scanner) {
+	private void sortMedia(){ 
 
     	if (playlist.isEmpty()) {
         	System.out.println("The playlist is empty.");
@@ -270,6 +285,18 @@ public class ConsoleUI {
 	    System.out.println("Media sorted.");
 
 	    listMedia();
+	}
+	
+	private void shuffle(){
+    	if (playlist.isEmpty()) {
+        	System.out.println("The playlist is empty.");
+    	    return;
+	    }
+	    
+	    playlist.shuffle();
+
+	    System.out.println("Playlist shuffled.");
+		playNext();
 	}
 }
 

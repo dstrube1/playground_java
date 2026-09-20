@@ -1,8 +1,9 @@
 package com.dstrube.mediaplayer;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class Playlist {
 
@@ -98,7 +99,6 @@ public class Playlist {
     }
 
     public List<MediaFile> getMediaFiles() {
-
         return List.copyOf(mediaFiles);
     }
     
@@ -200,6 +200,14 @@ public class Playlist {
 
         	return Double.compare(duration1, duration2);
     	};
+	}
+	
+	public void shuffle() {
+	    MediaFile currentFile = current();
+	    Collections.shuffle(mediaFiles);
+	    if (currentFile != null) {
+    	    currentIndex = mediaFiles.indexOf(currentFile);
+    	}
 	}
 }
 

@@ -12,6 +12,8 @@ public class MediaPlayerController {
     
     // Callback to automatically play next track
     private Runnable onTrackFinished;
+    
+    private Runnable onTrackReady;
 
     public void play(MediaFile mediaFile) {
 		// First, ensure the previous player is cleaned up before creating the new one.
@@ -23,13 +25,9 @@ public class MediaPlayerController {
 
         player = new MediaPlayer(media);
 
-        player.setOnReady(() -> {
-            System.out.println("Playing: " + mediaFile.getFileName());
-            System.out.println("Duration: " + 
-            	MediaMetadata.formatDuration(media.getDuration().toSeconds()));
-
-            player.play();
-        });
+		player.setOnReady(() -> {
+		    player.play();
+		});
 
         player.setOnEndOfMedia(() -> {
             System.out.println("Playback finished.");
@@ -82,5 +80,9 @@ public class MediaPlayerController {
     
     public void setOnTrackFinished(Runnable callback) {
     	this.onTrackFinished = callback;
+	}
+	
+	public void setOnTrackReady(Runnable callback) {
+	    this.onTrackReady = callback;
 	}
 }

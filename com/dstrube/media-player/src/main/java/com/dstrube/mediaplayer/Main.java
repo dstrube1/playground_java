@@ -1,5 +1,5 @@
 /*
-To run:
+To compile / run (from java/com/dstrube/media-player):
 mvn clean compile
 mvn javafx:run
 mvn javafx:run -Djavafx.args="/Path/to/music"

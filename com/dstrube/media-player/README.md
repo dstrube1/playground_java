@@ -34,7 +34,15 @@ ConsoleUI.java:
 Reads commands from System.in
 Displays menus/status information
 
+MediaPlayerController: 
+Control playback
+
+MediaMetadataCache: 
+Provide cached metadata
+
 Although the interface can be entirely console-based, JavaFX's media subsystem still uses native media components underneath. In particular, MP4 playback depends on the codecs available/supported by the JavaFX runtime.
+
+
 
 Note:
 If JavaFX doesn't work, try VLCJ next; and if not that, FFmpeg + custom playback.
